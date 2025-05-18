@@ -1,0 +1,1832 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.11.1" />
+<title>walytis_beta_api.walytis_beta_brenthy_api API documentation</title>
+<meta name="description" content="The machinery for communicating with Brenthy Core …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{color:#ddd;background:#111;--highlight-color:#050}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #222;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#f33}pre code{color:#ddd;background:#080808;font-size:.8em;line-height:1.4em}code{color:#ddd;background:#141414;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{color:#ddd;background:#080808;border:0;border-top:1px solid #555;border-bottom:1px solid #555;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #222}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{color:#ddd;background:#181818;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{color:#ddd;background:#181818}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#666;border-left:5px solid #181818;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#999;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{color:#ddd;background:#202}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #222}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#fff !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #666;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>walytis_beta_api.walytis_beta_brenthy_api</code></h1>
+</header>
+<section id="section-intro">
+<p>The machinery for communicating with Brenthy Core.</p>
+<p>It contains functions that are a direct part of Walytis_Beta API and intended
+for use by the Walytis_Beta API user (e.g. the create_blockchain() function),
+but also functions that are used only by higher-level WalytisAPI constructs
+such as BlocksListener class, which is not intended for use by the Walytis API
+user, but is used by the blockchain_model.Blockchain class instead,
+which is in turn intended for use by the Walytis_Beta API user.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;The machinery for communicating with Brenthy Core.
+
+It contains functions that are a direct part of Walytis_Beta API and intended
+for use by the Walytis_Beta API user (e.g. the create_blockchain() function),
+but also functions that are used only by higher-level WalytisAPI constructs
+such as BlocksListener class, which is not intended for use by the Walytis API
+user, but is used by the blockchain_model.Blockchain class instead,
+which is in turn intended for use by the Walytis_Beta API user.
+&#34;&#34;&#34;
+
+from __future__ import annotations
+from typing import TypeVar, Type
+import json
+import os
+import shutil
+from datetime import datetime
+from typing import Callable
+
+from walytis_beta_tools._experimental.config import ipfs
+from brenthy_tools_beta import brenthy_api, log
+from brenthy_tools_beta.utils import (
+    bytes_to_string,
+    decode_timestamp,
+    from_b255_no_0s,
+    function_name,
+    string_to_bytes,
+    to_b255_no_0s,
+)
+from brenthy_tools_beta.version_utils import (
+    decode_version,
+    encode_version,
+    version_to_string,
+)
+
+from walytis_beta_tools.block_model import (
+    Block,
+    decode_short_id,  # pylint: disable=unused-import
+    short_from_long_id
+)
+from walytis_beta_tools.exceptions import (
+    BlockchainAlreadyExistsError,
+    BlockIntegrityError,
+    BlockNotFoundError,
+    JoinFailureError,
+    NoSuchBlockchainError,
+    NoSuchInvitationError,
+    WalytisBugError,
+    WalytisReplyDecodeError,
+)
+from walytis_beta_tools.versions import (
+    WALYTIS_BETA_API_PROTOCOL_VERSION,
+    WALYTIS_BETA_API_VERSION,
+)
+
+from .walytis_beta_generic_interface import (
+    BaseWalytisBetaInterface, BaseBlocksListener, classproperty
+)
+# storing this blockchain&#39;s name so that we don&#39;t missspell it
+WALYTIS_BETA = &#34;Walytis_Beta&#34;
+
+
+# --------------Settings ---------------------------
+log.PRINT_DEBUG = False
+
+
+NO_SUCH_BLOCKCHAIN_MESSAGE = &#34;no such blockchain&#34;
+NO_SUCH_INVITATION_MESSAGE = &#34;no such join-key&#34;
+BLOCK_NOT_FOUND = &#34;block not found&#34;
+WALYTIS_BETA_ERROR_MESSAGE = &#34;internal Walytis_Beta error&#34;
+BLOCKCHAIN_EXISTS_MESSAGE = &#34;blockchain already exists&#34;
+
+# -------------- User Functions --------------------
+
+# --- Blockchain IDs and Names ---
+
+
+class _NetBlocksListener(BaseBlocksListener):
+    &#34;&#34;&#34;Listen for a blockchain&#39;s new block events.&#34;&#34;&#34;
+
+    event_listener = None
+
+    def __init__(
+        self,
+        blockchain_id: str,
+        eventhandler: Callable[[Block], None],
+        topics: list[str] | None = None,
+    ):
+        &#34;&#34;&#34;Call an eventhandler when the specified blockchain gets a new block.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to listen on
+            eventhandler (Callable[[Block, str], None]): eventhandler to call
+                    when the blockchain gets a new block
+            topics (list): the name of the topic to receive blocks from
+        &#34;&#34;&#34;
+        blockchain_id = WalytisBetaNetApi.get_blockchain_id(blockchain_id)
+        log.info(f&#34;Walytis_BetaAPI: BlocksListener: {blockchain_id}&#34;)
+        self._blockchain_id = blockchain_id
+        self._eventhandler = eventhandler
+        if isinstance(topics, str):
+            topics = [topics]
+        if topics:
+            self._topics = set(topics)
+        else:
+            self._topics = set()
+
+        self.event_listener = brenthy_api.EventListener(
+            &#34;Walytis_Beta&#34;, self._bap_event_received,
+            f&#34;{blockchain_id}-NewBlocks&#34;
+        )
+    def _bap_event_received(self, data: dict,topic:str) -&gt; None:
+        self._on_event_received(data,set([topic]))
+
+    def get_block(self, block_id: bytearray) -&gt; Block:
+        return WalytisBetaNetApi.get_block(self.blockchain_id, block_id)
+    @property
+    def topics(self)-&gt;set[str]:
+        return self._topics
+    
+    @property
+    def blockchain_id(self)-&gt;str:
+        return self._blockchain_id
+    @property
+    def eventhandler(self) -&gt; Callable[[Block], None]:
+        return self._eventhandler
+
+    def terminate(self) -&gt; None:
+        &#34;&#34;&#34;Clean up all resources used by this object.&#34;&#34;&#34;
+        if self.event_listener:
+            self.event_listener.terminate()
+
+    def __del__(self) -&gt; None:
+        &#34;&#34;&#34;Clean up all resources used by this object.&#34;&#34;&#34;
+        self.terminate()
+
+
+class WalytisBetaNetApi(BaseWalytisBetaInterface):
+    @classproperty
+    def BlocksListener(cls) -&gt; Type[_NetBlocksListener]:
+        return _NetBlocksListener
+
+    @classmethod
+    def list_blockchains(cls, names_first: bool = False) -&gt; list[tuple[str, str]]:
+        &#34;&#34;&#34;Get the IDs names of all the blockchains we have.
+
+        Args:
+            names_first: determines the order of the the tuple contents in the
+                            return value. See Returns.
+
+        Returns:
+            list: A list of tuples of the names and IDs of all the Walytis_Beta
+                    blockchains we have. Tuples are (id, name) by default,
+                    but (name, id) if names_first == True
+        &#34;&#34;&#34;
+        # make request to Brenthy
+        _response = cls._send_request(&#34;list_blockchains&#34;, bytearray([]))
+
+        # read and process response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+
+            # handle unexpected response type
+            if not isinstance(response, list):
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+
+            if names_first:
+                return [(name, id) for id, name in response]
+            else:
+                # convert lists to tuples
+                return [(id, name) for id, name in response]
+
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    # --- Blockchain Lifecycle ---
+
+    @classmethod
+    def create_blockchain(cls, blockchain_name: str = &#34;&#34;) -&gt; str:
+        &#34;&#34;&#34;Create and run a new blockchain.
+
+        Args:
+            blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                    to ease recognition when manually interacting with Walytis_API.
+                    Note: A blockchain&#39;s name only exists in the scope of a single
+                    node, meaning it is not guaranteed to be globally unique.
+                    Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                    its identifier, not the blockchain_name.
+
+        Returns:
+            str: ID of the created blockchain
+        &#34;&#34;&#34;
+        payload = json.dumps({&#34;blockchain_name&#34;: blockchain_name}).encode()
+
+        _response = cls._send_request(&#34;create_blockchain&#34;, payload)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            success = response[&#34;success&#34;]
+        except Exception:
+            error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if not success:
+            error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        blockchain_id = response[&#34;blockchain_id&#34;]
+
+        return blockchain_id
+
+    @classmethod
+    def join_blockchain(cls, invitation: str, blockchain_name: str = &#34;&#34;) -&gt; str:
+        &#34;&#34;&#34;Join a blockchain using an invitation generated by a blockchain node.
+
+        Args:
+            invitation (str): the invitation generated by a blockchain member
+            blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                    to ease recognition when manually interacting with WalytisAPI.
+                    Note: A blockchain&#39;s name only exists in the scope of a single
+                    node, meaning it is not guaranteed to be globally unique.
+                    Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                    its identifier, not the blockchain_name.
+
+        Returns:
+            str: the ID of the joined blockchain
+        &#34;&#34;&#34;
+        # convert invitation from JSON string to dict
+        if isinstance(invitation, str):
+            invitation = json.loads(invitation)
+        if not isinstance(invitation, dict):
+            raise ValueError(
+                &#34;The parameter invitation must be of type str or dict,&#34;
+                + f&#34; not {type(invitation)}&#34;
+            )
+        # log.debug(f&#34;WAPI: {function_name()}: &#34;)
+        # invitation is now of type dict
+        blockchain_id = invitation[&#34;blockchain_id&#34;]
+
+        blockchains = cls.list_blockchains()
+
+        if blockchain_id in [id for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if blockchain_name in [name for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(
+                blockchain_name=blockchain_name)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+
+        response = json.loads(
+            cls._send_request(
+                &#34;join_blockchain&#34;,
+                json.dumps(
+                    {
+                        &#34;invitation&#34;: invitation,
+                        &#34;blockchain_name&#34;: blockchain_name,
+                    }
+                ).encode(),
+            ).decode()
+        )
+        log.debug(f&#34;WAPI: {function_name()}: Got response!&#34;)
+
+        if response[&#34;success&#34;]:
+            return blockchain_id
+        else:
+            error = &#34;&#34;
+            if &#34;error&#34; in response.keys():
+                error = response[&#34;error&#34;]
+            error = JoinFailureError(error_message=error)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+    @classmethod
+    def join_blockchain_from_cid(cls,
+                                 blockchain_id: str, blockchain_data_cid: str, blockchain_name: str = &#34;&#34;
+                                 ) -&gt; None:
+        &#34;&#34;&#34;Join an existing live blockchain, given the IPFS CID of its appdata.
+
+        Args:
+            blockchain_id (str): the name of the blockchain
+            blockchain_data_cid (str): IPFS CID of the zip file containing the
+                    blockchain&#39;s data
+            blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                    to ease recognition when manually interacting with WalytisAPI.
+                    Note: A blockchain&#39;s name only exists in the scope of a single
+                    node, meaning it is not guaranteed to be globally unique.
+                    Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                    its identifier, not the blockchain_name.
+        &#34;&#34;&#34;
+        blockchains = cls.list_blockchains()
+
+        if blockchain_id in [id for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if blockchain_name in [name for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(
+                blockchain_name=blockchain_name)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        request = json.dumps(
+            {
+                &#34;blockchain_id&#34;: blockchain_id,
+                &#34;blockchain_name&#34;: blockchain_name,
+                &#34;blockchain_data_cid&#34;: blockchain_data_cid,
+            }
+        ).encode()
+        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+
+        _response = cls._send_request(&#34;join_blockchain_from_cid&#34;, request)
+        log.debug(f&#34;WAPI: {function_name()}: Got Response!&#34;)
+
+        try:
+            response = json.loads(_response.decode())
+            success = response[&#34;success&#34;]
+        except Exception:
+            _error = cls._read_appcomterm_error_message(
+                response, default_error=JoinFailureError()
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+        if not success:
+            raise JoinFailureError
+
+    @classmethod
+    def delete_blockchain(cls, blockchain_id: str) -&gt; None:
+        &#34;&#34;&#34;Delete the blockchain with the given id or name.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to delete
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        payload = blockchain_id.encode()
+
+        _response = cls._send_request(&#34;delete_blockchain&#34;, payload)
+
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            success = response[&#34;success&#34;]
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+        if not success:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def create_block(cls,
+                     blockchain_id: str,
+                     content: bytearray | bytes,
+                     topics: list[str] | str | None = None
+                     ) -&gt; Block:
+        &#34;&#34;&#34;Create a block with the given content on the specified blockchain.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to create a block
+            content (bytearray): the content to store on the blockchain
+            topics (list): user&#39;s metadata to encode in the block&#39;s ID
+        Returns:
+            Block: the newly created block
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        if not (isinstance(content, (bytearray, bytes))):
+            error = ValueError(
+                &#34;Block content must be of type bytes or bytearray.&#34;)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        if isinstance(topics, str):
+            topics = [topics]
+        if topics is None:
+            topics = []
+
+        response = {}
+
+        data = blockchain_id.encode() + bytearray([0])
+
+        data += to_b255_no_0s(len(topics)) + bytearray([0])
+        for topic in topics:
+            data = data + topic.encode() + bytearray([0, 0, 0])
+
+        # adding the self&#39;s content
+        data = data + content
+
+        # askig the blockchain to build and publish the block
+        response = json.loads(cls._send_request(&#34;create_block&#34;, data).decode())
+
+        # if the blockchain says it failed to build the block
+        if not response.get(&#34;success&#34;):
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+        block = cls.get_and_read_block(
+            string_to_bytes(response[&#34;block_id&#34;])
+        )  # decode the block
+
+        return block
+
+    @classmethod
+    def get_block(cls, blockchain_id: str, block_id: bytearray) -&gt; Block:
+        &#34;&#34;&#34;Get a block from the specified blokchain given its block ID.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain from which to get
+                                    the block
+            block_id (str): the id of the block
+        Returns:
+            Block: the Block object for the requested block
+        &#34;&#34;&#34;
+        if not blockchain_id or not block_id:
+            error = ValueError(
+                f&#34;The parameters can&#39;t be empty\n{blockchain_id}\n{block_id}&#34;
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if not isinstance(blockchain_id, str):
+            error_message = (
+                &#34;Walytis_BetaAPI: get_block: parameter blockchain_id must be of &#34;
+                f&#34;type str, not {type(blockchain_id)}&#34;
+            )
+            log.error(error_message)
+            raise TypeError(error_message)
+        if not (isinstance(block_id, (bytearray, bytes))):
+            error_message = (
+                &#34;Walytis_BetaAPI: get_block: parameter block_id must &#34;
+                f&#34;be of type bytearray or bytes, not {type(block_id)}&#34;
+            )
+            log.error(error_message)
+            raise TypeError(error_message)
+        response = {}
+        payload = json.dumps(
+            {&#34;blockchain_id&#34;: blockchain_id,
+                &#34;block_id&#34;: bytes_to_string(block_id)}
+        ).encode()
+        # askig the blockchain to build and publish the block
+        response = json.loads(cls._send_request(&#34;get_block&#34;, payload).decode())
+
+        # if the blockchain says it failed to build the block
+        if not response.get(&#34;success&#34;):
+            _error = cls._read_appcomterm_error_message(
+                response, default_error=BlockNotFoundError()
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+        block = cls.get_and_read_block(
+            string_to_bytes(response[&#34;block_id&#34;])
+        )  # decode the block
+
+        return block
+
+    @classmethod
+    def is_block_known(cls, blockchain_id: str, block_id: bytearray) -&gt; bool:
+        &#34;&#34;&#34;Check whether or not the specified blockchain has the given block.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to which the
+                                    block to look up belongs
+            block_id (bytearray): the block ID to look up in the block ID records
+        Returns:
+            bool: Whether the block is a known block
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+
+        # Sending request to Brenthy
+        payload = blockchain_id.encode() + bytearray([0]) + block_id
+
+        # askig the blockchain to build and publish the block
+        _response = cls._send_request(&#34;is_block_known&#34;, payload)
+        response = json.loads(_response.decode())
+
+        # Reading response from Brenthy
+        if not response.get(&#34;success&#34;):
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+        return response[&#34;is known&#34;]
+
+    @classmethod
+    def get_latest_blocks(cls,
+                          blockchain_id: str,
+                          amount: int | None = None,
+                          since_date: datetime | None = None,
+                          topics: list[str] | None = None,
+                          long_ids: bool = False,  # defaults to False for backwards-compatibility
+                          ) -&gt; list[bytearray]:
+        &#34;&#34;&#34;Get the latest few blocks on the blockchain.
+
+        The amount of which is determined by the paramters.
+        The blocks are returned in order of reception or creation date (CHECK!)
+        from most recent to oldest.
+        One of the paramaters amount or since_date must be set.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to look up
+            amount (int): how many blocks should be returned
+            since_date (datetime): the maximum age of the blocks to look for.
+                    This function will return several even older blocks,
+                    some of which may have been received after the specified date
+            topics (list): the topics to filter by, returning only
+                    blocks published on those topics, if this paramater is set.
+                    If not set, this function returns all blocks within the range
+                    of the first two parameters
+
+        Returns:
+            list: a list of IDs of the latest few blocks
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+
+        payload = json.dumps(
+            {
+                &#34;blockchain_id&#34;: blockchain_id,
+                &#34;amount&#34;: amount,
+                &#34;since_date&#34;: since_date,
+                &#34;topics&#34;: topics,
+                &#34;long_ids&#34;: long_ids
+            }
+        ).encode()
+
+        # send request to Brenthy
+        _response = cls._send_request(&#34;get_latest_blocks&#34;, payload)
+
+        # read response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            block_ids_encoded = response.get(&#34;block_ids&#34;)
+            block_ids = []
+            for block_id in block_ids_encoded:
+                block_ids.append(string_to_bytes(block_id))
+
+            # BACKWARDS COMPATIBILITY foor versions of WalytisCore that don&#39;t
+            # support the `long_ids` parameter:
+            if bytearray([0, 0, 0, 0]) not in block_ids[0]:
+                block_ids = [
+                    cls._get_block_long_from_short_id(blockchain_id, short_id)
+                    for short_id in block_ids
+                ]
+
+            return block_ids
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_blockchain_data(cls, blockchain_id: str) -&gt; str:
+        &#34;&#34;&#34;Create a zip file of all this blockchain&#39;s data, returning its path.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to zip
+        Returns:
+            str: the path of the zip file created
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = blockchain_id.encode()
+
+        _response = cls._send_request(&#34;get_blockchain_data&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if response[&#34;success&#34;]:
+                return response[&#34;path&#34;]
+
+        except Exception:
+            pass
+        _error = cls._read_appcomterm_error_message(response)
+        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        raise _error
+
+    @classmethod
+    def get_peers(cls, blockchain_id: str) -&gt; list[str]:
+        &#34;&#34;&#34;Get a list of IPFS IDs of the given blockchain&#39;s currently online nodes.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to look up
+        Returns:
+            list[str]: the IPFS IDs of the blockchain&#39;s currently online nodes
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = blockchain_id.encode()
+
+        _response = cls._send_request(&#34;get_peers&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if response[&#34;success&#34;]:
+                return response[&#34;peers&#34;]
+
+        except Exception:
+            pass
+        _error = cls._read_appcomterm_error_message(response)
+        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        raise _error
+
+    @classmethod
+    def create_invitation(cls,
+                          blockchain_id: str, one_time: bool = True, shared: bool = False
+                          ) -&gt; str:
+        &#34;&#34;&#34;Create a code which other nodes can use to join this blockchain.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to create a
+                            invitation for
+            one_time (bool): (optional, default True) whether this code is valid
+                            only for one use only instead of being reusable
+            shared (bool): whether this invitation should be hosted by other
+                            nodes who join this blockchain too, or just by this one
+        Returns:
+            str: an invitation code that can be used by other computers to join
+                    this blockchain
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = json.dumps(
+            {
+                &#34;blockchain_id&#34;: blockchain_id,
+                &#34;one_time&#34;: one_time,
+                &#34;shared&#34;: shared,
+            }
+        ).encode()
+
+        _response = cls._send_request(&#34;create_invitation&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            return response[&#34;invitation&#34;]
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_invitations(cls, blockchain_id: str) -&gt; list[str]:
+        &#34;&#34;&#34;Get the specified blockchain&#39;s active invitations.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain whose invitations
+                                    to look up
+        Returns:
+            list: the invitations of this blockchain
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+
+        # Sending request to Brenthy
+        payload = blockchain_id.encode()
+
+        # askig the blockchain to build and publish the block
+        _response = cls._send_request(&#34;get_invitations&#34;, payload)
+
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if response[&#34;success&#34;]:
+                return response[&#34;invitations&#34;]
+            else:
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def delete_invitation(cls, blockchain_id: str, invitation: str) -&gt; None:
+        &#34;&#34;&#34;Delete an invitation from the specified blockchain.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to delete an
+                                invitation from
+            invitation (str): the invitation to delete
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = json.dumps(
+            {&#34;blockchain_id&#34;: blockchain_id, &#34;invitation&#34;: invitation}
+        ).encode()
+
+        _response = cls._send_request(&#34;delete_invitation&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if not response[&#34;success&#34;]:
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_walytis_beta_version(cls,) -&gt; tuple[int, int, int]:
+        &#34;&#34;&#34;Get the software version of the locally running Walytis node.
+
+        Returns:
+            tuple: the software version of the locally running Walytis_Beta node
+        &#34;&#34;&#34;
+        # make request to Brenthy
+        _response = cls._send_request(
+            &#34;get_walytis_beta_version&#34;, bytearray([]))
+
+        # read and process response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+
+            # handle unexpected response type
+            if not (
+                isinstance(response, dict)
+                and (response.get(&#34;walytis_beta_core_version&#34;), list)
+            ):
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+
+            return tuple(response[&#34;walytis_beta_core_version&#34;])
+
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_walytis_beta_api_version(cls,) -&gt; tuple[int, int, int]:
+        &#34;&#34;&#34;Get the software version of the this walytis_beta_api library.
+
+        Returns:
+            tuple: the software version of the this walytis_beta_api library
+        &#34;&#34;&#34;
+        return WALYTIS_BETA_API_VERSION
+
+    @classmethod
+    def get_and_read_block(cls, short_id: bytearray) -&gt; Block:
+        &#34;&#34;&#34;Given a block&#39;s ID, download and verify it.
+
+        Args:
+            short_id (str): the ID of the block to get
+        Returns:
+            Block: an object representing the specified block, containing all its
+                    metadata and block content
+        &#34;&#34;&#34;
+        try:
+            ipfs_cid = decode_short_id(short_id)[&#34;ipfs_cid&#34;]
+            block_data = ipfs.files.read(ipfs_cid)
+        except Exception:
+            error = BlockNotFoundError()
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        try:
+            block = cls.read_block(block_data, ipfs_cid)
+        except Exception as error:
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        while short_id[-1] == 0:
+            short_id = short_id[:-1]
+        if bytearray(block.short_id) != short_from_long_id(short_id):  # suspicious
+            error_message = (
+                &#34;The decoded block&#39;s ID is not the same as the one we are looking &#34;
+                f&#34;for.\nLooking for: {bytearray(short_id)}&#34;
+                f&#34;\nGenerated from BlockData: {block.short_id}&#34;
+            )
+
+            exception = BlockIntegrityError(error_message)
+            log.error(f&#34;WAPI: {function_name()}: {error_message}&#34;)
+            raise exception
+        return block
+
+    @classmethod
+    def read_block(cls, block_data: bytearray, ipfs_cid: str) -&gt; Block:
+        &#34;&#34;&#34;Read a block-file, generating a block object if it&#39;s valid.
+
+        Args:
+            block_data (bytearray): the raw data of the block to read.
+            ipfs_cid (str): the IPFS content ID of the block
+        Returns:
+            Block: a Block object
+        &#34;&#34;&#34;
+        # making a copy of the data to work with
+        data = bytearray(block_data)
+        # extract metadata block (separated from content by [0,0,0,0,0])
+        # and splt it into is subcomponents separated by [0,0]
+        content_separator = data.index(bytearray([0, 0, 0, 0, 0]))
+        blockfile_header = data[:content_separator].split(
+            bytearray([0, 0, 0, 0]))
+        metadata = blockfile_header[0].split(bytearray([0, 0]))
+        # log.important(data)
+        # log.important(blockfile_header)
+        # log.important(metadata)
+        if len(blockfile_header) &gt; 1:
+            parents = blockfile_header[1].split(bytearray([0, 0, 0]))
+        else:
+            parents = []
+            # log.important(&#34;Genesis block&#34;)
+        # content sits between metadata and block_hash
+        content = data[content_separator + 5:]
+
+        blockchain_version = decode_version(metadata[0])
+        creator_id = metadata[1]
+        creation_time = decode_timestamp(metadata[2])
+
+        topics = [topic.decode()
+                  for topic in metadata[3].split(bytearray([0]))]
+        content_length = from_b255_no_0s(metadata[4])
+        content_hash_algorithm = metadata[5].decode()
+        content_hash = metadata[6]
+
+        n_parents = from_b255_no_0s(metadata[7])
+        parents_hash_algorithm = metadata[8].decode()
+        parents_hash = metadata[9]
+
+        # creating a new block object from the decoded block data
+        block = Block.from_metadata(
+            blockchain_version=blockchain_version,
+            creator_id=creator_id,
+            creation_time=creation_time,
+            topics=topics,
+            content_hash_algorithm=content_hash_algorithm,
+            content_hash=content_hash,
+            content=content,
+            n_parents=n_parents,
+            parents_hash_algorithm=parents_hash_algorithm,
+            parents_hash=parents_hash,
+            parents=parents,
+            ipfs_cid=ipfs_cid,
+            content_length=content_length,
+            file_data=bytearray(block_data),
+        )
+
+        block.generate_id()
+
+        # making sure the block&#39;s hash is correct
+        if not block.check_integrity():
+            error = BlockIntegrityError(
+                &#34;The received block had an incorrect hash. The block is &#34;
+                &#34;considered corrupt or fraudulently manipulated.&#34;
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        return block
+
+    @classmethod
+    def _read_appcomterm_error_message(cls,
+                                       data: dict | bytearray, default_error: BaseException | None = None
+                                       ) -&gt; BaseException:
+        &#34;&#34;&#34;Analyse a failed request reply, returning an appropriate Exception.
+
+        Args:
+            data (dict | bytearray): the response from the brenthy AppComTerm to
+                                        analyse
+            default_error(Exception): the exception to return if no error
+                                        message/cause can be determined
+        &#34;&#34;&#34;
+        if isinstance(data, dict):
+            if &#34;error&#34; in data.keys():
+                if data[&#34;error&#34;] == NO_SUCH_BLOCKCHAIN_MESSAGE:
+                    if &#34;blockchain_id&#34; in data.keys():
+                        return NoSuchBlockchainError(
+                            blockchain_id=data[&#34;blockchain_id&#34;]
+                        )
+                    else:
+                        return NoSuchBlockchainError()
+                elif data[&#34;error&#34;] == BLOCKCHAIN_EXISTS_MESSAGE:
+                    if &#34;blockchain_name&#34; in data.keys():
+                        return BlockchainAlreadyExistsError(
+                            blockchain_name=data[&#34;blockchain_name&#34;]
+                        )
+                    else:
+                        return BlockchainAlreadyExistsError()
+                elif data[&#34;error&#34;] == NO_SUCH_INVITATION_MESSAGE:
+                    return NoSuchInvitationError()
+                elif data[&#34;error&#34;] == WALYTIS_BETA_ERROR_MESSAGE:
+                    return WalytisBugError(error_message=data[&#34;error&#34;])
+                if default_error:
+                    return default_error
+                else:
+                    return WalytisReplyDecodeError(reply=str(data))
+        if default_error:
+            return default_error
+        log.error(str(WalytisReplyDecodeError(reply=str(data))))
+        return WalytisReplyDecodeError(reply=str(data))
+
+    @classmethod
+    def _send_request(cls, function_name: str, payload: bytearray | bytes) -&gt; bytearray:
+        &#34;&#34;&#34;Send a request to Walytis-Core.
+
+        Args:
+            function_name(str): the name of the function in walytis_api_terminal
+                                    which we want to call
+            payload(bytearray): the data the function in walytis_beta_api_terminal
+                                    needs to process our request, its arguments
+
+        Returns:
+            bytearray: the reply from the function we called in
+                                    walytis_beta_api_terminal
+        &#34;&#34;&#34;
+        request = (
+            encode_version(WALYTIS_BETA_API_PROTOCOL_VERSION) + bytearray([0])
+            + function_name.encode() + bytearray([0])
+            + payload
+        )
+        reply = brenthy_api.send_request(&#34;Walytis_Beta&#34;, request)
+        walytis_api_version = decode_version(
+            reply[: reply.index(bytearray([0]))])
+        reply = reply[reply.index(bytearray([0])) + 1:]
+        return reply
+
+    @classmethod
+    def _get_block_long_from_short_id(cls, blockchain_id: str, short_id: bytearray):
+        &#34;&#34;&#34;This function is needed for BACKWARDS COMPATIBILITY with older versions
+        of Walytis_Beta Core.&#34;&#34;&#34;
+        return cls.get_block(blockchain_id, short_id).long_id</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="walytis_beta_api.walytis_beta_brenthy_api.WalytisBetaNetApi"><code class="flex name class">
+<span>class <span class="ident">WalytisBetaNetApi</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WalytisBetaNetApi(BaseWalytisBetaInterface):
+    @classproperty
+    def BlocksListener(cls) -&gt; Type[_NetBlocksListener]:
+        return _NetBlocksListener
+
+    @classmethod
+    def list_blockchains(cls, names_first: bool = False) -&gt; list[tuple[str, str]]:
+        &#34;&#34;&#34;Get the IDs names of all the blockchains we have.
+
+        Args:
+            names_first: determines the order of the the tuple contents in the
+                            return value. See Returns.
+
+        Returns:
+            list: A list of tuples of the names and IDs of all the Walytis_Beta
+                    blockchains we have. Tuples are (id, name) by default,
+                    but (name, id) if names_first == True
+        &#34;&#34;&#34;
+        # make request to Brenthy
+        _response = cls._send_request(&#34;list_blockchains&#34;, bytearray([]))
+
+        # read and process response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+
+            # handle unexpected response type
+            if not isinstance(response, list):
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+
+            if names_first:
+                return [(name, id) for id, name in response]
+            else:
+                # convert lists to tuples
+                return [(id, name) for id, name in response]
+
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    # --- Blockchain Lifecycle ---
+
+    @classmethod
+    def create_blockchain(cls, blockchain_name: str = &#34;&#34;) -&gt; str:
+        &#34;&#34;&#34;Create and run a new blockchain.
+
+        Args:
+            blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                    to ease recognition when manually interacting with Walytis_API.
+                    Note: A blockchain&#39;s name only exists in the scope of a single
+                    node, meaning it is not guaranteed to be globally unique.
+                    Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                    its identifier, not the blockchain_name.
+
+        Returns:
+            str: ID of the created blockchain
+        &#34;&#34;&#34;
+        payload = json.dumps({&#34;blockchain_name&#34;: blockchain_name}).encode()
+
+        _response = cls._send_request(&#34;create_blockchain&#34;, payload)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            success = response[&#34;success&#34;]
+        except Exception:
+            error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if not success:
+            error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        blockchain_id = response[&#34;blockchain_id&#34;]
+
+        return blockchain_id
+
+    @classmethod
+    def join_blockchain(cls, invitation: str, blockchain_name: str = &#34;&#34;) -&gt; str:
+        &#34;&#34;&#34;Join a blockchain using an invitation generated by a blockchain node.
+
+        Args:
+            invitation (str): the invitation generated by a blockchain member
+            blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                    to ease recognition when manually interacting with WalytisAPI.
+                    Note: A blockchain&#39;s name only exists in the scope of a single
+                    node, meaning it is not guaranteed to be globally unique.
+                    Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                    its identifier, not the blockchain_name.
+
+        Returns:
+            str: the ID of the joined blockchain
+        &#34;&#34;&#34;
+        # convert invitation from JSON string to dict
+        if isinstance(invitation, str):
+            invitation = json.loads(invitation)
+        if not isinstance(invitation, dict):
+            raise ValueError(
+                &#34;The parameter invitation must be of type str or dict,&#34;
+                + f&#34; not {type(invitation)}&#34;
+            )
+        # log.debug(f&#34;WAPI: {function_name()}: &#34;)
+        # invitation is now of type dict
+        blockchain_id = invitation[&#34;blockchain_id&#34;]
+
+        blockchains = cls.list_blockchains()
+
+        if blockchain_id in [id for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if blockchain_name in [name for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(
+                blockchain_name=blockchain_name)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+
+        response = json.loads(
+            cls._send_request(
+                &#34;join_blockchain&#34;,
+                json.dumps(
+                    {
+                        &#34;invitation&#34;: invitation,
+                        &#34;blockchain_name&#34;: blockchain_name,
+                    }
+                ).encode(),
+            ).decode()
+        )
+        log.debug(f&#34;WAPI: {function_name()}: Got response!&#34;)
+
+        if response[&#34;success&#34;]:
+            return blockchain_id
+        else:
+            error = &#34;&#34;
+            if &#34;error&#34; in response.keys():
+                error = response[&#34;error&#34;]
+            error = JoinFailureError(error_message=error)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+    @classmethod
+    def join_blockchain_from_cid(cls,
+                                 blockchain_id: str, blockchain_data_cid: str, blockchain_name: str = &#34;&#34;
+                                 ) -&gt; None:
+        &#34;&#34;&#34;Join an existing live blockchain, given the IPFS CID of its appdata.
+
+        Args:
+            blockchain_id (str): the name of the blockchain
+            blockchain_data_cid (str): IPFS CID of the zip file containing the
+                    blockchain&#39;s data
+            blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                    to ease recognition when manually interacting with WalytisAPI.
+                    Note: A blockchain&#39;s name only exists in the scope of a single
+                    node, meaning it is not guaranteed to be globally unique.
+                    Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                    its identifier, not the blockchain_name.
+        &#34;&#34;&#34;
+        blockchains = cls.list_blockchains()
+
+        if blockchain_id in [id for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if blockchain_name in [name for id, name in blockchains]:
+            error = BlockchainAlreadyExistsError(
+                blockchain_name=blockchain_name)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        request = json.dumps(
+            {
+                &#34;blockchain_id&#34;: blockchain_id,
+                &#34;blockchain_name&#34;: blockchain_name,
+                &#34;blockchain_data_cid&#34;: blockchain_data_cid,
+            }
+        ).encode()
+        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+
+        _response = cls._send_request(&#34;join_blockchain_from_cid&#34;, request)
+        log.debug(f&#34;WAPI: {function_name()}: Got Response!&#34;)
+
+        try:
+            response = json.loads(_response.decode())
+            success = response[&#34;success&#34;]
+        except Exception:
+            _error = cls._read_appcomterm_error_message(
+                response, default_error=JoinFailureError()
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+        if not success:
+            raise JoinFailureError
+
+    @classmethod
+    def delete_blockchain(cls, blockchain_id: str) -&gt; None:
+        &#34;&#34;&#34;Delete the blockchain with the given id or name.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to delete
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        payload = blockchain_id.encode()
+
+        _response = cls._send_request(&#34;delete_blockchain&#34;, payload)
+
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            success = response[&#34;success&#34;]
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+        if not success:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def create_block(cls,
+                     blockchain_id: str,
+                     content: bytearray | bytes,
+                     topics: list[str] | str | None = None
+                     ) -&gt; Block:
+        &#34;&#34;&#34;Create a block with the given content on the specified blockchain.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to create a block
+            content (bytearray): the content to store on the blockchain
+            topics (list): user&#39;s metadata to encode in the block&#39;s ID
+        Returns:
+            Block: the newly created block
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        if not (isinstance(content, (bytearray, bytes))):
+            error = ValueError(
+                &#34;Block content must be of type bytes or bytearray.&#34;)
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        if isinstance(topics, str):
+            topics = [topics]
+        if topics is None:
+            topics = []
+
+        response = {}
+
+        data = blockchain_id.encode() + bytearray([0])
+
+        data += to_b255_no_0s(len(topics)) + bytearray([0])
+        for topic in topics:
+            data = data + topic.encode() + bytearray([0, 0, 0])
+
+        # adding the self&#39;s content
+        data = data + content
+
+        # askig the blockchain to build and publish the block
+        response = json.loads(cls._send_request(&#34;create_block&#34;, data).decode())
+
+        # if the blockchain says it failed to build the block
+        if not response.get(&#34;success&#34;):
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+        block = cls.get_and_read_block(
+            string_to_bytes(response[&#34;block_id&#34;])
+        )  # decode the block
+
+        return block
+
+    @classmethod
+    def get_block(cls, blockchain_id: str, block_id: bytearray) -&gt; Block:
+        &#34;&#34;&#34;Get a block from the specified blokchain given its block ID.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain from which to get
+                                    the block
+            block_id (str): the id of the block
+        Returns:
+            Block: the Block object for the requested block
+        &#34;&#34;&#34;
+        if not blockchain_id or not block_id:
+            error = ValueError(
+                f&#34;The parameters can&#39;t be empty\n{blockchain_id}\n{block_id}&#34;
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        if not isinstance(blockchain_id, str):
+            error_message = (
+                &#34;Walytis_BetaAPI: get_block: parameter blockchain_id must be of &#34;
+                f&#34;type str, not {type(blockchain_id)}&#34;
+            )
+            log.error(error_message)
+            raise TypeError(error_message)
+        if not (isinstance(block_id, (bytearray, bytes))):
+            error_message = (
+                &#34;Walytis_BetaAPI: get_block: parameter block_id must &#34;
+                f&#34;be of type bytearray or bytes, not {type(block_id)}&#34;
+            )
+            log.error(error_message)
+            raise TypeError(error_message)
+        response = {}
+        payload = json.dumps(
+            {&#34;blockchain_id&#34;: blockchain_id,
+                &#34;block_id&#34;: bytes_to_string(block_id)}
+        ).encode()
+        # askig the blockchain to build and publish the block
+        response = json.loads(cls._send_request(&#34;get_block&#34;, payload).decode())
+
+        # if the blockchain says it failed to build the block
+        if not response.get(&#34;success&#34;):
+            _error = cls._read_appcomterm_error_message(
+                response, default_error=BlockNotFoundError()
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+        block = cls.get_and_read_block(
+            string_to_bytes(response[&#34;block_id&#34;])
+        )  # decode the block
+
+        return block
+
+    @classmethod
+    def is_block_known(cls, blockchain_id: str, block_id: bytearray) -&gt; bool:
+        &#34;&#34;&#34;Check whether or not the specified blockchain has the given block.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to which the
+                                    block to look up belongs
+            block_id (bytearray): the block ID to look up in the block ID records
+        Returns:
+            bool: Whether the block is a known block
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+
+        # Sending request to Brenthy
+        payload = blockchain_id.encode() + bytearray([0]) + block_id
+
+        # askig the blockchain to build and publish the block
+        _response = cls._send_request(&#34;is_block_known&#34;, payload)
+        response = json.loads(_response.decode())
+
+        # Reading response from Brenthy
+        if not response.get(&#34;success&#34;):
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+        return response[&#34;is known&#34;]
+
+    @classmethod
+    def get_latest_blocks(cls,
+                          blockchain_id: str,
+                          amount: int | None = None,
+                          since_date: datetime | None = None,
+                          topics: list[str] | None = None,
+                          long_ids: bool = False,  # defaults to False for backwards-compatibility
+                          ) -&gt; list[bytearray]:
+        &#34;&#34;&#34;Get the latest few blocks on the blockchain.
+
+        The amount of which is determined by the paramters.
+        The blocks are returned in order of reception or creation date (CHECK!)
+        from most recent to oldest.
+        One of the paramaters amount or since_date must be set.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to look up
+            amount (int): how many blocks should be returned
+            since_date (datetime): the maximum age of the blocks to look for.
+                    This function will return several even older blocks,
+                    some of which may have been received after the specified date
+            topics (list): the topics to filter by, returning only
+                    blocks published on those topics, if this paramater is set.
+                    If not set, this function returns all blocks within the range
+                    of the first two parameters
+
+        Returns:
+            list: a list of IDs of the latest few blocks
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+
+        payload = json.dumps(
+            {
+                &#34;blockchain_id&#34;: blockchain_id,
+                &#34;amount&#34;: amount,
+                &#34;since_date&#34;: since_date,
+                &#34;topics&#34;: topics,
+                &#34;long_ids&#34;: long_ids
+            }
+        ).encode()
+
+        # send request to Brenthy
+        _response = cls._send_request(&#34;get_latest_blocks&#34;, payload)
+
+        # read response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            block_ids_encoded = response.get(&#34;block_ids&#34;)
+            block_ids = []
+            for block_id in block_ids_encoded:
+                block_ids.append(string_to_bytes(block_id))
+
+            # BACKWARDS COMPATIBILITY foor versions of WalytisCore that don&#39;t
+            # support the `long_ids` parameter:
+            if bytearray([0, 0, 0, 0]) not in block_ids[0]:
+                block_ids = [
+                    cls._get_block_long_from_short_id(blockchain_id, short_id)
+                    for short_id in block_ids
+                ]
+
+            return block_ids
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_blockchain_data(cls, blockchain_id: str) -&gt; str:
+        &#34;&#34;&#34;Create a zip file of all this blockchain&#39;s data, returning its path.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to zip
+        Returns:
+            str: the path of the zip file created
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = blockchain_id.encode()
+
+        _response = cls._send_request(&#34;get_blockchain_data&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if response[&#34;success&#34;]:
+                return response[&#34;path&#34;]
+
+        except Exception:
+            pass
+        _error = cls._read_appcomterm_error_message(response)
+        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        raise _error
+
+    @classmethod
+    def get_peers(cls, blockchain_id: str) -&gt; list[str]:
+        &#34;&#34;&#34;Get a list of IPFS IDs of the given blockchain&#39;s currently online nodes.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to look up
+        Returns:
+            list[str]: the IPFS IDs of the blockchain&#39;s currently online nodes
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = blockchain_id.encode()
+
+        _response = cls._send_request(&#34;get_peers&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if response[&#34;success&#34;]:
+                return response[&#34;peers&#34;]
+
+        except Exception:
+            pass
+        _error = cls._read_appcomterm_error_message(response)
+        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        raise _error
+
+    @classmethod
+    def create_invitation(cls,
+                          blockchain_id: str, one_time: bool = True, shared: bool = False
+                          ) -&gt; str:
+        &#34;&#34;&#34;Create a code which other nodes can use to join this blockchain.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to create a
+                            invitation for
+            one_time (bool): (optional, default True) whether this code is valid
+                            only for one use only instead of being reusable
+            shared (bool): whether this invitation should be hosted by other
+                            nodes who join this blockchain too, or just by this one
+        Returns:
+            str: an invitation code that can be used by other computers to join
+                    this blockchain
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = json.dumps(
+            {
+                &#34;blockchain_id&#34;: blockchain_id,
+                &#34;one_time&#34;: one_time,
+                &#34;shared&#34;: shared,
+            }
+        ).encode()
+
+        _response = cls._send_request(&#34;create_invitation&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            return response[&#34;invitation&#34;]
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_invitations(cls, blockchain_id: str) -&gt; list[str]:
+        &#34;&#34;&#34;Get the specified blockchain&#39;s active invitations.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain whose invitations
+                                    to look up
+        Returns:
+            list: the invitations of this blockchain
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+
+        # Sending request to Brenthy
+        payload = blockchain_id.encode()
+
+        # askig the blockchain to build and publish the block
+        _response = cls._send_request(&#34;get_invitations&#34;, payload)
+
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if response[&#34;success&#34;]:
+                return response[&#34;invitations&#34;]
+            else:
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def delete_invitation(cls, blockchain_id: str, invitation: str) -&gt; None:
+        &#34;&#34;&#34;Delete an invitation from the specified blockchain.
+
+        Args:
+            blockchain_id (str): the id or name of the blockchain to delete an
+                                invitation from
+            invitation (str): the invitation to delete
+        &#34;&#34;&#34;
+        blockchain_id = cls.get_blockchain_id(blockchain_id)
+        request = json.dumps(
+            {&#34;blockchain_id&#34;: blockchain_id, &#34;invitation&#34;: invitation}
+        ).encode()
+
+        _response = cls._send_request(&#34;delete_invitation&#34;, request)
+        # Reading response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+            if not response[&#34;success&#34;]:
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_walytis_beta_version(cls,) -&gt; tuple[int, int, int]:
+        &#34;&#34;&#34;Get the software version of the locally running Walytis node.
+
+        Returns:
+            tuple: the software version of the locally running Walytis_Beta node
+        &#34;&#34;&#34;
+        # make request to Brenthy
+        _response = cls._send_request(
+            &#34;get_walytis_beta_version&#34;, bytearray([]))
+
+        # read and process response from Brenthy
+        try:
+            response = json.loads(_response.decode())
+
+            # handle unexpected response type
+            if not (
+                isinstance(response, dict)
+                and (response.get(&#34;walytis_beta_core_version&#34;), list)
+            ):
+                _error = cls._read_appcomterm_error_message(response)
+                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                raise _error
+
+            return tuple(response[&#34;walytis_beta_core_version&#34;])
+
+        except Exception:
+            _error = cls._read_appcomterm_error_message(response)
+            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            raise _error
+
+    @classmethod
+    def get_walytis_beta_api_version(cls,) -&gt; tuple[int, int, int]:
+        &#34;&#34;&#34;Get the software version of the this walytis_beta_api library.
+
+        Returns:
+            tuple: the software version of the this walytis_beta_api library
+        &#34;&#34;&#34;
+        return WALYTIS_BETA_API_VERSION
+
+    @classmethod
+    def get_and_read_block(cls, short_id: bytearray) -&gt; Block:
+        &#34;&#34;&#34;Given a block&#39;s ID, download and verify it.
+
+        Args:
+            short_id (str): the ID of the block to get
+        Returns:
+            Block: an object representing the specified block, containing all its
+                    metadata and block content
+        &#34;&#34;&#34;
+        try:
+            ipfs_cid = decode_short_id(short_id)[&#34;ipfs_cid&#34;]
+            block_data = ipfs.files.read(ipfs_cid)
+        except Exception:
+            error = BlockNotFoundError()
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        try:
+            block = cls.read_block(block_data, ipfs_cid)
+        except Exception as error:
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+        while short_id[-1] == 0:
+            short_id = short_id[:-1]
+        if bytearray(block.short_id) != short_from_long_id(short_id):  # suspicious
+            error_message = (
+                &#34;The decoded block&#39;s ID is not the same as the one we are looking &#34;
+                f&#34;for.\nLooking for: {bytearray(short_id)}&#34;
+                f&#34;\nGenerated from BlockData: {block.short_id}&#34;
+            )
+
+            exception = BlockIntegrityError(error_message)
+            log.error(f&#34;WAPI: {function_name()}: {error_message}&#34;)
+            raise exception
+        return block
+
+    @classmethod
+    def read_block(cls, block_data: bytearray, ipfs_cid: str) -&gt; Block:
+        &#34;&#34;&#34;Read a block-file, generating a block object if it&#39;s valid.
+
+        Args:
+            block_data (bytearray): the raw data of the block to read.
+            ipfs_cid (str): the IPFS content ID of the block
+        Returns:
+            Block: a Block object
+        &#34;&#34;&#34;
+        # making a copy of the data to work with
+        data = bytearray(block_data)
+        # extract metadata block (separated from content by [0,0,0,0,0])
+        # and splt it into is subcomponents separated by [0,0]
+        content_separator = data.index(bytearray([0, 0, 0, 0, 0]))
+        blockfile_header = data[:content_separator].split(
+            bytearray([0, 0, 0, 0]))
+        metadata = blockfile_header[0].split(bytearray([0, 0]))
+        # log.important(data)
+        # log.important(blockfile_header)
+        # log.important(metadata)
+        if len(blockfile_header) &gt; 1:
+            parents = blockfile_header[1].split(bytearray([0, 0, 0]))
+        else:
+            parents = []
+            # log.important(&#34;Genesis block&#34;)
+        # content sits between metadata and block_hash
+        content = data[content_separator + 5:]
+
+        blockchain_version = decode_version(metadata[0])
+        creator_id = metadata[1]
+        creation_time = decode_timestamp(metadata[2])
+
+        topics = [topic.decode()
+                  for topic in metadata[3].split(bytearray([0]))]
+        content_length = from_b255_no_0s(metadata[4])
+        content_hash_algorithm = metadata[5].decode()
+        content_hash = metadata[6]
+
+        n_parents = from_b255_no_0s(metadata[7])
+        parents_hash_algorithm = metadata[8].decode()
+        parents_hash = metadata[9]
+
+        # creating a new block object from the decoded block data
+        block = Block.from_metadata(
+            blockchain_version=blockchain_version,
+            creator_id=creator_id,
+            creation_time=creation_time,
+            topics=topics,
+            content_hash_algorithm=content_hash_algorithm,
+            content_hash=content_hash,
+            content=content,
+            n_parents=n_parents,
+            parents_hash_algorithm=parents_hash_algorithm,
+            parents_hash=parents_hash,
+            parents=parents,
+            ipfs_cid=ipfs_cid,
+            content_length=content_length,
+            file_data=bytearray(block_data),
+        )
+
+        block.generate_id()
+
+        # making sure the block&#39;s hash is correct
+        if not block.check_integrity():
+            error = BlockIntegrityError(
+                &#34;The received block had an incorrect hash. The block is &#34;
+                &#34;considered corrupt or fraudulently manipulated.&#34;
+            )
+            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            raise error
+
+        return block
+
+    @classmethod
+    def _read_appcomterm_error_message(cls,
+                                       data: dict | bytearray, default_error: BaseException | None = None
+                                       ) -&gt; BaseException:
+        &#34;&#34;&#34;Analyse a failed request reply, returning an appropriate Exception.
+
+        Args:
+            data (dict | bytearray): the response from the brenthy AppComTerm to
+                                        analyse
+            default_error(Exception): the exception to return if no error
+                                        message/cause can be determined
+        &#34;&#34;&#34;
+        if isinstance(data, dict):
+            if &#34;error&#34; in data.keys():
+                if data[&#34;error&#34;] == NO_SUCH_BLOCKCHAIN_MESSAGE:
+                    if &#34;blockchain_id&#34; in data.keys():
+                        return NoSuchBlockchainError(
+                            blockchain_id=data[&#34;blockchain_id&#34;]
+                        )
+                    else:
+                        return NoSuchBlockchainError()
+                elif data[&#34;error&#34;] == BLOCKCHAIN_EXISTS_MESSAGE:
+                    if &#34;blockchain_name&#34; in data.keys():
+                        return BlockchainAlreadyExistsError(
+                            blockchain_name=data[&#34;blockchain_name&#34;]
+                        )
+                    else:
+                        return BlockchainAlreadyExistsError()
+                elif data[&#34;error&#34;] == NO_SUCH_INVITATION_MESSAGE:
+                    return NoSuchInvitationError()
+                elif data[&#34;error&#34;] == WALYTIS_BETA_ERROR_MESSAGE:
+                    return WalytisBugError(error_message=data[&#34;error&#34;])
+                if default_error:
+                    return default_error
+                else:
+                    return WalytisReplyDecodeError(reply=str(data))
+        if default_error:
+            return default_error
+        log.error(str(WalytisReplyDecodeError(reply=str(data))))
+        return WalytisReplyDecodeError(reply=str(data))
+
+    @classmethod
+    def _send_request(cls, function_name: str, payload: bytearray | bytes) -&gt; bytearray:
+        &#34;&#34;&#34;Send a request to Walytis-Core.
+
+        Args:
+            function_name(str): the name of the function in walytis_api_terminal
+                                    which we want to call
+            payload(bytearray): the data the function in walytis_beta_api_terminal
+                                    needs to process our request, its arguments
+
+        Returns:
+            bytearray: the reply from the function we called in
+                                    walytis_beta_api_terminal
+        &#34;&#34;&#34;
+        request = (
+            encode_version(WALYTIS_BETA_API_PROTOCOL_VERSION) + bytearray([0])
+            + function_name.encode() + bytearray([0])
+            + payload
+        )
+        reply = brenthy_api.send_request(&#34;Walytis_Beta&#34;, request)
+        walytis_api_version = decode_version(
+            reply[: reply.index(bytearray([0]))])
+        reply = reply[reply.index(bytearray([0])) + 1:]
+        return reply
+
+    @classmethod
+    def _get_block_long_from_short_id(cls, blockchain_id: str, short_id: bytearray):
+        &#34;&#34;&#34;This function is needed for BACKWARDS COMPATIBILITY with older versions
+        of Walytis_Beta Core.&#34;&#34;&#34;
+        return cls.get_block(blockchain_id, short_id).long_id</code></pre>
+</details>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface">BaseWalytisBetaInterface</a></b></code>:
+<ul class="hlist">
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_block" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_block">create_block</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_blockchain" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_blockchain">create_blockchain</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_invitation" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_invitation">create_invitation</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_blockchain" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_blockchain">delete_blockchain</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_invitation" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_invitation">delete_invitation</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_and_read_block" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_and_read_block">get_and_read_block</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_block" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_block">get_block</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_data" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_data">get_blockchain_data</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_id" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_id">get_blockchain_id</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_name" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_name">get_blockchain_name</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_invitations" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_invitations">get_invitations</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_latest_blocks" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_latest_blocks">get_latest_blocks</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_peers" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_peers">get_peers</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version">get_walytis_beta_api_version</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version_string" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version_string">get_walytis_beta_api_version_string</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version">get_walytis_beta_version</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version_string" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version_string">get_walytis_beta_version_string</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.is_block_known" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.is_block_known">is_block_known</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain">join_blockchain</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_cid" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_cid">join_blockchain_from_cid</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_zip" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_zip">join_blockchain_from_zip</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_ids" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_ids">list_blockchain_ids</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_names" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_names">list_blockchain_names</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchains" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchains">list_blockchains</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.read_block" href="walytis_beta_generic_interface.html#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.read_block">read_block</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="walytis_beta_api" href="index.html">walytis_beta_api</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="walytis_beta_api.walytis_beta_brenthy_api.WalytisBetaNetApi" href="#walytis_beta_api.walytis_beta_brenthy_api.WalytisBetaNetApi">WalytisBetaNetApi</a></code></h4>
+<ul class="">
+<li><code><a title="walytis_beta_api.walytis_beta_brenthy_api.WalytisBetaNetApi.BlocksListener" href="#walytis_beta_api.walytis_beta_brenthy_api.WalytisBetaNetApi.BlocksListener">BlocksListener</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+</footer>
+</body>
+</html>

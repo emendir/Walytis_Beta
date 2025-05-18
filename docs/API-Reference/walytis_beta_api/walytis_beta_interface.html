@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.11.1" />
+<title>walytis_beta_api.walytis_beta_interface API documentation</title>
+<meta name="description" content="The machinery for communicating with Brenthy Core …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{color:#ddd;background:#111;--highlight-color:#050}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #222;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#f33}pre code{color:#ddd;background:#080808;font-size:.8em;line-height:1.4em}code{color:#ddd;background:#141414;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{color:#ddd;background:#080808;border:0;border-top:1px solid #555;border-bottom:1px solid #555;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #222}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{color:#ddd;background:#181818;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{color:#ddd;background:#181818}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#666;border-left:5px solid #181818;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#999;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{color:#ddd;background:#202}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #222}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#fff !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #666;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>walytis_beta_api.walytis_beta_interface</code></h1>
+</header>
+<section id="section-intro">
+<p>The machinery for communicating with Brenthy Core.</p>
+<p>It contains functions that are a direct part of Walytis_Beta API and intended
+for use by the Walytis_Beta API user (e.g. the create_blockchain() function),
+but also functions that are used only by higher-level WalytisAPI constructs
+such as BlocksListener class, which is not intended for use by the Walytis API
+user, but is used by the blockchain_model.Blockchain class instead,
+which is in turn intended for use by the Walytis_Beta API user.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;The machinery for communicating with Brenthy Core.
+
+It contains functions that are a direct part of Walytis_Beta API and intended
+for use by the Walytis_Beta API user (e.g. the create_blockchain() function),
+but also functions that are used only by higher-level WalytisAPI constructs
+such as BlocksListener class, which is not intended for use by the Walytis API
+user, but is used by the blockchain_model.Blockchain class instead,
+which is in turn intended for use by the Walytis_Beta API user.
+&#34;&#34;&#34;
+
+from enum import Enum
+import os
+from .walytis_beta_generic_interface import BaseWalytisBetaInterface
+from datetime import datetime
+
+from brenthy_tools_beta import log
+
+from walytis_beta_tools.block_model import Block
+
+from walytis_beta_tools.exceptions import (
+    BlockchainAlreadyExistsError,  # noqa
+    BlockIntegrityError,  # noqa
+    BlockNotFoundError,  # noqa
+    JoinFailureError,  # noqa
+    NoSuchBlockchainError,  # noqa
+    NoSuchInvitationError,  # noqa
+    WalytisBugError,  # noqa
+    WalytisReplyDecodeError,  # noqa
+)
+from walytis_beta_tools.exceptions import (
+    NO_SUCH_BLOCKCHAIN_MESSAGE,
+    NO_SUCH_INVITATION_MESSAGE,
+    BLOCK_NOT_FOUND,
+    WALYTIS_BETA_ERROR_MESSAGE,
+    BLOCKCHAIN_EXISTS_MESSAGE,
+)
+# storing this blockchain&#39;s name so that we don&#39;t missspell it
+WALYTIS_BETA = &#34;Walytis_Beta&#34;
+
+
+# --------------Settings ---------------------------
+log.PRINT_DEBUG = False
+
+
+
+
+_waly: BaseWalytisBetaInterface
+
+
+class WalytisBetaApiTypes(Enum):
+    WALYTIS_BETA_BRENTHY_API = 0
+    WALYTIS_BETA_DIRECT_API = 1
+
+WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API.name
+_WALYTIS_BETA_API_TYPE = os.getenv(&#34;WALYTIS_BETA_API_TYPE&#34;)
+
+if not _WALYTIS_BETA_API_TYPE:
+    # if environment variable wasn&#39;t set, use default
+    WALYTIS_BETA_API_TYPE = WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API
+else:
+    type_match = None
+    for wapi_type in WalytisBetaApiTypes:
+        if _WALYTIS_BETA_API_TYPE == wapi_type.name:
+            type_match = wapi_type
+    if not type_match:
+        raise Exception(
+            &#34;Invalid value for environment variable WALYTIS_BETA_API_TYPE &#34;
+            f&#34;&#39;{_WALYTIS_BETA_API_TYPE}&#39;\n&#34;
+            f&#34;Valid values are: {[member.name for member in WalytisBetaApiTypes]}&#34;
+        )
+    WALYTIS_BETA_API_TYPE = type_match
+
+
+match WALYTIS_BETA_API_TYPE:
+    case WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API:
+        from .walytis_beta_brenthy_api import WalytisBetaNetApi
+        _waly = WalytisBetaNetApi()
+    case WalytisBetaApiTypes.WALYTIS_BETA_DIRECT_API:
+        from .walytis_beta_embedded_api import WalytisBetaDirectInterface
+        _waly = WalytisBetaDirectInterface()
+    case _:
+        raise WalytisBugError(
+            &#34;walytis_beta_interface: Didn&#39;t take into account how to process &#34;
+            f&#34;WALYTIS_BETA_API_TYPE {WALYTIS_BETA_API_TYPE}&#34;
+        )
+log.info(WALYTIS_BETA_API_TYPE)
+BlocksListener = _waly.BlocksListener
+
+
+# --- Blockchain IDs and Names ---
+
+
+def list_blockchains(names_first: bool = False) -&gt; list[tuple[str, str]]:
+    &#34;&#34;&#34;Get the IDs names of all the blockchains we have.
+
+    Args:
+        names_first: determines the order of the the tuple contents in the
+                        return value. See Returns.
+
+    Returns:
+        list: A list of tuples of the names and IDs of all the Walytis_Beta
+                blockchains we have. Tuples are (id, name) by default,
+                but (name, id) if names_first == True
+    &#34;&#34;&#34;
+    return _waly.list_blockchains(names_first=names_first)
+
+
+def list_blockchain_names() -&gt; list[str]:
+    &#34;&#34;&#34;Get the names of all the blockchains we have.
+
+    Returns:
+        list: A list of the names of all the Walytis_Beta blockchains we have.
+    &#34;&#34;&#34;
+    return _waly.list_blockchain_names()
+
+
+def list_blockchain_ids() -&gt; list[str]:
+    &#34;&#34;&#34;Get the ids of all the blockchains we have.
+
+    Returns:
+        list: A list of the names of all the Walytis_Beta blockchains we have.
+    &#34;&#34;&#34;
+    return _waly.list_blockchain_ids()
+
+
+def get_blockchain_id(blockchain_name: str | bytearray) -&gt; str:
+    &#34;&#34;&#34;Given a blockchain&#39;s name, returns its ID.
+
+    If a blockchain&#39;s ID is given, it returns the ID.
+
+    Args:
+        blockchain_name (str): the name of the blockchain to look up
+    Returns:
+        str: the ID of the blockchain
+    &#34;&#34;&#34;
+    return _waly.get_blockchain_id(blockchain_name)
+
+
+def get_blockchain_name(blockchain_id: str) -&gt; str:
+    &#34;&#34;&#34;Given a blockchain&#39;s id, returns its name.
+
+    If a blockchain&#39;s name is given, it returns the name.
+
+    Args:
+        blockchain_id (str): the id of the blockchain to look up
+    Returns:
+        str: the name of the blockchain
+    &#34;&#34;&#34;
+    return _waly.get_blockchain_name(blockchain_id)
+
+
+# --- Blockchain Lifecycle ---
+
+
+def create_blockchain(blockchain_name: str = &#34;&#34;) -&gt; str:
+    &#34;&#34;&#34;Create and run a new blockchain.
+
+    Args:
+        blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                to ease recognition when manually interacting with Walytis_API.
+                Note: A blockchain&#39;s name only exists in the scope of a single
+                node, meaning it is not guaranteed to be globally unique.
+                Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                its identifier, not the blockchain_name.
+
+    Returns:
+        str: ID of the created blockchain
+    &#34;&#34;&#34;
+    return _waly.create_blockchain(blockchain_name)
+
+
+def join_blockchain(invitation: str, blockchain_name: str = &#34;&#34;) -&gt; str:
+    &#34;&#34;&#34;Join a blockchain using an invitation generated by a blockchain node.
+
+    Args:
+        invitation (str): the invitation generated by a blockchain member
+        blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                to ease recognition when manually interacting with WalytisAPI.
+                Note: A blockchain&#39;s name only exists in the scope of a single
+                node, meaning it is not guaranteed to be globally unique.
+                Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                its identifier, not the blockchain_name.
+
+    Returns:
+        str: the ID of the joined blockchain
+    &#34;&#34;&#34;
+    return _waly.join_blockchain(invitation, blockchain_name)
+
+
+def join_blockchain_from_zip(
+    blockchain_id: str, blockchain_data_path: str, blockchain_name: str = &#34;&#34;
+) -&gt; None:
+    &#34;&#34;&#34;Join an existing live blockchain, given a zip file of all its data.
+
+    Args:
+        blockchain_id (str): the name of the blockchain
+        blockchain_data_path (str): path of the zip file containing the
+                blockchain&#39;s data
+        blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                to ease recognition when manually interacting with WalytisAPI.
+                Note: A blockchain&#39;s name only exists in the scope of a single
+                node, meaning it is not guaranteed to be globally unique.
+                Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                its identifier, not the blockchain_name.
+    &#34;&#34;&#34;
+    return _waly.join_blockchain_from_zip(
+        blockchain_id, blockchain_data_path, blockchain_name
+    )
+
+
+def join_blockchain_from_cid(
+    blockchain_id: str, blockchain_data_cid: str, blockchain_name: str = &#34;&#34;
+) -&gt; None:
+    &#34;&#34;&#34;Join an existing live blockchain, given the IPFS CID of its appdata.
+
+    Args:
+        blockchain_id (str): the name of the blockchain
+        blockchain_data_cid (str): IPFS CID of the zip file containing the
+                blockchain&#39;s data
+        blockchain_name (str): blockchain&#39;s local name: a human-readable label
+                to ease recognition when manually interacting with WalytisAPI.
+                Note: A blockchain&#39;s name only exists in the scope of a single
+                node, meaning it is not guaranteed to be globally unique.
+                Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
+                its identifier, not the blockchain_name.
+    &#34;&#34;&#34;
+    return _waly.join_blockchain_from_cid(
+        blockchain_id, blockchain_data_cid, blockchain_name
+    )
+
+
+def delete_blockchain(blockchain_id: str) -&gt; None:
+    &#34;&#34;&#34;Delete the blockchain with the given id or name.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to delete
+    &#34;&#34;&#34;
+    return _waly.delete_blockchain(blockchain_id)
+
+
+def create_block(
+    blockchain_id: str,
+    content: bytearray | bytes,
+    topics: list[str] | str | None = None
+) -&gt; Block:
+    &#34;&#34;&#34;Create a block with the given content on the specified blockchain.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to create a block
+        content (bytearray): the content to store on the blockchain
+        topics (list): user&#39;s metadata to encode in the block&#39;s ID
+    Returns:
+        Block: the newly created block
+    &#34;&#34;&#34;
+    return _waly.create_block(
+        blockchain_id,
+        content,
+        topics,
+    )
+
+
+def get_block(blockchain_id: str, block_id: bytearray) -&gt; Block:
+    &#34;&#34;&#34;Get a block from the specified blokchain given its block ID.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain from which to get
+                                the block
+        block_id (str): the id of the block
+    Returns:
+        Block: the Block object for the requested block
+    &#34;&#34;&#34;
+    return _waly.get_block(blockchain_id, block_id)
+
+
+def is_block_known(blockchain_id: str, block_id: bytearray) -&gt; bool:
+    &#34;&#34;&#34;Check whether or not the specified blockchain has the given block.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to which the
+                                block to look up belongs
+        block_id (bytearray): the block ID to look up in the block ID records
+    Returns:
+        bool: Whether the block is a known block
+    &#34;&#34;&#34;
+    return _waly.is_block_known(blockchain_id, block_id)
+
+
+def get_latest_blocks(
+    blockchain_id: str,
+    amount: int | None = None,
+    since_date: datetime | None = None,
+    topics: list[str] | None = None,
+    long_ids: bool = False,  # defaults to False for backwards-compatibility
+) -&gt; list[bytearray]:
+    &#34;&#34;&#34;Get the latest few blocks on the blockchain.
+
+    The amount of which is determined by the paramters.
+    The blocks are returned in order of reception or creation date (CHECK!)
+    from most recent to oldest.
+    One of the paramaters amount or since_date must be set.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to look up
+        amount (int): how many blocks should be returned
+        since_date (datetime): the maximum age of the blocks to look for.
+                This function will return several even older blocks,
+                some of which may have been received after the specified date
+        topics (list): the topics to filter by, returning only
+                blocks published on those topics, if this paramater is set.
+                If not set, this function returns all blocks within the range
+                of the first two parameters
+
+    Returns:
+        list: a list of IDs of the latest few blocks
+    &#34;&#34;&#34;
+    return _waly.get_latest_blocks(
+        blockchain_id=blockchain_id,
+        amount=amount,
+        since_date=since_date,
+        topics=topics,
+        long_ids=long_ids,
+    )
+
+
+def get_blockchain_data(blockchain_id: str) -&gt; str:
+    &#34;&#34;&#34;Create a zip file of all this blockchain&#39;s data, returning its path.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to zip
+    Returns:
+        str: the path of the zip file created
+    &#34;&#34;&#34;
+    return _waly. get_blockchain_data(blockchain_id)
+
+
+def get_peers(blockchain_id: str) -&gt; list[str]:
+    &#34;&#34;&#34;Get a list of IPFS IDs of the given blockchain&#39;s currently online nodes.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to look up
+    Returns:
+        list[str]: the IPFS IDs of the blockchain&#39;s currently online nodes
+    &#34;&#34;&#34;
+    return _waly.get_peers(blockchain_id)
+
+
+def create_invitation(
+    blockchain_id: str, one_time: bool = True, shared: bool = False
+) -&gt; str:
+    &#34;&#34;&#34;Create a code which other nodes can use to join this blockchain.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to create a
+                        invitation for
+        one_time (bool): (optional, default True) whether this code is valid
+                        only for one use only instead of being reusable
+        shared (bool): whether this invitation should be hosted by other
+                        nodes who join this blockchain too, or just by this one
+    Returns:
+        str: an invitation code that can be used by other computers to join
+                this blockchain
+    &#34;&#34;&#34;
+    return _waly.create_invitation(
+        blockchain_id=blockchain_id, one_time=one_time, shared=shared
+    )
+
+
+def get_invitations(blockchain_id: str) -&gt; list[str]:
+    &#34;&#34;&#34;Get the specified blockchain&#39;s active invitations.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain whose invitations
+                                to look up
+    Returns:
+        list: the invitations of this blockchain
+    &#34;&#34;&#34;
+    return _waly.get_invitations(blockchain_id)
+
+
+def delete_invitation(blockchain_id: str, invitation: str) -&gt; None:
+    &#34;&#34;&#34;Delete an invitation from the specified blockchain.
+
+    Args:
+        blockchain_id (str): the id or name of the blockchain to delete an
+                            invitation from
+        invitation (str): the invitation to delete
+    &#34;&#34;&#34;
+    return _waly.delete_invitation(blockchain_id, invitation)
+
+
+def get_walytis_beta_version() -&gt; tuple[int, int, int]:
+    &#34;&#34;&#34;Get the software version of the locally running Walytis node.
+
+    Returns:
+        tuple: the software version of the locally running Walytis_Beta node
+    &#34;&#34;&#34;
+    return _waly.get_walytis_beta_version()
+
+
+def get_walytis_beta_version_string() -&gt; str:
+    &#34;&#34;&#34;Get the software version of the locally running Walytis_Beta node.
+
+    Returns:
+        str: the software version of the locally running Walytis_Beta node
+    &#34;&#34;&#34;
+    return _waly.get_walytis_beta_version_string()
+
+
+def get_walytis_beta_api_version() -&gt; tuple[int, int, int]:
+    &#34;&#34;&#34;Get the software version of the this walytis_beta_api library.
+
+    Returns:
+        tuple: the software version of the this walytis_beta_api library
+    &#34;&#34;&#34;
+    return _waly.get_walytis_beta_api_version()
+
+
+def get_walytis_beta_api_version_string() -&gt; str:
+    &#34;&#34;&#34;Get the software version of the this walytis_beta_api library.
+
+    Returns:
+        str: the software version of the this walytis_beta_api library
+    &#34;&#34;&#34;
+    return _waly.get_walytis_beta_api_version_string()
+
+
+def get_and_read_block(short_id: bytearray) -&gt; Block:
+    &#34;&#34;&#34;Given a block&#39;s ID, download and verify it.
+
+    Args:
+        short_id (str): the ID of the block to get
+    Returns:
+        Block: an object representing the specified block, containing all its
+                metadata and block content
+    &#34;&#34;&#34;
+    return _waly.get_and_read_block(short_id)
+
+
+def read_block(block_data: bytearray, ipfs_cid: str) -&gt; Block:
+    &#34;&#34;&#34;Read a block-file, generating a block object if it&#39;s valid.
+
+    Args:
+        block_data (bytearray): the raw data of the block to read.
+        ipfs_cid (str): the IPFS content ID of the block
+    Returns:
+        Block: a Block object
+    &#34;&#34;&#34;
+    return _waly.read_block(block_data, ipfs_cid)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="walytis_beta_api.walytis_beta_interface.list_blockchains"><code class="name flex">
+<span>def <span class="ident">list_blockchains</span></span>(<span>names_first: bool = False) ‑> list[tuple[str, str]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the IDs names of all the blockchains we have.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>names_first</code></strong></dt>
+<dd>determines the order of the the tuple contents in the
+return value. See Returns.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>A list of tuples of the names and IDs of all the Walytis_Beta
+blockchains we have. Tuples are (id, name) by default,
+but (name, id) if names_first == True</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.list_blockchain_names"><code class="name flex">
+<span>def <span class="ident">list_blockchain_names</span></span>(<span>) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the names of all the blockchains we have.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>A list of the names of all the Walytis_Beta blockchains we have.</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.list_blockchain_ids"><code class="name flex">
+<span>def <span class="ident">list_blockchain_ids</span></span>(<span>) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the ids of all the blockchains we have.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>A list of the names of all the Walytis_Beta blockchains we have.</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_blockchain_id"><code class="name flex">
+<span>def <span class="ident">get_blockchain_id</span></span>(<span>blockchain_name: str | bytearray) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a blockchain's name, returns its ID.</p>
+<p>If a blockchain's ID is given, it returns the ID.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>the name of the blockchain to look up</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>the ID of the blockchain</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_blockchain_name"><code class="name flex">
+<span>def <span class="ident">get_blockchain_name</span></span>(<span>blockchain_id: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a blockchain's id, returns its name.</p>
+<p>If a blockchain's name is given, it returns the name.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id of the blockchain to look up</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>the name of the blockchain</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.create_blockchain"><code class="name flex">
+<span>def <span class="ident">create_blockchain</span></span>(<span>blockchain_name: str = '') ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create and run a new blockchain.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>blockchain's local name: a human-readable label
+to ease recognition when manually interacting with Walytis_API.
+Note: A blockchain's name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain's ID (attribute 'id') as
+its identifier, not the blockchain_name.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>ID of the created blockchain</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.join_blockchain"><code class="name flex">
+<span>def <span class="ident">join_blockchain</span></span>(<span>invitation: str, blockchain_name: str = '') ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Join a blockchain using an invitation generated by a blockchain node.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>invitation</code></strong> :&ensp;<code>str</code></dt>
+<dd>the invitation generated by a blockchain member</dd>
+<dt><strong><code>blockchain_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>blockchain's local name: a human-readable label
+to ease recognition when manually interacting with WalytisAPI.
+Note: A blockchain's name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain's ID (attribute 'id') as
+its identifier, not the blockchain_name.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>the ID of the joined blockchain</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.join_blockchain_from_zip"><code class="name flex">
+<span>def <span class="ident">join_blockchain_from_zip</span></span>(<span>blockchain_id: str, blockchain_data_path: str, blockchain_name: str = '') ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Join an existing live blockchain, given a zip file of all its data.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the name of the blockchain</dd>
+<dt><strong><code>blockchain_data_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>path of the zip file containing the
+blockchain's data</dd>
+<dt><strong><code>blockchain_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>blockchain's local name: a human-readable label
+to ease recognition when manually interacting with WalytisAPI.
+Note: A blockchain's name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain's ID (attribute 'id') as
+its identifier, not the blockchain_name.</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.join_blockchain_from_cid"><code class="name flex">
+<span>def <span class="ident">join_blockchain_from_cid</span></span>(<span>blockchain_id: str, blockchain_data_cid: str, blockchain_name: str = '') ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Join an existing live blockchain, given the IPFS CID of its appdata.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the name of the blockchain</dd>
+<dt><strong><code>blockchain_data_cid</code></strong> :&ensp;<code>str</code></dt>
+<dd>IPFS CID of the zip file containing the
+blockchain's data</dd>
+<dt><strong><code>blockchain_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>blockchain's local name: a human-readable label
+to ease recognition when manually interacting with WalytisAPI.
+Note: A blockchain's name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain's ID (attribute 'id') as
+its identifier, not the blockchain_name.</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.delete_blockchain"><code class="name flex">
+<span>def <span class="ident">delete_blockchain</span></span>(<span>blockchain_id: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Delete the blockchain with the given id or name.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to delete</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.create_block"><code class="name flex">
+<span>def <span class="ident">create_block</span></span>(<span>blockchain_id: str, content: bytearray | bytes, topics: list[str] | str | None = None) ‑> walytis_beta_tools.block_model.Block</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a block with the given content on the specified blockchain.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to create a block</dd>
+<dt><strong><code>content</code></strong> :&ensp;<code>bytearray</code></dt>
+<dd>the content to store on the blockchain</dd>
+<dt><strong><code>topics</code></strong> :&ensp;<code>list</code></dt>
+<dd>user's metadata to encode in the block's ID</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Block</code></dt>
+<dd>the newly created block</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_block"><code class="name flex">
+<span>def <span class="ident">get_block</span></span>(<span>blockchain_id: str, block_id: bytearray) ‑> walytis_beta_tools.block_model.Block</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get a block from the specified blokchain given its block ID.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain from which to get
+the block</dd>
+<dt><strong><code>block_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id of the block</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Block</code></dt>
+<dd>the Block object for the requested block</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.is_block_known"><code class="name flex">
+<span>def <span class="ident">is_block_known</span></span>(<span>blockchain_id: str, block_id: bytearray) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check whether or not the specified blockchain has the given block.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to which the
+block to look up belongs</dd>
+<dt><strong><code>block_id</code></strong> :&ensp;<code>bytearray</code></dt>
+<dd>the block ID to look up in the block ID records</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>Whether the block is a known block</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_latest_blocks"><code class="name flex">
+<span>def <span class="ident">get_latest_blocks</span></span>(<span>blockchain_id: str, amount: int | None = None, since_date: datetime.datetime | None = None, topics: list[str] | None = None, long_ids: bool = False) ‑> list[bytearray]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the latest few blocks on the blockchain.</p>
+<p>The amount of which is determined by the paramters.
+The blocks are returned in order of reception or creation date (CHECK!)
+from most recent to oldest.
+One of the paramaters amount or since_date must be set.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to look up</dd>
+<dt><strong><code>amount</code></strong> :&ensp;<code>int</code></dt>
+<dd>how many blocks should be returned</dd>
+<dt><strong><code>since_date</code></strong> :&ensp;<code>datetime</code></dt>
+<dd>the maximum age of the blocks to look for.
+This function will return several even older blocks,
+some of which may have been received after the specified date</dd>
+<dt><strong><code>topics</code></strong> :&ensp;<code>list</code></dt>
+<dd>the topics to filter by, returning only
+blocks published on those topics, if this paramater is set.
+If not set, this function returns all blocks within the range
+of the first two parameters</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>a list of IDs of the latest few blocks</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_blockchain_data"><code class="name flex">
+<span>def <span class="ident">get_blockchain_data</span></span>(<span>blockchain_id: str) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a zip file of all this blockchain's data, returning its path.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to zip</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>the path of the zip file created</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_peers"><code class="name flex">
+<span>def <span class="ident">get_peers</span></span>(<span>blockchain_id: str) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get a list of IPFS IDs of the given blockchain's currently online nodes.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to look up</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list[str]</code></dt>
+<dd>the IPFS IDs of the blockchain's currently online nodes</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.create_invitation"><code class="name flex">
+<span>def <span class="ident">create_invitation</span></span>(<span>blockchain_id: str, one_time: bool = True, shared: bool = False) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a code which other nodes can use to join this blockchain.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to create a
+invitation for</dd>
+<dt><strong><code>one_time</code></strong> :&ensp;<code>bool</code></dt>
+<dd>(optional, default True) whether this code is valid
+only for one use only instead of being reusable</dd>
+<dt><strong><code>shared</code></strong> :&ensp;<code>bool</code></dt>
+<dd>whether this invitation should be hosted by other
+nodes who join this blockchain too, or just by this one</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>an invitation code that can be used by other computers to join
+this blockchain</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_invitations"><code class="name flex">
+<span>def <span class="ident">get_invitations</span></span>(<span>blockchain_id: str) ‑> list[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the specified blockchain's active invitations.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain whose invitations
+to look up</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>the invitations of this blockchain</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.delete_invitation"><code class="name flex">
+<span>def <span class="ident">delete_invitation</span></span>(<span>blockchain_id: str, invitation: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Delete an invitation from the specified blockchain.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>blockchain_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the id or name of the blockchain to delete an
+invitation from</dd>
+<dt><strong><code>invitation</code></strong> :&ensp;<code>str</code></dt>
+<dd>the invitation to delete</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_walytis_beta_version"><code class="name flex">
+<span>def <span class="ident">get_walytis_beta_version</span></span>(<span>) ‑> tuple[int, int, int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the software version of the locally running Walytis node.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>the software version of the locally running Walytis_Beta node</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_walytis_beta_version_string"><code class="name flex">
+<span>def <span class="ident">get_walytis_beta_version_string</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the software version of the locally running Walytis_Beta node.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>the software version of the locally running Walytis_Beta node</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version"><code class="name flex">
+<span>def <span class="ident">get_walytis_beta_api_version</span></span>(<span>) ‑> tuple[int, int, int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the software version of the this walytis_beta_api library.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>the software version of the this walytis_beta_api library</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version_string"><code class="name flex">
+<span>def <span class="ident">get_walytis_beta_api_version_string</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the software version of the this walytis_beta_api library.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>the software version of the this walytis_beta_api library</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.get_and_read_block"><code class="name flex">
+<span>def <span class="ident">get_and_read_block</span></span>(<span>short_id: bytearray) ‑> walytis_beta_tools.block_model.Block</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given a block's ID, download and verify it.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>short_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>the ID of the block to get</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Block</code></dt>
+<dd>an object representing the specified block, containing all its
+metadata and block content</dd>
+</dl></div>
+</dd>
+<dt id="walytis_beta_api.walytis_beta_interface.read_block"><code class="name flex">
+<span>def <span class="ident">read_block</span></span>(<span>block_data: bytearray, ipfs_cid: str) ‑> walytis_beta_tools.block_model.Block</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Read a block-file, generating a block object if it's valid.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>block_data</code></strong> :&ensp;<code>bytearray</code></dt>
+<dd>the raw data of the block to read.</dd>
+<dt><strong><code>ipfs_cid</code></strong> :&ensp;<code>str</code></dt>
+<dd>the IPFS content ID of the block</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Block</code></dt>
+<dd>a Block object</dd>
+</dl></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes"><code class="flex name class">
+<span>class <span class="ident">WalytisBetaApiTypes</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color.RED
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>value lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color(1)
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>name lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color['RED']
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WalytisBetaApiTypes(Enum):
+    WALYTIS_BETA_BRENTHY_API = 0
+    WALYTIS_BETA_DIRECT_API = 1</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="walytis_beta_api" href="index.html">walytis_beta_api</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="walytis_beta_api.walytis_beta_interface.list_blockchains" href="#walytis_beta_api.walytis_beta_interface.list_blockchains">list_blockchains</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.list_blockchain_names" href="#walytis_beta_api.walytis_beta_interface.list_blockchain_names">list_blockchain_names</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.list_blockchain_ids" href="#walytis_beta_api.walytis_beta_interface.list_blockchain_ids">list_blockchain_ids</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_blockchain_id" href="#walytis_beta_api.walytis_beta_interface.get_blockchain_id">get_blockchain_id</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_blockchain_name" href="#walytis_beta_api.walytis_beta_interface.get_blockchain_name">get_blockchain_name</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.create_blockchain" href="#walytis_beta_api.walytis_beta_interface.create_blockchain">create_blockchain</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.join_blockchain" href="#walytis_beta_api.walytis_beta_interface.join_blockchain">join_blockchain</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.join_blockchain_from_zip" href="#walytis_beta_api.walytis_beta_interface.join_blockchain_from_zip">join_blockchain_from_zip</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.join_blockchain_from_cid" href="#walytis_beta_api.walytis_beta_interface.join_blockchain_from_cid">join_blockchain_from_cid</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.delete_blockchain" href="#walytis_beta_api.walytis_beta_interface.delete_blockchain">delete_blockchain</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.create_block" href="#walytis_beta_api.walytis_beta_interface.create_block">create_block</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_block" href="#walytis_beta_api.walytis_beta_interface.get_block">get_block</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.is_block_known" href="#walytis_beta_api.walytis_beta_interface.is_block_known">is_block_known</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_latest_blocks" href="#walytis_beta_api.walytis_beta_interface.get_latest_blocks">get_latest_blocks</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_blockchain_data" href="#walytis_beta_api.walytis_beta_interface.get_blockchain_data">get_blockchain_data</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_peers" href="#walytis_beta_api.walytis_beta_interface.get_peers">get_peers</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.create_invitation" href="#walytis_beta_api.walytis_beta_interface.create_invitation">create_invitation</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_invitations" href="#walytis_beta_api.walytis_beta_interface.get_invitations">get_invitations</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.delete_invitation" href="#walytis_beta_api.walytis_beta_interface.delete_invitation">delete_invitation</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_walytis_beta_version" href="#walytis_beta_api.walytis_beta_interface.get_walytis_beta_version">get_walytis_beta_version</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_walytis_beta_version_string" href="#walytis_beta_api.walytis_beta_interface.get_walytis_beta_version_string">get_walytis_beta_version_string</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version" href="#walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version">get_walytis_beta_api_version</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version_string" href="#walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version_string">get_walytis_beta_api_version_string</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.get_and_read_block" href="#walytis_beta_api.walytis_beta_interface.get_and_read_block">get_and_read_block</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.read_block" href="#walytis_beta_api.walytis_beta_interface.read_block">read_block</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes" href="#walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes">WalytisBetaApiTypes</a></code></h4>
+<ul class="">
+<li><code><a title="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API" href="#walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API">WALYTIS_BETA_BRENTHY_API</a></code></li>
+<li><code><a title="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_DIRECT_API" href="#walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_DIRECT_API">WALYTIS_BETA_DIRECT_API</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+</footer>
+</body>
+</html>
