@@ -24,7 +24,7 @@
 ## Tutorials
 
 - [0-TutorialOverview](Tutorials/0-TutorialOverview.md): 
-- [1-GettingStarte](Tutorials/1-GettingStarted.md): 
+- [1-GettingStarted](Tutorials/1-GettingStarted.md): 
 - [2-JoiningBlockchains](Tutorials/2-JoiningBlockchains.md): 
 - [3-BuildingApplications](Tutorials/3-BuildingApplications.md): 
 - [4-PlayingAroun](Tutorials/4-PlayingAround.md): 

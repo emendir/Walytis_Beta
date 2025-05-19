@@ -2,7 +2,7 @@
 
 # Walytis
 
-**_A flexible, lightweight, nonlinear blockchain. Built to be built upon._**
+**_A flexible, lightweight, nonlinear database-blockchain. Built to be built upon._**
 
 _`4D61646520776974682073696E63657265206C6F766520666F72206D616E6B696E642E`_
 
