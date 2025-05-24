@@ -1357,8 +1357,8 @@ def run_blockchains() -> None:
         raise Exception(error_message)
     blockchain_ids = []
     log.important(
-        f"Loading blockchains from {
-            os.path.abspath(get_walytis_appdata_dir())}"
+        "Loading blockchains from "
+        f"{os.path.abspath(get_walytis_appdata_dir())}"
     )
     for blockchain_id in os.listdir(get_walytis_appdata_dir()):
         blockchain_data_dir = os.path.join(
