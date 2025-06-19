@@ -13,7 +13,7 @@ import os
 from .walytis_beta_generic_interface import BaseWalytisBetaInterface
 from datetime import datetime
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_api as logger
 
 from walytis_beta_tools.block_model import Block
 
@@ -39,7 +39,7 @@ WALYTIS_BETA = "Walytis_Beta"
 
 
 # --------------Settings ---------------------------
-log.PRINT_DEBUG = False
+# logger.PRINT_DEBUG = False
 
 
 
@@ -83,7 +83,7 @@ match WALYTIS_BETA_API_TYPE:
             "walytis_beta_interface: Didn't take into account how to process "
             f"WALYTIS_BETA_API_TYPE {WALYTIS_BETA_API_TYPE}"
         )
-log.info(WALYTIS_BETA_API_TYPE)
+logger.info(WALYTIS_BETA_API_TYPE)
 BlocksListener = _waly.BlocksListener
 
 

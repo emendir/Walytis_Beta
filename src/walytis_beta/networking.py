@@ -8,15 +8,13 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from random import randint
 from threading import Lock
-from ipfs_node import IpfsNode
-from ipfs_tk_generics import IpfsClient
 from ipfs_tk_peer_monitor import PeerMonitor
 
 from .exceptions import BlockchainTerminatedError
 
 if True:
     # pylint: disable=import-error
-    from brenthy_tools_beta import log
+    from walytis_beta_tools.log import logger_networking as logger
     from brenthy_tools_beta.utils import bytes_to_string, string_to_bytes
     
     from walytis_beta_tools._experimental.config import ipfs
@@ -80,7 +78,7 @@ class Networking(ABC):
         self.pubsub_listener = ipfs.pubsub.subscribe(
             self.blockchain_id, self.pubsub_message_handler
         )
-        log.info(f"Created PubSub listener for {self.name}")
+        logger.info(f"Created PubSub listener for {self.name}")
 
     def pubsub_message_handler(self, pubsub_packet: dict) -> None:
         """Handle a pubsub message on the channel for new blocks comms."""
@@ -93,7 +91,7 @@ class Networking(ABC):
             data = json.loads(pubsub_packet["data"].decode())
             sender_id = pubsub_packet["senderID"]
         except Exception as e:
-            log.error(e)
+            logger.error(e)
             raise TypeError(
                 f"Pubsub message handler received unexpected type "
                 f"{type(pubsub_packet)}"
@@ -102,13 +100,13 @@ class Networking(ABC):
         if not sender_id == self.ipfs_peer_id:
             self.peer_monitor.register_contact_event(sender_id)
         if message == "New block!":
-            # log.info(f"PubSub: Received data for new block on {self.name}.")
+            # logger.info(f"PubSub: Received data for new block on {self.name}.")
             self.lastcoms_time = datetime.utcnow()
             self.update_shared_leaf_blocks([data["block_id"]])
             self.new_block_published(string_to_bytes(data["block_id"]))
 
         elif message == "Leaf blocks:":
-            # log.info(f"PubSub: Received leaf blocks broadcast on {self.name}.")
+            # logger.info(f"PubSub: Received leaf blocks broadcast on {self.name}.")
             self.lastcoms_time = datetime.utcnow()
             # leaf_blocks = [
             #     string_to_bytes(block_id) for block_id in data["leaf_blocks"]
@@ -185,7 +183,7 @@ class Networking(ABC):
             try:
                 ipfs.pubsub.publish(self.blockchain_id, data)
             except Exception as e:
-                log.error(e)
+                logger.error(e)
         self.update_shared_leaf_blocks(leaf_blocks, already_locked=True)
         self.__lslb_lock.release()
 
@@ -315,4 +313,4 @@ class Networking(ABC):
         """Shut down communications, cleaning up resources."""
         self.pubsub_listener.terminate(True)
         self.peer_monitor.terminate(True)
-        log.info(f"Walytis_Beta: {self.name}: Shut down networking.")
+        logger.info(f"{self.name}: Shut down networking.")

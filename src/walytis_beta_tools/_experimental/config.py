@@ -1,11 +1,12 @@
 import os
 from ipfs_tk_generics import IpfsClient
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger
 
 # initialise IPFS
 USE_IPFS_NODE = os.environ.get("USE_IPFS_NODE", "").lower() in ["true", "1"]
 IPFS_REPO_DIR = os.environ.get("IPFS_REPO_DIR", "")
 ipfs:IpfsClient
+# print("IPFS embedded node:", USE_IPFS_NODE)
 if USE_IPFS_NODE:
     if IPFS_REPO_DIR:
         if not os.path.exists(IPFS_REPO_DIR):
@@ -28,6 +29,6 @@ else:
     try:
         ipfs.wait_till_ipfs_is_running(timeout_sec=5)
     except TimeoutError:
-        log.warning("IPFS isn't running. Waiting for IPFS to start...")
+        logger.warning("IPFS isn't running. Waiting for IPFS to start...")
         ipfs.wait_till_ipfs_is_running()
-        log.warning("IPFS running now.")
+        logger.warning("IPFS running now.")

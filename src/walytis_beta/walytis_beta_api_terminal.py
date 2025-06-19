@@ -5,7 +5,7 @@ from typing import Callable
 import json
 import os
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_api as logger
 from brenthy_tools_beta.utils import (
     bytes_to_string,
     from_b255_no_0s,
@@ -128,7 +128,7 @@ def create_block(payload: bytearray) -> bytes:
         ).encode()
 
     except Exception as e:
-        log.error("Failed to build block:\n" + str(e))
+        logger.error("Failed to build block:\n" + str(e))
         return json.dumps(
             {"success": False, "error": WALYTIS_BETA_ERROR_MESSAGE}
         ).encode()
@@ -161,7 +161,7 @@ def get_block(payload: bytearray) -> bytes:
                 {"success": False, "error": BLOCK_NOT_FOUND}
             ).encode()
     except Exception as e:
-        log.error("Failed to build block:\n" + str(e))
+        logger.error("Failed to build block:\n" + str(e))
         return json.dumps(
             {"success": False, "error": WALYTIS_BETA_ERROR_MESSAGE}
         ).encode()
@@ -187,7 +187,7 @@ def is_block_known(payload: bytearray) -> bytes:
             }
         ).encode()
     except Exception as e:
-        log.error("Failed to subscribe to topic:\n" + str(e))
+        logger.error("Failed to subscribe to topic:\n" + str(e))
 
         return json.dumps(
             {"success": False, "error": WALYTIS_BETA_ERROR_MESSAGE}
@@ -249,7 +249,7 @@ def get_latest_blocks(payload: bytearray) -> bytes:
             }
         ).encode()
     except Exception as e:
-        log.error("Failed to subscribe to topic:\n" + str(e))
+        logger.error("Failed to subscribe to topic:\n" + str(e))
         return json.dumps(
             {"success": False, "error": WALYTIS_BETA_ERROR_MESSAGE}
         ).encode()
@@ -465,7 +465,7 @@ def request_router(request: bytearray) -> bytes:
             return get_walytis_beta_version()
 
         else:
-            log.warning(
+            logger.warning(
                 "walytis_beta_api_terminal: Received request that was not "
                 f"understood: {function} {payload}"
             )
@@ -473,7 +473,7 @@ def request_router(request: bytearray) -> bytes:
                 {"success": False, "error": "not understood"}
             ).encode()
     except Exception as e:
-        log.error(
+        logger.error(
             "Unhandled Exception in walytis_beta_api_terminal.request_router:"
             f"\n{e}"
         )

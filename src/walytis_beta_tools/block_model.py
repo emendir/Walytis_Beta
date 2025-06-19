@@ -8,7 +8,7 @@ from copy import deepcopy
 from datetime import datetime
 from secrets import randbits
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_block_model as logger
 from brenthy_tools_beta.utils import (  # pylint: disable=unused-import
     bytes_from_b255_no_0s,
     bytes_to_b255_no_0s,
@@ -115,7 +115,7 @@ class Block(GenericBlock):
         """
         self._content_hash_algorithm = PREFERRED_HASH_ALGORITHM
         if not self.content:
-            log.error("Block Hash Generation: empty content")
+            logger.error("Block Hash Generation: empty content")
             return None
         hashGen = hashlib.sha512()
         hashGen.update(self.content)
@@ -170,47 +170,47 @@ class Block(GenericBlock):
             bool: whether this block's data is self-consistent and valid.
         """
         if not self._blockchain_version:
-            log.warning("Block Integrity Check: blockchain_version not set.")
+            logger.warning("Block Integrity Check: blockchain_version not set.")
             return False
         if not self.ipfs_cid:
-            log.warning("Block Integrity Check: ipfs_cid not set.")
+            logger.warning("Block Integrity Check: ipfs_cid not set.")
             return False
         if not self.creator_id:
-            log.warning("Block Integrity Check: creator_id not set.")
+            logger.warning("Block Integrity Check: creator_id not set.")
             return False
         if not self.creation_time:
-            log.warning("Block Integrity Check: creation_time not set.")
+            logger.warning("Block Integrity Check: creation_time not set.")
             return False
         if not self.topics:
-            log.warning("Block Integrity Check: topics not set.")
+            logger.warning("Block Integrity Check: topics not set.")
             return False
         if not self._content_length:
-            log.warning("Block Integrity Check: Content length not set.")
+            logger.warning("Block Integrity Check: Content length not set.")
             return False
         if not self._content_hash_algorithm:
-            log.warning(
+            logger.warning(
                 "Block Integrity Check: content_hash_algorithm not set."
             )
             return False
         if not self._content_hash:
-            log.warning("Block Integrity Check: Hash not set.")
+            logger.warning("Block Integrity Check: Hash not set.")
             return False
         # if not self._n_parents:
-        #     log.warning("Block Integrity Check: n_parents not set.")
+        #     logger.warning("Block Integrity Check: n_parents not set.")
         #     return None
         if not self._parents_hash_algorithm:
-            log.warning(
+            logger.warning(
                 "Block Integrity Check: parents_hash_algorithm not set."
             )
             return False
         if not self._parents_hash:
-            log.warning("Block Integrity Check: parents_hash not set.")
+            logger.warning("Block Integrity Check: parents_hash not set.")
             return False
         if not self.short_id:
-            log.warning("Block Integrity Check: short_id not set.")
+            logger.warning("Block Integrity Check: short_id not set.")
             return False
         if not self.long_id:
-            log.warning("Block Integrity Check: long_id not set.")
+            logger.warning("Block Integrity Check: long_id not set.")
             return False
 
         # only skip checking file data if it is not set
@@ -218,23 +218,23 @@ class Block(GenericBlock):
             ignore_filedata = False
 
         if not self.file_data and not ignore_filedata:
-            log.warning("Block Integrity Check: filedata not set.")
+            logger.warning("Block Integrity Check: filedata not set.")
             return False
 
         # check if encoded content length matches actual block content length
         if not len(self.content) == self._content_length:
-            log.warning("Block INtegrity Check: content length incorrect")
+            logger.warning("Block INtegrity Check: content length incorrect")
             return False
         # checking if encoded parents count matches actual parent's count
         if not len(self.parents) == self._n_parents:
-            log.warning("Block Integrity Check: number of parents incorrect")
+            logger.warning("Block Integrity Check: number of parents incorrect")
             return False
 
         # check if parents are sorted
         sorted_parents = deepcopy(self.parents)
         sorted_parents.sort()
         if self.parents != sorted_parents:
-            log.warning("Block Integrity Check: parents blocks aren't sorted")
+            logger.warning("Block Integrity Check: parents blocks aren't sorted")
             return False
 
         # Checking generated parts
@@ -251,7 +251,7 @@ class Block(GenericBlock):
         self.generate_content_hash()
         # compare the encoded content-hash with the generated content-hash
         if self._content_hash != old_content_hash:
-            log.warning("Block Integrity Check: hash does not match.")
+            logger.warning("Block Integrity Check: hash does not match.")
             # restoring old non-matching content_hash
             self._content_hash = old_content_hash
             return False
@@ -261,7 +261,7 @@ class Block(GenericBlock):
             self.generate_parents_hash()
             # comparing the encoded parents-hash with the generated hash
             if self._parents_hash != old_parents_hash:
-                log.warning(
+                logger.warning(
                     "Block Integrity Check: parents_hash does not match."
                 )
                 # restoring old non-matching content_hash
@@ -283,7 +283,7 @@ class Block(GenericBlock):
                     f"{self.creation_time}. This is most likely due to this "
                     "node's clock not being synchronised."
                 )
-                log.warning(error_message)
+                logger.warning(error_message)
                 return False
 
         # Checking if file_data matches block properties if they are ALL set
@@ -295,7 +295,7 @@ class Block(GenericBlock):
         # reset the initially set inconsistent file-data property
         if not ignore_filedata and old_file_data != self.file_data:
             self._file_data = old_file_data
-            log.warning(
+            logger.warning(
                 "Block Integrity Check: File-data doesn't match block fields."
             )
             return False
@@ -304,13 +304,13 @@ class Block(GenericBlock):
         self.generate_id()
         if old_short_id != self.short_id:
             self._short_id = old_short_id
-            log.warning(
+            logger.warning(
                 "Block Integrity Check: short ID doesn't match block fields."
             )
             return False
         if old_long_id != self.long_id:
             self._long_id = old_long_id
-            log.warning(
+            logger.warning(
                 "Block Integrity Check: long ID doesn't match block fields."
             )
             return False
@@ -328,37 +328,37 @@ class Block(GenericBlock):
         """
         # make sure all the necessary components of the short_id have been set
         if not self._blockchain_version:
-            log.warning("Block.generate_id(): blockchain_version not set.")
+            logger.warning("Block.generate_id(): blockchain_version not set.")
             return None
         if not self.ipfs_cid:
-            log.warning("Block.generate_id(): ipfs_cid not set.")
+            logger.warning("Block.generate_id(): ipfs_cid not set.")
             return None
         if not self.creator_id:
-            log.warning("Block.generate_id(): creator_id not set.")
+            logger.warning("Block.generate_id(): creator_id not set.")
             return None
         if not self.creation_time:
-            log.warning("Block.generate_id(): creation_time not set.")
+            logger.warning("Block.generate_id(): creation_time not set.")
             return None
         if not self.topics:
-            log.warning("Block.generate_id(): topics not set.")
+            logger.warning("Block.generate_id(): topics not set.")
             return None
         if not self._content_length:
-            log.warning("Block.generate_id(): Content length not set.")
+            logger.warning("Block.generate_id(): Content length not set.")
             return None
         if not self._content_hash_algorithm:
-            log.warning("Block.generate_id(): content_hash_algorithm not set.")
+            logger.warning("Block.generate_id(): content_hash_algorithm not set.")
             return None
         if not self._content_hash:
-            log.warning("Block.generate_id(): Hash not set.")
+            logger.warning("Block.generate_id(): Hash not set.")
             return None
         # if not self._n_parents:
-        #     log.warning("Block.generate_id(): n_parents not set.")
+        #     logger.warning("Block.generate_id(): n_parents not set.")
         #     return None
         if not self._parents_hash_algorithm:
-            log.warning("Block.generate_id(): parents_hash_algorithm not set.")
+            logger.warning("Block.generate_id(): parents_hash_algorithm not set.")
             return None
         if not self._parents_hash:
-            log.warning("Block.generate_id(): parents_hash not set.")
+            logger.warning("Block.generate_id(): parents_hash not set.")
             return None
 
         self._short_id = bytearray(
@@ -448,7 +448,7 @@ class Block(GenericBlock):
                 raise BlockIntegrityError("Integrity check failed")
             return self.file_data
         except Exception as e:
-            log.error("Failed to generate block data.\n" + str(e))
+            logger.error("Failed to generate block data.\n" + str(e))
             return None
 
     def save_block_to_file(self, path: str) -> None:
@@ -462,7 +462,7 @@ class Block(GenericBlock):
             file.write(self.file_data)
             file.close()
         else:
-            log.error("Couldn't save block to file cause data is null.")
+            logger.error("Couldn't save block to file cause data is null.")
 
 
 def decode_short_id(short_id: bytearray) -> dict:
@@ -490,7 +490,7 @@ def decode_short_id(short_id: bytearray) -> dict:
     while short_id[-1] == 0:
         short_id = short_id[:-1]
     metadata = short_id.split(bytearray([0, 0]))
-    # log.important(str(metadata))
+    # logger.important(str(metadata))
     topics = [
         element.decode("utf-8")
         for element in metadata[4].split(bytearray([0]))

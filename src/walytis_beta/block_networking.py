@@ -6,7 +6,7 @@ import json
 import os
 from tempfile import NamedTemporaryFile
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_networking  as logger
 from brenthy_tools_beta.utils import (  # pylint: disable=unused-import
     bytes_to_string,
 )
@@ -37,19 +37,19 @@ class Block(block_model.Block):
 
     def publish_file_data(self) -> str:
         """Put this block's block file on IPFS."""
-        log.info("Publishing file...")
+        logger.info("Publishing file...")
         if not (len(self.file_data) > 0):
             error_message = (
-                "Walytis_Beta: Block.publish_file_data: file_data is empty"
+                "Block.publish_file_data: file_data is empty"
             )
-            log.error(error_message)
+            logger.error(error_message)
             raise ValueError(error_message)
         with NamedTemporaryFile(delete=False) as tempf:
             tempf.write(self.file_data)
             tempf.close()
             cid = ipfs.files.predict_cid(tempf.name)
             if cid in ipfs.files.list_pins(cache_age_s=1000):
-                log.error(
+                logger.error(
                     "Block.publish_file_data: "
                     "IPFS content with this CID already exists!"
                 )

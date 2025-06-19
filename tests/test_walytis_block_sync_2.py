@@ -25,7 +25,7 @@ from walytis_beta_api import (
     Block, Blockchain, list_blockchain_names, delete_blockchain
 )
 import walytis_beta_api
-walytis_beta_api.log.PRINT_DEBUG = True
+# walytis_beta_api.log.PRINT_DEBUG = True
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
 REBUILD_DOCKER = True
@@ -34,7 +34,7 @@ REBUILD_DOCKER = True
 # you can set this to true to automatically remove unpurged docker containers
 # after failed tests
 DELETE_ALL_BRENTHY_DOCKERS = True
-BLOCKCHAIN_NAME = "TestingBrenthyAppdata"
+BLOCKCHAIN_NAME = "TestingWalytisAppdata"
 SYNC_DUR = 40
 USE_SYSTEM_BRENTHY = False
 

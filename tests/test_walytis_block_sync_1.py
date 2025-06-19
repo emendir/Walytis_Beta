@@ -151,9 +151,11 @@ def test_sync_block_creation() -> None:
 
     blockchain.add_block("DUMMY".encode())
     blockchain.add_block("Test1".encode())
-    for _ in range(8):
+    for _ in range(2):
         time.sleep(5)
         result = get_docker_latest_block_content(brenthy_dockers[0])
+        result=[line for line in result.split("\n") if line][-1]
+        print(result)
         success = result == "Test1"
         if success:
             break
@@ -169,10 +171,12 @@ def test_sync_on_join() -> None:
     mark(ipfs_connect_to_container(1), "ipfs.peers.find")
     mark(docker_join_blockchain(1), "join_blockchain")
 
-    for _ in range(8):
+    for _ in range(3):
         polite_wait(5)
         print("Getting docker's latest block...")
         result = get_docker_latest_block_content(brenthy_dockers[1])
+        result=[line for line in result.split("\n") if line][-1]
+        
         success = result == "Test1"
         if success:
             break
@@ -187,9 +191,10 @@ def test_sync_on_awake() -> None:
     blockchain.add_block("Test2".encode())
     polite_wait(10)
     brenthy_dockers[1].restart()
-    for i in range(15):
+    for i in range(4):
         polite_wait(5)
         result = get_docker_latest_block_content(brenthy_dockers[1])
+        result=[line for line in result.split("\n") if line][-1]
         success = result == "Test2"
         if success:
             break

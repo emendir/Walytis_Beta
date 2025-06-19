@@ -1,6 +1,6 @@
 """Machinery for processing blocks' ancestries."""
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_ancestry as logger
 
 from .walytis_beta import Blockchain
 from walytis_beta_tools.block_model import decode_long_id, Block
@@ -61,7 +61,7 @@ def list_unshared_ancestors(
                     f"block_ancestry: blockchain {blockchain.name}: couldn't "
                     f"find block {block}"
                 )
-                log.error(error_message)
+                logger.error(error_message)
                 raise Exception(error_message)
             parents = decode_long_id(long_id)["parents"]
 

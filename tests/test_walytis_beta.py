@@ -54,7 +54,7 @@ if True:
     from _testing_utils import mark, test_threads_cleanup
     from walytis_beta_api import Block, Blockchain
     import walytis_beta_api
-    walytis_beta_api.log.PRINT_DEBUG = True
+    # walytis_beta_api.log.PRINT_DEBUG = True
 
 
 brenthy_docker: BrenthyDocker
@@ -138,13 +138,13 @@ def test_create_blockchain() -> None:
     global blockchain
     try:
         blockchain = walytis_beta_api.Blockchain.create(
-            "TestingBrenthy",
+            "TestingWalytis",
             app_name="BrenthyTester",
             block_received_handler=on_block_received,
         )
     except walytis_beta_api.BlockchainAlreadyExistsError:
         blockchain = walytis_beta_api.Blockchain(
-            "TestingBrenthy",
+            "TestingWalytis",
             app_name="BrenthyTester",
             block_received_handler=on_block_received,
         )
@@ -186,8 +186,13 @@ def test_joining() -> None:
         raise CantRunTestError("Invitation is blank")
 
     join_python_code = (
-        "import walytis_beta_api;"
-        f"walytis_beta_api.join_blockchain('{invitation}')"
+        f"""
+import walytis_beta_api
+try:
+    walytis_beta_api.join_blockchain('{invitation}')
+except Exception as e:
+    print(e)
+"""
     )
     test_python_code = ";".join([
         "import walytis_beta_api",
@@ -198,7 +203,9 @@ def test_joining() -> None:
 
     result = "-"
     for i in range(NUMBER_OF_JOIN_ATTEMPTS):
-        brenthy_docker.run_python_code(join_python_code, print_output=False)
+        
+        result = brenthy_docker.run_python_code(join_python_code, print_output=True)
+        print(result)
         result = brenthy_docker.run_python_code(
             test_python_code, print_output=False
         ).strip("\n")
@@ -227,9 +234,9 @@ def test_join_id_check() -> None:
 def test_delete_blockchain() -> None:
     """Test that we can delete a blockchain."""
     blockchain.terminate()
-    walytis_beta_api.delete_blockchain("TestingBrenthy")
+    walytis_beta_api.delete_blockchain("TestingWalytis")
     success = (
-        "TestingBrenthy" not in walytis_beta_api.list_blockchain_names(),
+        "TestingWalytis" not in walytis_beta_api.list_blockchain_names(),
         "failed to delete blockchain",
     )
     mark(success, "delete_blockchain")

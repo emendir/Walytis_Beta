@@ -14,7 +14,7 @@ from .networking import ipfs
 
 if True:
     # pylint: disable=import-error
-    from brenthy_tools_beta import log
+    from walytis_beta_tools.log import logger_block_records as logger
     from brenthy_tools_beta.utils import (
         from_b255_no_0s,
         string_to_time,
@@ -121,7 +121,7 @@ class BlockRecords(ABC):
                 + bytearray([0, 0, 0, 0, 0, 0])
             )
             f.close()
-            log.info(f"{self.name}:  Block is new. Added block to ID Records.")
+            logger.info(f"{self.name}:  Block is new. Added block to ID Records.")
             if self.number_of_known_ids is not None:
                 self.number_of_known_ids += 1
 
@@ -196,7 +196,7 @@ class BlockRecords(ABC):
             file = args
             entry_list = []
         else:
-            log.error(
+            logger.error(
                 f"{self.name}: error: index_file_reader was called with an "
                 "invalid task: " + task
             )
@@ -206,7 +206,7 @@ class BlockRecords(ABC):
         self.index_lock.acquire()
 
         if not os.path.exists(os.path.join(self.index_dir, file)):
-            log.error(
+            logger.error(
                 f"BlockRecords {task}: Index file doesn't exist: {file}\n"
                 f"{traceback.format_stack(limit=8)}"
             )
@@ -220,7 +220,7 @@ class BlockRecords(ABC):
             file_reader.close()
             self.index_lock.release()
             if not success:
-                log.error(
+                logger.error(
                     f"{self.name}: BlockRecords: error reading an index file."
                 )
                 return None
@@ -232,7 +232,7 @@ class BlockRecords(ABC):
                 return ID_count
             elif list_ids:
                 return entry_list
-            log.error(
+            logger.error(
                 f"{self.name}: BlockRecords: Bug in index_file_reader(), this "
                 "line isn't to be reached."
             )
@@ -265,7 +265,7 @@ class BlockRecords(ABC):
 
             # making sure the end code is in place
             if file_reader.read(6) != bytearray([0, 0, 0, 0, 0, 0]):
-                log.error(
+                logger.error(
                     f"{self.name}: error in the Block ID records in index file"
                     f" {file}. Block ID entry was not followed by the entry "
                     "separator bytearray([0,0,0,0,0,0])."
@@ -323,7 +323,7 @@ class BlockRecords(ABC):
         """Cache a block's long ID."""
         short_id = short_from_long_id(long_id)
         if short_id == long_id:
-            log.warning("BlockRecords.cache_block: short_id was passed")
+            logger.warning("BlockRecords.cache_block: short_id was passed")
             return
 
         # check if it's already cached
@@ -390,7 +390,7 @@ class BlockRecords(ABC):
         self.block_record_initialised.wait()
         result: list[bytearray] = self.index_file_reader("list_ids", filename)
         if result is None:
-            log.warning(
+            logger.warning(
                 f"{self.name}:  BlockRecords.list_ids: index_file_reader "
                 "returned None"
             )
@@ -417,7 +417,7 @@ class BlockRecords(ABC):
                 "older than our records."
             )
             message += str(timestamp) + self.name
-            log.warning(message)
+            logger.warning(message)
         return right_file
 
     def save_block(self, block: Block) -> None:
@@ -460,7 +460,7 @@ class BlockRecords(ABC):
         """
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
-        log.info(f"{self.name}:  Loading the record of known blocks...")
+        logger.info(f"{self.name}:  Loading the record of known blocks...")
         # loading a list of all index files for the ID records
         if not os.path.exists(self.index_dir):
             os.mkdir(self.index_dir)
@@ -575,7 +575,7 @@ class BlockRecords(ABC):
             and "genesis" in block_data["topics"]
         ):
             error_message = "BlockRecords.get_genesis_block not working"
-            log.error(error_message)
+            logger.error(error_message)
             raise NotSupposedToHappenError(error_message)
 
         self._genesis_block_id = genesis_block_id  # cache
@@ -600,8 +600,8 @@ class BlockRecords(ABC):
                         os.path.join(subfolder_dir, block_cid)
                     )
                     if not cid == block_cid:
-                        log.error(
-                            f"Walytis_Beta: ensure_ipfs_pinned: published "
+                        logger.error(
+                            f"ensure_ipfs_pinned: published "
                             f"block's cid is not the same as its file name "
                             f"{self.name} {block_cid}"
                         )

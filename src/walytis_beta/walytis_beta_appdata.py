@@ -9,7 +9,7 @@ import tempfile
 from abc import ABC
 from threading import Event, Lock
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_appdata as logger
 import os
 
 walytis_beta_appdata_dir = ""
@@ -17,7 +17,7 @@ walytis_beta_appdata_dir = ""
 
 def set_appdata_dir(appdata_dir: str):
     global walytis_beta_appdata_dir
-    log.info(f"Walytis: Setting appdata: {walytis_beta_appdata_dir}")
+    logger.info(f"Walytis: Setting appdata: {walytis_beta_appdata_dir}")
     walytis_beta_appdata_dir = appdata_dir
     if not os.path.exists(walytis_beta_appdata_dir):
         os.makedirs(walytis_beta_appdata_dir)
@@ -149,7 +149,7 @@ class BlockchainAppdata(ABC):
                     "Walytis_BetaAppdata: failed to parse config.json: "
                     + str(error)
                 )
-                log.error(error_message)
+                logger.error(error_message)
         self.save_config(already_locked=True)
         self.config_lock.release()
 

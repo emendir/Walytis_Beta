@@ -113,7 +113,8 @@ if True:
         os.environ["USE_IPFS_NODE"] = "false"
         os.environ["WALYTIS_BETA_API_TYPE"] = "WALYTIS_BETA_BRENTHY_API"
     else:
-        os.environ["USE_IPFS_NODE"] = "true"
+        if os.environ.get("USE_IPFS_NODE", None) is None :
+            os.environ["USE_IPFS_NODE"] = "true"
 
     import walytis_beta_embedded
     from walytis_beta_tools._experimental.config import ipfs
