@@ -11,10 +11,8 @@ import traceback
 from datetime import datetime
 from random import randint, seed
 from threading import Lock, Thread
+from time import sleep
 
-# import api_terminal as AppCom
-
-from walytis_beta_tools.log import logger
 from brenthy_tools_beta.utils import (
     are_elements_unique,
     bytes_to_string,
@@ -24,6 +22,16 @@ from brenthy_tools_beta.utils import (
 )
 from brenthy_tools_beta.version_utils import decode_version, is_version_greater
 from ecies.utils import generate_key
+from walytis_beta_tools.block_model import (
+    decode_long_id,
+    decode_short_id,
+    short_from_long_id,
+)
+from walytis_beta_tools.exceptions import NotSupposedToHappenError
+
+# import api_terminal as AppCom
+from walytis_beta_tools.log import logger
+from walytis_beta_tools.versions import WALYTIS_BETA_CORE_VERSION
 
 from . import walytis_beta_api_terminal
 from .block_networking import (
@@ -33,15 +41,12 @@ from .block_networking import (
 from .block_records import BlockRecords
 from .exceptions import BlockchainNotInitialised, BlockchainTerminatedError
 from .networking import Networking, ipfs
-from walytis_beta_tools.versions import WALYTIS_BETA_CORE_VERSION
-from walytis_beta_tools.block_model import (
-    decode_long_id,
-    decode_short_id,
-    short_from_long_id,
-    PREFERRED_HASH_ALGORITHM,
+from .walytis_beta_appdata import (
+    BlockchainAppdata,
+    create_temp_dir,
+    get_walytis_appdata_dir,
 )
-from walytis_beta_tools.exceptions import NotSupposedToHappenError
-from .walytis_beta_appdata import BlockchainAppdata, get_walytis_appdata_dir, create_temp_dir
+
 # a variable with this blockchain's name so that we don't missspell it
 WALYTIS_BETA = "Walytis_Beta"
 
@@ -958,6 +963,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                     if progress == 1:
                         os.remove(appdata_zip)
                 logger.debug("WJR: Transmitting appdata...")
+                sleep(0.5)
                 conv.transmit_file(
                     appdata_zip,
                     "Here you go".encode(),
@@ -976,7 +982,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                 conv.say("Don't recognise Invitation.".encode())
             conv.terminate()
         except Exception as e:
-            logger.error("on_join_request_received: " + str(e))
+            logger.error(f"on_join_request_received: Unhandled error {type(e)}: " + str(e))
             try:
                 conv.terminate()
             except:
@@ -1033,7 +1039,7 @@ def join_blockchain(
         invitation_d = invitation
 
     blockchain_id = invitation_d["blockchain_id"]
-    
+
     if blockchain_id in get_blockchain_ids():
         logger.warning("Walytis_Beta.join_blockchain: Blockchain already exists")
         return get_blockchain(blockchain_id)
@@ -1055,6 +1061,7 @@ def join_blockchain(
                 timeout_sec=JOIN_COMMS_TIMEOUT_S
             )
             logger.info("Asking peer for AppdataZip")
+            sleep(0.5)
 
             success = conv.say(
                 json.dumps(invitation_d).encode(),
@@ -1108,7 +1115,7 @@ def join_blockchain(
                 conv.terminate()
             conv.terminate()
         except Exception as e:
-            logger.error("Join: " + str(e))
+            logger.error(f"Join: Unhandled error {type(e)}: " + str(e))
             try:
                 if conv:
                     conv.terminate()

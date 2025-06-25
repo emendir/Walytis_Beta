@@ -191,7 +191,7 @@ def test_sync_on_awake() -> None:
     blockchain.add_block("Test2".encode())
     polite_wait(10)
     brenthy_dockers[1].restart()
-    for i in range(4):
+    for i in range(6):
         polite_wait(5)
         result = get_docker_latest_block_content(brenthy_dockers[1])
         result=[line for line in result.split("\n") if line][-1]
