@@ -1143,6 +1143,7 @@ def join_blockchain_from_cid(
     Returns:
         Blockchain: the blockchain object representing the joined blockchain
     """
+    logger.info(f"Joining blockchain from CID: {blockchain_data_cid}")
     bc_appdata_path = os.path.join(get_walytis_appdata_dir(), blockchain_id)
     if [
         bc

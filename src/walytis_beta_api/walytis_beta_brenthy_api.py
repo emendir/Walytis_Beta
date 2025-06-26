@@ -9,15 +9,13 @@ which is in turn intended for use by the Walytis_Beta API user.
 """
 
 from __future__ import annotations
-from typing import TypeVar, Type
-import json
-import os
-import shutil
-from datetime import datetime
-from typing import Callable
+from walytis_beta_tools.log import logger_api as logger
 
-from walytis_beta_tools._experimental.config import ipfs
-from brenthy_tools_beta import brenthy_api, log
+import json
+from datetime import datetime
+from typing import Callable, Type
+
+from brenthy_tools_beta import brenthy_api
 from brenthy_tools_beta.utils import (
     bytes_to_string,
     decode_timestamp,
@@ -29,13 +27,12 @@ from brenthy_tools_beta.utils import (
 from brenthy_tools_beta.version_utils import (
     decode_version,
     encode_version,
-    version_to_string,
 )
-
+from walytis_beta_tools._experimental.config import ipfs
 from walytis_beta_tools.block_model import (
     Block,
     decode_short_id,  # pylint: disable=unused-import
-    short_from_long_id
+    short_from_long_id,
 )
 from walytis_beta_tools.exceptions import (
     BlockchainAlreadyExistsError,
@@ -53,16 +50,17 @@ from walytis_beta_tools.versions import (
 )
 
 from .walytis_beta_generic_interface import (
-    BaseWalytisBetaInterface, BaseBlocksListener, classproperty
+    BaseBlocksListener,
+    BaseWalytisBetaInterface,
+    classproperty,
 )
+
 # storing this blockchain's name so that we don't missspell it
 WALYTIS_BETA = "Walytis_Beta"
 
 
 # --------------Settings ---------------------------
 # logger.PRINT_DEBUG = False
-from walytis_beta_tools.log import logger_api as logger
-
 
 NO_SUCH_BLOCKCHAIN_MESSAGE = "no such blockchain"
 NO_SUCH_INVITATION_MESSAGE = "no such join-key"
@@ -109,18 +107,21 @@ class _NetBlocksListener(BaseBlocksListener):
             "Walytis_Beta", self._bap_event_received,
             f"{blockchain_id}-NewBlocks"
         )
-    def _bap_event_received(self, data: dict,topic:str) -> None:
-        self._on_event_received(data,set([topic]))
+
+    def _bap_event_received(self, data: dict, topic: str) -> None:
+        self._on_event_received(data, set([topic]))
 
     def get_block(self, block_id: bytearray) -> Block:
         return WalytisBetaNetApi.get_block(self.blockchain_id, block_id)
+
     @property
-    def topics(self)->set[str]:
+    def topics(self) -> set[str]:
         return self._topics
-    
+
     @property
-    def blockchain_id(self)->str:
+    def blockchain_id(self) -> str:
         return self._blockchain_id
+
     @property
     def eventhandler(self) -> Callable[[Block], None]:
         return self._eventhandler
@@ -920,5 +921,6 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
     @classmethod
     def _get_block_long_from_short_id(cls, blockchain_id: str, short_id: bytearray):
         """This function is needed for BACKWARDS COMPATIBILITY with older versions
-        of Walytis_Beta Core."""
+        of Walytis_Beta Core.
+        """
         return cls.get_block(blockchain_id, short_id).long_id

@@ -203,14 +203,16 @@ except Exception as e:
 
     result = "-"
     for i in range(NUMBER_OF_JOIN_ATTEMPTS):
-        
         result = brenthy_docker.run_python_code(join_python_code, print_output=True)
         print(result)
-        result = brenthy_docker.run_python_code(
+        lines = brenthy_docker.run_python_code(
             test_python_code, print_output=False
-        ).strip("\n")
-        if result == "True":
-            break
+        ).split("\n")
+        if lines:
+            result = lines[-1].strip("\n")
+            if result == "True":
+                break
+
     success = result == "True"
     mark(success, "join_blockchain")
 

@@ -27,7 +27,8 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(formatter)
 
-LOG_PATH = os.environ.get("WALYTIS_BETA_LOG_PATH", "Walytis_Beta.log")
+LOG_PATH = os.path.abspath(os.environ.get("WALYTIS_BETA_LOG_PATH", "Walytis_Beta.log"))
+# print(f"Walytis_Beta: Logging to {LOG_PATH}")
 # File handler (DEBUG+ with rotation)
 file_handler = RotatingFileHandler(
     'Walytis_Beta.log', maxBytes=5*1024*1024, backupCount=5
