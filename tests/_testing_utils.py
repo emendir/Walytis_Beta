@@ -117,7 +117,7 @@ if True:
             os.environ["USE_IPFS_NODE"] = "false"
 
     import walytis_beta_embedded
-    from walytis_beta_tools._experimental.config import ipfs
+    from walytis_beta_tools._experimental.ipfs_interface import ipfs
     import walytis_beta_api
     import walytis_beta_tools
     assert_is_loaded_from_source(EMBEDDED_DIR, walytis_beta_embedded)

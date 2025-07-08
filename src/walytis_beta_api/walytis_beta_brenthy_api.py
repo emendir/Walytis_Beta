@@ -28,7 +28,7 @@ from brenthy_tools_beta.version_utils import (
     decode_version,
     encode_version,
 )
-from walytis_beta_tools._experimental.config import ipfs
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
 from walytis_beta_tools.block_model import (
     Block,
     decode_short_id,  # pylint: disable=unused-import

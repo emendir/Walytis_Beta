@@ -74,7 +74,7 @@ from walytis_beta_tools.versions import (
     WALYTIS_BETA_CORE_VERSION,
 )
 
-from walytis_beta_tools._experimental.config import ipfs
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
 
 if _WALYTIS_BETA_DATA_DIR:
     set_appdata_dir(_WALYTIS_BETA_DATA_DIR)

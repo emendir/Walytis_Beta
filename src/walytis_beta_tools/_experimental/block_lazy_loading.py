@@ -6,7 +6,7 @@ from collections.abc import Generator
 from datetime import datetime
 from typing import Generic, Type, TypeVar
 
-from walytis_beta_tools._experimental.config import ipfs
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
 
 from walytis_beta_tools.block_model import Block, decode_long_id, short_from_long_id
 from ..exceptions import (

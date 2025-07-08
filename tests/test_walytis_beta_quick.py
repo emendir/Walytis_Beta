@@ -15,7 +15,6 @@ run the following commands to stop and remove the unterminated container:
     docker rm $(docker ps -aqf "name=^brenthy_test$")
 """
 
-import _testing_utils
 from test_walytis_beta import (
     stop_walytis,
     test_add_block,
@@ -31,8 +30,6 @@ from test_walytis_beta import (
 )
 
 NUMBER_OF_JOIN_ATTEMPTS = 10
-# enable/disable breakpoints when checking intermediate test results
-_testing_utils.BREAKPOINTS = True
 
 # if you do not have any other important brenthy docker containers,
 # you can set this to true to automatically remove unpurged docker containers
@@ -60,7 +57,6 @@ def run_tests() -> None:
 
 
 if __name__ == "__main__":
-    _testing_utils.PYTEST = False
     run_tests()
 
     _testing_utils.terminate()

@@ -47,31 +47,9 @@ WALYTIS_BETA = "Walytis_Beta"
 _waly: BaseWalytisBetaInterface
 
 
-class WalytisBetaApiTypes(Enum):
-    WALYTIS_BETA_BRENTHY_API = 0
-    WALYTIS_BETA_DIRECT_API = 1
+from walytis_beta_tools._experimental.config import WalytisBetaApiTypes, get_walytis_beta_api_type
 
-WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API.name
-_WALYTIS_BETA_API_TYPE = os.getenv("WALYTIS_BETA_API_TYPE")
-
-if not _WALYTIS_BETA_API_TYPE:
-    # if environment variable wasn't set, use default
-    WALYTIS_BETA_API_TYPE = WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API
-else:
-    type_match = None
-    for wapi_type in WalytisBetaApiTypes:
-        if _WALYTIS_BETA_API_TYPE == wapi_type.name:
-            type_match = wapi_type
-    if not type_match:
-        raise Exception(
-            "Invalid value for environment variable WALYTIS_BETA_API_TYPE "
-            f"'{_WALYTIS_BETA_API_TYPE}'\n"
-            f"Valid values are: {[member.name for member in WalytisBetaApiTypes]}"
-        )
-    WALYTIS_BETA_API_TYPE = type_match
-
-
-match WALYTIS_BETA_API_TYPE:
+match get_walytis_beta_api_type():
     case WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API:
         from .walytis_beta_brenthy_api import WalytisBetaNetApi
         _waly = WalytisBetaNetApi()
@@ -81,9 +59,9 @@ match WALYTIS_BETA_API_TYPE:
     case _:
         raise WalytisBugError(
             "walytis_beta_interface: Didn't take into account how to process "
-            f"WALYTIS_BETA_API_TYPE {WALYTIS_BETA_API_TYPE}"
+            f"WALYTIS_BETA_API_TYPE {get_walytis_beta_api_type()}"
         )
-logger.info(WALYTIS_BETA_API_TYPE)
+logger.info(_waly)
 BlocksListener = _waly.BlocksListener
 
 

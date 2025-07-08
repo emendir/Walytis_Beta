@@ -19,7 +19,7 @@ import shutil
 from datetime import datetime
 from typing import Callable
 
-from walytis_beta_tools._experimental.config import ipfs
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
 from brenthy_tools_beta import brenthy_api, log
 from brenthy_tools_beta.utils import (
     bytes_to_string,

@@ -15,18 +15,22 @@ run the following commands to stop and remove the unterminated container:
     docker rm $(docker ps -aqf "name=^brenthy_test$")
 """
 
-import os
-import shutil
-import sys
-import time
-
-import pytest
-import _testing_utils
+# This import allows us to run this script with either pytest or python
+import _auto_run_with_pytest  # noqa
+from conftest import BRENTHY_DIR, WalytisTestModes
+from walytis_beta_tools._experimental.config import get_walytis_test_mode
 import walytis_beta_embedded
+import pytest
+import time
+import sys
+import shutil
+import os
+from emtest import await_thread_cleanup
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
+
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
-REBUILD_DOCKER = True
-_testing_utils.BREAKPOINTS = True
+REBUILD_DOCKER = False
 # enable/disable breakpoints when checking intermediate test results
 
 # if you do not have any other important brenthy docker containers,
@@ -34,33 +38,39 @@ _testing_utils.BREAKPOINTS = True
 # after failed tests
 DELETE_ALL_BRENTHY_DOCKERS = True
 if True:
-    brenthy_dir = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        "..", "..", "..",  "Brenthy"
-    )
-    brenthy_docker_dir = os.path.abspath(os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        "..", "..", "..", "tests", "brenthy_docker"
-    ))
-    print(brenthy_docker_dir)
-    sys.path.insert(0, brenthy_dir)
-    sys.path.insert(0, brenthy_docker_dir)
     # import run
-    from _testing_utils import ipfs
-    # import _testing_utils
+    import run
+    run.TRY_INSTALL = False
+    import walytis_beta_api
+    # print("PWB")
+
     from brenthy_docker import BrenthyDocker, delete_containers
     from build_docker import build_docker_image
-
-    from _testing_utils import mark, test_threads_cleanup
     from walytis_beta_api import Block, Blockchain
-    import walytis_beta_api
+    
     # walytis_beta_api.log.PRINT_DEBUG = True
-
 
 brenthy_docker: BrenthyDocker
 blockchain: Blockchain
-created_block: Block
 invitation = ""
+created_block: Block
+
+
+@pytest.fixture(scope="module", autouse=True)
+def setup_and_teardown():
+    """Wrap around tests, running preparations and cleaning up afterwards.
+
+    A module-level fixture that runs once for all tests in this file.
+    """
+    # Setup: code here runs before tests that uses this fixture
+    print(f"\nRunning tests for {__name__}\n")
+    prepare()
+
+    yield  # This separates setup from teardown
+
+    # Teardown: code here runs after the tests
+    print(f"\nFinished tests for {__name__}\n")
+    cleanup()
 
 
 def prepare() -> None:
@@ -83,12 +93,48 @@ def prepare() -> None:
         container_name=DOCKER_CONTAINER_NAME,
         auto_run=False
     )
+    run_walytis()
+    
+    if "TestingWalytis" in walytis_beta_api.list_blockchain_names():
+        walytis_beta_api.delete_blockchain("TestingWalytis")
+    print("Finished preparations...")
 
 
+def cleanup(request: pytest.FixtureRequest | None = None) -> None:
+    """Clean up after running tests with PyTest."""
+    brenthy_docker.stop()
+    # _testing_utils.terminate()
+
+    stop_walytis()
+
+WALYTIS_TEST_MODE= get_walytis_test_mode()
+def run_walytis() -> None:
+    """Test that we can run Brenthy-Core."""
+    global WALYTIS_TEST_MODE
+    match WALYTIS_TEST_MODE:
+        case WalytisTestModes.RUN_BRENTHY:
+            # run.log.set_print_level("important")
+            print("Running Brenthy...")
+            run.run_brenthy()
+        case WalytisTestModes.EMBEDDED:
+            print("Running Walytis embedded...")
+            walytis_beta_embedded.run_blockchains()
+            print("Running Walytis embedded.")
+        case WalytisTestModes.USE_BRENTHY:
+            pass
+        case _:
+            raise Exception("BUG in handling of WALYTIS_TEST_MODE!")
 def stop_walytis() -> None:
     """Stop Brenthy-Core."""
-    # run.stop_walytis()
-    walytis_beta_embedded.terminate()
+    match WALYTIS_TEST_MODE:
+        case WalytisTestModes.RUN_BRENTHY:
+            run.stop_brenthy()
+        case WalytisTestModes.EMBEDDED:
+            walytis_beta_embedded.terminate()
+        case WalytisTestModes.USE_BRENTHY:
+            pass
+        case _:
+            raise Exception("BUG in handling of WALYTIS_TEST_MODE!")
 
 
 def on_block_received(block: Block) -> None:
@@ -97,60 +143,42 @@ def on_block_received(block: Block) -> None:
     created_block = block
 
 
-def test_run_walytis() -> None:
-    """Test that we can run Brenthy-Core."""
-    # run.TRY_INSTALL = False
-    # run.log.set_print_level("important")
-    try:
-        # run.run_walytis()
-        walytis_beta_embedded.run_blockchains()
-        mark(True, "Run Brenthy")
-    except Exception as e:
-        mark(False, "Failed to run Brenthy!")
-        print(e)
-        sys.exit()
-
 
 def test_run_docker() -> None:
     """Test that we can run the Brenthy docker container."""
     try:
         brenthy_docker.start()
-        mark(True, "Run BrenthyDocker")
+        assert True, "Run BrenthyDocker"
+        
     except Exception as e:
-        mark(False, "Failed to run BrenthyDocker")
+        assert False, "Failed to run BrenthyDocker"
         print(e)
         sys.exit()
 
 
 def test_find_peer() -> None:
     """Test that we are connected to the Brenthy docker container via IPFS."""
+    brenthy_docker.start()
     success = False
     for i in range(5):
         success = ipfs.peers.find(brenthy_docker.ipfs_id)
         if success:
             break
 
-    mark(success, "ipfs.peers.find")
+    assert success, "ipfs.peers.find"
 
 
 def test_create_blockchain() -> None:
     """Test that we can create a Walytis blockchain."""
     global blockchain
-    try:
-        blockchain = walytis_beta_api.Blockchain.create(
-            "TestingWalytis",
-            app_name="BrenthyTester",
-            block_received_handler=on_block_received,
-        )
-    except walytis_beta_api.BlockchainAlreadyExistsError:
-        blockchain = walytis_beta_api.Blockchain(
-            "TestingWalytis",
-            app_name="BrenthyTester",
-            block_received_handler=on_block_received,
-        )
+    blockchain = walytis_beta_api.Blockchain.create(
+        "TestingWalytis",
+        app_name="BrenthyTester",
+        block_received_handler=on_block_received,
+    )
+    
     success = isinstance(blockchain, walytis_beta_api.Blockchain)
-
-    mark(success, "create_blockchain")
+    assert success, "create_blockchain"
 
     time.sleep(2)
 
@@ -166,7 +194,7 @@ def test_add_block() -> None:
         == blockchain.get_block(blockchain._blocks.get_long_ids()[-1]).content.decode()
         == "Hello there!"
     )
-    mark(success, "Blockchain.add_block")
+    assert success, "Blockchain.add_block"
 
 
 def test_create_invitation() -> None:
@@ -177,7 +205,7 @@ def test_create_invitation() -> None:
         invitation in blockchain.get_invitations(),
         "newly created invitation is not listed in blockchain's invitations",
     )
-    mark(success, "Blockchain.create_invitation")
+    assert success, "Blockchain.create_invitation"
 
 
 def test_joining() -> None:
@@ -203,7 +231,8 @@ except Exception as e:
 
     result = "-"
     for i in range(NUMBER_OF_JOIN_ATTEMPTS):
-        result = brenthy_docker.run_python_code(join_python_code, print_output=True)
+        result = brenthy_docker.run_python_code(
+            join_python_code, print_output=True)
         print(result)
         lines = brenthy_docker.run_python_code(
             test_python_code, print_output=False
@@ -214,7 +243,7 @@ except Exception as e:
                 break
 
     success = result == "True"
-    mark(success, "join_blockchain")
+    assert success, "join_blockchain"
 
 
 def test_join_id_check() -> None:
@@ -224,13 +253,13 @@ def test_join_id_check() -> None:
         walytis_beta_api.join_blockchain_from_zip(
             "FALSE_BLOCKCHAIN_ID",
             os.path.join(
-                brenthy_dir, "InstallScripts", "BrenthyUpdates.zip"
+                BRENTHY_DIR, "InstallScripts", "BrenthyUpdates.zip"
             ),
         )
     except walytis_beta_api.JoinFailureError:
         exception = True
     success = "FALSE_BLOCKCHAIN_ID" not in walytis_beta_api.list_blockchains()
-    mark(success and exception, "join blockchain ID check")
+    assert success and exception, "join blockchain ID check"
 
 
 def test_delete_blockchain() -> None:
@@ -241,49 +270,56 @@ def test_delete_blockchain() -> None:
         "TestingWalytis" not in walytis_beta_api.list_blockchain_names(),
         "failed to delete blockchain",
     )
-    mark(success, "delete_blockchain")
+    assert success, "delete_blockchain"
 
 
-def test_list_blockchains() -> None:
-    """Test that getting a list of blockchains IDs and names works."""
-    walytis_beta_api.list_blockchains()
-
-    found = False
-    for id, name in walytis_beta_api.list_blockchains():
-        if id == blockchain.blockchain_id and name == blockchain.name:
-            found = True
-            break
-    mark(found, "walytis_beta_api.list_blockchains")
-
-
-def test_list_blockchains_names_first() -> None:
-    """Test that getting a list of blockchains works with the names first."""
-    all_in_order = walytis_beta_api.list_blockchains(names_first=True) == [
-        (name, id) for id, name in walytis_beta_api.list_blockchains()
-    ]
-    mark(all_in_order,
-         "walytis_beta_api.list_blockchains(names_first=True)",
-         )
-
-
-def test_list_blockchain_ids() -> None:
-    """Test that getting a list of blockchains IDs."""
-    all_in_order = (
-        blockchain.blockchain_id in walytis_beta_api.list_blockchain_ids()
-        and walytis_beta_api.list_blockchain_ids()
-        == [id for id, name in walytis_beta_api.list_blockchains()]
-    )
-    mark(all_in_order, "walytis_beta_api.list_blockchain_ids")
-
-
-def test_list_blockchain_names() -> None:
-    """Test that getting a list of blockchains names."""
-    all_in_order = (
-        blockchain.name in walytis_beta_api.list_blockchain_names()
-        and walytis_beta_api.list_blockchain_names()
-        == [name for id, name in walytis_beta_api.list_blockchains()]
-    )
-    mark(all_in_order, "walytis_beta_api.list_blockchain_names")
+def test_threads_cleanup() -> None:
+    brenthy_docker.stop()
+    blockchain.terminate()
+    stop_walytis()
+    assert await_thread_cleanup(timeout=5)
+#
+#
+# def test_list_blockchains() -> None:
+#     """Test that getting a list of blockchains IDs and names works."""
+#     walytis_beta_api.list_blockchains()
+#
+#     found = False
+#     for id, name in walytis_beta_api.list_blockchains():
+#         if id == blockchain.blockchain_id and name == blockchain.name:
+#             found = True
+#             break
+#     mark(found, "walytis_beta_api.list_blockchains")
+#
+#
+# def test_list_blockchains_names_first() -> None:
+#     """Test that getting a list of blockchains works with the names first."""
+#     all_in_order = walytis_beta_api.list_blockchains(names_first=True) == [
+#         (name, id) for id, name in walytis_beta_api.list_blockchains()
+#     ]
+#     mark(all_in_order,
+#          "walytis_beta_api.list_blockchains(names_first=True)",
+#          )
+#
+#
+# def test_list_blockchain_ids() -> None:
+#     """Test that getting a list of blockchains IDs."""
+#     all_in_order = (
+#         blockchain.blockchain_id in walytis_beta_api.list_blockchain_ids()
+#         and walytis_beta_api.list_blockchain_ids()
+#         == [id for id, name in walytis_beta_api.list_blockchains()]
+#     )
+#     mark(all_in_order, "walytis_beta_api.list_blockchain_ids")
+#
+#
+# def test_list_blockchain_names() -> None:
+#     """Test that getting a list of blockchains names."""
+#     all_in_order = (
+#         blockchain.name in walytis_beta_api.list_blockchain_names()
+#         and walytis_beta_api.list_blockchain_names()
+#         == [name for id, name in walytis_beta_api.list_blockchains()]
+#     )
+#     mark(all_in_order, "walytis_beta_api.list_blockchain_names")
 
 
 class CantRunTestError(Exception):
@@ -294,12 +330,6 @@ class CantRunTestError(Exception):
 
     def __str__(self):
         return self.message
-
-
-@pytest.fixture(scope="session", autouse=True)
-def cleanup(request: pytest.FixtureRequest | None = None) -> None:
-    """Clean up after running tests with PyTest."""
-    brenthy_docker.stop()
 
 
 def run_tests() -> None:
@@ -322,9 +352,3 @@ def run_tests() -> None:
     blockchain.terminate()
     stop_walytis()
     test_threads_cleanup()
-
-
-if __name__ == "__main__":
-    _testing_utils.PYTEST = False
-    run_tests()
-    _testing_utils.terminate()

@@ -2,33 +2,52 @@ import os
 from ipfs_tk_generics import IpfsClient
 from walytis_beta_tools.log import logger
 
+from enum import Enum
+from environs import Env
+env = Env()
 # initialise IPFS
 USE_IPFS_NODE = os.environ.get("USE_IPFS_NODE", "").lower() in ["true", "1"]
-IPFS_REPO_DIR = os.environ.get("IPFS_REPO_DIR", "")
-ipfs:IpfsClient
-# print("IPFS embedded node:", USE_IPFS_NODE)
-if USE_IPFS_NODE:
-    if IPFS_REPO_DIR:
-        if not os.path.exists(IPFS_REPO_DIR):
-            raise Exception(
-                "The path specified in the environment variable IPFS_REPO_DIR "
-                f"doesn't exist: {IPFS_REPO_DIR}"
-            )
-    else:
-        IPFS_REPO_DIR = os.path.abspath(os.path.join(".ipfs_repo"))
-        if not os.path.exists(IPFS_REPO_DIR):
-            os.makedirs(IPFS_REPO_DIR)
-        os.environ["IPFS_REPO_DIR"]=IPFS_REPO_DIR
-    print(f"IPFS repo: {IPFS_REPO_DIR}")
-    from ipfs_node import IpfsNode
+DEF_IPFS_REPO_DIR = os.path.abspath(os.path.join(".ipfs_repo"))
+IPFS_REPO_DIR = env.str("IPFS_REPO_DIR", DEF_IPFS_REPO_DIR)
+ipfs: IpfsClient
 
-    ipfs = IpfsNode(IPFS_REPO_DIR)
-else:
-    from ipfs_remote import IpfsRemote
-    ipfs = IpfsRemote("localhost:5001")
-    try:
-        ipfs.wait_till_ipfs_is_running(timeout_sec=5)
-    except TimeoutError:
-        logger.warning("IPFS isn't running. Waiting for IPFS to start...")
-        ipfs.wait_till_ipfs_is_running()
-        logger.warning("IPFS running now.")
+
+class IpfsTkModes(Enum):
+    EMBEDDED = "EMBEDDED"
+    HTTP = "HTTP"
+
+
+def get_ipfs_tk_mode() -> IpfsTkModes:
+    return env.enum(
+        "IPFS_TK_MODE",
+        enum=IpfsTkModes,
+        default=IpfsTkModes.HTTP,
+    )
+
+
+class WalytisTestModes(Enum):
+    EMBEDDED = "EMBEDDED"
+    USE_BRENTHY = "USE_BRENTHY"
+    RUN_BRENTHY = "RUN_BRENTHY"
+
+
+def get_walytis_test_mode() -> WalytisTestModes:
+    return env.enum(
+        "WALYTIS_TEST_MODE",
+        enum=WalytisTestModes,
+        default=WalytisTestModes.EMBEDDED,
+    )
+
+
+class WalytisBetaApiTypes(Enum):
+    WALYTIS_BETA_BRENTHY_API = 0
+    WALYTIS_BETA_DIRECT_API = 1
+
+
+def get_walytis_beta_api_type():
+
+    return env.enum(
+        "WALYTIS_BETA_API_TYPE",
+        enum=WalytisBetaApiTypes,
+        default=WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API,
+    )
