@@ -15,48 +15,104 @@ run the following commands to stop and remove the unterminated container:
     docker rm $(docker ps -aqf "name=^brenthy_test$")
 """
 
-from test_walytis_beta import (
-    stop_walytis,
-    test_add_block,
-    test_create_blockchain,
-    test_create_invitation,
-    test_delete_blockchain,
-    test_list_blockchain_ids,
-    test_list_blockchain_names,
-    test_list_blockchains,
-    test_list_blockchains_names_first,
-    test_run_walytis,
-    test_threads_cleanup,
-)
+# This import allows us to run this script with either pytest or python
+import _auto_run_with_pytest  # noqa
+import walytis_beta_embedded
+import pytest
+import shutil
+import os
+from emtest import await_thread_cleanup
+from testing_utils import shared_data
 
+import testing_utils
 NUMBER_OF_JOIN_ATTEMPTS = 10
+DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
+REBUILD_DOCKER = False
+# enable/disable breakpoints when checking intermediate test results
 
 # if you do not have any other important brenthy docker containers,
 # you can set this to true to automatically remove unpurged docker containers
 # after failed tests
 DELETE_ALL_BRENTHY_DOCKERS = True
+if True:
+    # import run
+    import run
+    run.TRY_INSTALL = False
+    import walytis_beta_api
+
+    # print("PWB")
 
 
-def run_tests() -> None:
-    """Run all tests."""
-    print("\nRunning quick tests for walytis_beta...")
-    test_run_walytis()
+@pytest.fixture(scope="module", autouse=True)
+def setup_and_teardown():
+    """Wrap around tests, running preparations and cleaning up afterwards.
 
-    test_create_blockchain()
-    test_add_block()
-    test_create_invitation()
+    A module-level fixture that runs once for all tests in this file.
+    """
+    # Setup: code here runs before tests that uses this fixture
+    print(f"\nRunning tests for {__name__}\n")
+    prepare()
 
-    test_list_blockchains()
-    test_list_blockchains_names_first()
-    test_list_blockchain_ids()
-    test_list_blockchain_names()
+    yield  # This separates setup from teardown
 
-    test_delete_blockchain()
-    stop_walytis()
-    test_threads_cleanup()
+    # Teardown: code here runs after the tests
+    print(f"\nFinished tests for {__name__}\n")
+    cleanup()
 
 
-if __name__ == "__main__":
-    run_tests()
+def prepare() -> None:
+    """Get everything needed to run the tests ready."""
+    false_id_path = os.path.join(
+        walytis_beta_embedded.get_walytis_appdata_dir(), "FALSE_BLOCKCHAIN_ID"
+    )
+    if os.path.exists(false_id_path):
+        shutil.rmtree(false_id_path)
 
-    _testing_utils.terminate()
+    testing_utils.run_walytis()
+
+    if "TestingWalytis" in walytis_beta_api.list_blockchain_names():
+        walytis_beta_api.delete_blockchain("TestingWalytis")
+    print("Finished preparations...")
+
+
+def cleanup(request: pytest.FixtureRequest | None = None) -> None:
+    """Clean up after running tests with PyTest."""
+    testing_utils.stop_walytis()
+
+
+def test_create_blockchain() -> None:
+    testing_utils.test_create_blockchain()
+
+
+def test_add_block() -> None:
+    testing_utils.test_add_block()
+
+
+def test_create_invitation() -> None:
+    testing_utils.test_create_invitation()
+
+
+def test_list_blockchains() -> None:
+    testing_utils.test_list_blockchains()
+
+
+def test_list_blockchains_names_first() -> None:
+    testing_utils.test_list_blockchains_names_first()
+
+
+def test_list_blockchain_ids() -> None:
+    testing_utils.test_list_blockchain_ids()
+
+
+def test_list_blockchain_names() -> None:
+    testing_utils.test_list_blockchain_names()
+
+
+def test_delete_blockchain() -> None:
+    testing_utils.test_delete_blockchain()
+
+
+def test_threads_cleanup() -> None:
+    shared_data.blockchain.terminate()
+    testing_utils.stop_walytis()
+    assert await_thread_cleanup(timeout=5)

@@ -5,3 +5,4 @@ ipfs_toolkit==0.6.0rc2
 ipfs_tk
 ipfs_node>=0.1.1
 brenthy_tools_beta
+environs

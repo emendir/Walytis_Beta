@@ -3,6 +3,8 @@
 Runs automatically when pytest runs a test before loading the test module.
 """
 from enum import Enum
+from dataclasses import dataclass
+from brenthy_docker.brenthy_docker import BrenthyDocker
 from environs import Env
 import pytest
 import os
@@ -62,3 +64,6 @@ if True:
     assert_is_loaded_from_source(SRC_DIR, walytis_beta_api)
     assert_is_loaded_from_source(SRC_DIR, walytis_beta_tools)
     walytis_beta_embedded.set_appdata_dir("./.blockchains")
+
+
+
