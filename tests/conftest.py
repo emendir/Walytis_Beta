@@ -9,7 +9,7 @@ from environs import Env
 import pytest
 import os
 
-from emtest import add_path_to_python, configure_pytest_reporter
+from emtest import add_path_to_python, configure_pytest_reporter, are_we_in_docker
 
 PRINT_ERRORS = True  # whether or not to print error messages after failed tests
 
@@ -41,7 +41,6 @@ def pytest_configure(config):
     configure_pytest_reporter(config, print_errors=PRINT_ERRORS)
 
 
-WE_ARE_IN_DOCKER = os.path.exists('/.dockerenv')
 
 
 
@@ -50,19 +49,16 @@ from walytis_beta_tools._experimental.config import WalytisTestModes, get_walyti
 
 if get_walytis_test_mode() == WalytisTestModes.EMBEDDED:
     os.environ["WALYTIS_BETA_API_TYPE"] = "WALYTIS_BETA_DIRECT_API"
-if WE_ARE_IN_DOCKER:
-    WALYTIS_TEST_MODE = WalytisTestModes.USE_BRENTHY
-# print("WALYTIS_TEST_MODE:", WALYTIS_TEST_MODE)
-# print("IPFS_TK_MODE:     ", IPFS_TK_MODE)
 if True:
     # ensure IPFS is initialised via Walytis_Beta.networking, not walytis_beta_api
     import walytis_beta_api
     import walytis_beta_embedded
     import walytis_beta_tools
     from emtest import assert_is_loaded_from_source
-    assert_is_loaded_from_source(EMBEDDED_DIR, walytis_beta_embedded)
-    assert_is_loaded_from_source(SRC_DIR, walytis_beta_api)
-    assert_is_loaded_from_source(SRC_DIR, walytis_beta_tools)
+    if not are_we_in_docker():
+        assert_is_loaded_from_source(EMBEDDED_DIR, walytis_beta_embedded)
+        assert_is_loaded_from_source(SRC_DIR, walytis_beta_api)
+        assert_is_loaded_from_source(SRC_DIR, walytis_beta_tools)
     walytis_beta_embedded.set_appdata_dir("./.blockchains")
 
 

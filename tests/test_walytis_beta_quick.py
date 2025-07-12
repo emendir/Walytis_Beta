@@ -44,7 +44,7 @@ if True:
 
 
 @pytest.fixture(scope="module", autouse=True)
-def setup_and_teardown():
+def setup_and_teardown() -> None:
     """Wrap around tests, running preparations and cleaning up afterwards.
 
     A module-level fixture that runs once for all tests in this file.
@@ -81,38 +81,47 @@ def cleanup(request: pytest.FixtureRequest | None = None) -> None:
 
 
 def test_create_blockchain() -> None:
+    """Test that we can create a Walytis blockchain."""
     testing_utils.test_create_blockchain()
 
 
 def test_add_block() -> None:
+    """Test that we can add a block to the blockchain."""
     testing_utils.test_add_block()
 
 
 def test_create_invitation() -> None:
+    """Test that we can create an invitation for the blockchain."""
     testing_utils.test_create_invitation()
 
 
 def test_list_blockchains() -> None:
+    """Test that getting a list of blockchains ids and names works."""
     testing_utils.test_list_blockchains()
 
 
 def test_list_blockchains_names_first() -> None:
+    """Test that getting a list of blockchains works with the names first."""
     testing_utils.test_list_blockchains_names_first()
 
 
 def test_list_blockchain_ids() -> None:
+    """Test that getting a list of blockchains ids."""
     testing_utils.test_list_blockchain_ids()
 
 
 def test_list_blockchain_names() -> None:
+    """Test that getting a list of blockchains names."""
     testing_utils.test_list_blockchain_names()
 
 
 def test_delete_blockchain() -> None:
+    """Test that we can delete a blockchain."""
     testing_utils.test_delete_blockchain()
 
 
 def test_threads_cleanup() -> None:
+    """Test that no threads are left running."""
     shared_data.blockchain.terminate()
     testing_utils.stop_walytis()
     assert await_thread_cleanup(timeout=5)

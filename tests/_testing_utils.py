@@ -21,9 +21,9 @@ sys.path.insert(0, EMBEDDED_DIR)
 BREAKPOINTS = False
 PYTEST = True  # whether or not this script is being run by pytest
 USING_BRENTHY = False  # overridden to True in docker container
-WE_ARE_IN_DOCKER=os.path.exists('/.dockerenv')
+are_we_in_docker()=os.path.exists('/.dockerenv')
 
-if WE_ARE_IN_DOCKER:
+if are_we_in_docker():
     USING_BRENTHY = True
 
 

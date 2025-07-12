@@ -17,12 +17,13 @@ run the following commands to stop and remove the unterminated container:
 
 import _auto_run_with_pytest  # noqa
 import testing_utils
+from emtest import await_thread_cleanup
 from emtest import polite_wait
+from walytis_beta_tools.exceptions import NoSuchBlockchainError
 from walytis_beta_tools._experimental.ipfs_interface import ipfs
 import pytest
 from testing_utils import run_walytis, stop_walytis
 import time
-import sys
 from brenthy_tools_beta import log
 import walytis_beta_api
 from walytis_beta_api import Block
@@ -30,7 +31,9 @@ from threading import Thread
 from testing_utils import shared_data
 from build_docker import build_docker_image
 from brenthy_docker import BrenthyDocker, delete_containers
-REBUILD_DOCKER = False
+from testing_utils import get_rebuild_docker
+REBUILD_DOCKER = False  # overriden by environment variable
+REBUILD_DOCKER = get_rebuild_docker(REBUILD_DOCKER)  # override if EnvVar set
 NUMBER_OF_FIND_ATTEMPTS = 10
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_onboarding"
@@ -53,20 +56,22 @@ if True:
 
 
 @pytest.fixture(scope="module", autouse=True)
-def setup_and_teardown():
+def setup_and_teardown() -> None:
     """Wrap around tests, running preparations and cleaning up afterwards.
 
     A module-level fixture that runs once for all tests in this file.
     """
     # Setup: code here runs before tests that uses this fixture
-    print(f"\nRunning tests for {__name__}\n")
+    print(f"\nRunning test preparations for {__name__}\n")
     prepare()
+    print(f"\nRunning tests for {__name__}\n")
 
     yield  # This separates setup from teardown
 
     # Teardown: code here runs after the tests
-    print(f"\nFinished tests for {__name__}\n")
+    print(f"\nCleaning up after tests for {__name__}\n")
     cleanup()
+    print(f"\nFinished tests for {__name__}\n")
 
 
 def prepare() -> None:
@@ -111,7 +116,8 @@ def get_docker_latest_block_content(
     """Get the content of the latest block on the specified container."""
     return docker_container.run_python_code(";".join([
         "import walytis_beta_api",
-        f"bc = walytis_beta_api.Blockchain('{shared_data.blockchain.blockchain_id}')",
+        f"bc = walytis_beta_api.Blockchain('{
+            shared_data.blockchain.blockchain_id}')",
         "print(bc.get_block(-1).content.decode())",
         "bc.terminate()"
     ]), print_output=False
@@ -254,14 +260,31 @@ def test_get_peers() -> None:
     assert peers_found, "get_peers"
 
 
+def test_threads_cleanup() -> None:
+    """Test that no threads are left running."""
+    blockchain = shared_data.blockchain
+    log.debug("test: deleting blockhain")
+    if blockchain:
+        blockchain.terminate()
+        try:
+            walytis_beta_api.delete_blockchain(blockchain.blockchain_id)
+        except NoSuchBlockchainError:
+            pass
+    stop_walytis()
+    assert await_thread_cleanup(), "Threads clean up"
+
+
 def cleanup() -> None:
-    """Test that all resources are cleaned up properly when shutting down."""
+    """Ensure all resources used by tests are cleaned up."""
     blockchain = shared_data.blockchain
     brenthy_dockers = shared_data.brenthy_dockers
     log.debug("test: deleting blockhain")
     if blockchain:
         blockchain.terminate()
-        walytis_beta_api.delete_blockchain(blockchain.blockchain_id)
+        try:
+            walytis_beta_api.delete_blockchain(blockchain.blockchain_id)
+        except NoSuchBlockchainError:
+            pass
     # Terminate Docker containers and our test brenthy instance in parallel
     termination_threads = []
     # start terminating docker containers
@@ -271,7 +294,6 @@ def cleanup() -> None:
         )
         termination_threads[-1].start()
     # terminate our own brenthy instance
-    stop_walytis()
     # wair till all docker containers are terminated
     for thread in termination_threads:
         thread.join()

@@ -16,20 +16,22 @@ run the following commands to stop and remove the unterminated container:
 """
 
 # This import allows us to run this script with either pytest or python
-import _auto_run_with_pytest  # noqa
-from conftest import BRENTHY_DIR
-import walytis_beta_embedded
-import pytest
-import shutil
 import os
-from emtest import await_thread_cleanup
-from walytis_beta_tools._experimental.ipfs_interface import ipfs
-from testing_utils import shared_data
+import shutil
 
+import _auto_run_with_pytest  # noqa
+import pytest
 import testing_utils
+import walytis_beta_embedded
+from conftest import BRENTHY_DIR
+from emtest import await_thread_cleanup
+from testing_utils import get_rebuild_docker, shared_data
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
+
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
-REBUILD_DOCKER = False
+REBUILD_DOCKER = False  # overriden by environment variable
+REBUILD_DOCKER = get_rebuild_docker(REBUILD_DOCKER)  # override if EnvVar set
 # enable/disable breakpoints when checking intermediate test results
 
 # if you do not have any other important brenthy docker containers,
@@ -50,7 +52,7 @@ if True:
 
 
 @pytest.fixture(scope="module", autouse=True)
-def setup_and_teardown():
+def setup_and_teardown() -> None:
     """Wrap around tests, running preparations and cleaning up afterwards.
 
     A module-level fixture that runs once for all tests in this file.
@@ -188,6 +190,7 @@ def test_delete_blockchain() -> None:
 
 
 def test_threads_cleanup() -> None:
+    """Test that no threads are left running."""
     shared_data.brenthy_dockers[0].stop()
     shared_data.blockchain.terminate()
     testing_utils.stop_walytis()

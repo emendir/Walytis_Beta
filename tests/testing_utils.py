@@ -1,14 +1,14 @@
-from dataclasses import dataclass
-from conftest import BRENTHY_DIR
-from walytis_beta_tools._experimental.config import get_walytis_test_mode, WalytisTestModes
-import walytis_beta_embedded
-import pytest
+from environs import Env
 import time
-import sys
-import shutil
-import os
-from emtest import await_thread_cleanup
-from walytis_beta_tools._experimental.ipfs_interface import ipfs
+from dataclasses import dataclass
+
+import pytest
+import walytis_beta_embedded
+from walytis_beta_tools._experimental.config import (
+    WalytisTestModes,
+    get_walytis_test_mode,
+)
+from emtest import are_we_in_docker
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
 REBUILD_DOCKER = False
@@ -20,36 +20,44 @@ REBUILD_DOCKER = False
 DELETE_ALL_BRENTHY_DOCKERS = True
 if True:
     # import run
-    import run
-    run.TRY_INSTALL = False
+    if not are_we_in_docker():
+        import run
+        run.TRY_INSTALL = False
     import walytis_beta_api
-    # print("PWB")
 
-    from brenthy_docker import BrenthyDocker, delete_containers
-    from build_docker import build_docker_image
+    # print("PWB")
+    if not are_we_in_docker():
+        from brenthy_docker import BrenthyDocker
     from walytis_beta_api import Block, Blockchain
 
     # walytis_beta_api.log.PRINT_DEBUG = True
 
-WALYTIS_TEST_MODE: WalytisTestModes
+
+env = Env()
+
+
+def get_rebuild_docker(default: bool):
+    return env.bool("REBUILD_DOCKER", default=default)
 
 
 @dataclass
 class SharedData:
     """Structure for storing objects created and shared between tests."""
+
     brenthy_dockers: list[BrenthyDocker]
     blockchain: Blockchain | None
     invitation: str | None
     created_block: Block | None
+    WALYTIS_TEST_MODE: WalytisTestModes | None
 
 
-shared_data = SharedData([], None, None, None)
+shared_data = SharedData([], None, None, None, None)
+
 
 def run_walytis() -> None:
     """Test that we can run Brenthy-Core."""
-    global WALYTIS_TEST_MODE
-    WALYTIS_TEST_MODE = get_walytis_test_mode()
-    match WALYTIS_TEST_MODE:
+    shared_data.WALYTIS_TEST_MODE = get_walytis_test_mode()
+    match shared_data.WALYTIS_TEST_MODE:
         case WalytisTestModes.RUN_BRENTHY:
             # run.log.set_print_level("important")
             print("Running Brenthy...")
@@ -60,20 +68,20 @@ def run_walytis() -> None:
             print("Running Walytis embedded.")
         case WalytisTestModes.USE_BRENTHY:
             pass
-        case _:
+        case 0:
             raise Exception("BUG in handling of WALYTIS_TEST_MODE!")
 
 
 def stop_walytis() -> None:
     """Stop Brenthy-Core."""
-    match WALYTIS_TEST_MODE:
+    match shared_data.WALYTIS_TEST_MODE:
         case WalytisTestModes.RUN_BRENTHY:
             run.stop_brenthy()
         case WalytisTestModes.EMBEDDED:
             walytis_beta_embedded.terminate()
         case WalytisTestModes.USE_BRENTHY:
             pass
-        case _:
+        case 0:
             raise Exception("BUG in handling of WALYTIS_TEST_MODE!")
 
 
@@ -82,6 +90,8 @@ def delete_blockchains() -> None:
     for bc_id in walytis_beta_api.list_blockchain_ids():
         if not bc_id == "BrenthyUpdates":
             walytis_beta_api.delete_blockchain(bc_id)
+
+
 def on_block_received(block: Block) -> None:
     """Eventhandler for newly created blocks on the test's blockchain."""
     global created_block
@@ -146,9 +156,8 @@ def test_delete_blockchain() -> None:
     assert success, "delete_blockchain"
 
 
-#
 def test_list_blockchains() -> None:
-    """test that getting a list of blockchains ids and names works."""
+    """Test that getting a list of blockchains ids and names works."""
     blockchain = shared_data.blockchain
     if not blockchain:
         pytest.skip("No blockchain created.")
@@ -163,7 +172,7 @@ def test_list_blockchains() -> None:
 
 
 def test_list_blockchains_names_first() -> None:
-    """test that getting a list of blockchains works with the names first."""
+    """Test that getting a list of blockchains works with the names first."""
     all_in_order = walytis_beta_api.list_blockchains(names_first=True) == [
         (name, id) for id, name in walytis_beta_api.list_blockchains()
     ]
@@ -171,7 +180,7 @@ def test_list_blockchains_names_first() -> None:
 
 
 def test_list_blockchain_ids() -> None:
-    """test that getting a list of blockchains ids."""
+    """Test that getting a list of blockchains ids."""
     blockchain = shared_data.blockchain
     if not blockchain:
         pytest.skip("No blockchain created.")
@@ -184,7 +193,7 @@ def test_list_blockchain_ids() -> None:
 
 
 def test_list_blockchain_names() -> None:
-    """test that getting a list of blockchains names."""
+    """Test that getting a list of blockchains names."""
     blockchain = shared_data.blockchain
     if not blockchain:
         pytest.skip("No blockchain created.")

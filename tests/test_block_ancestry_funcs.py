@@ -9,7 +9,9 @@ import os
 import sys
 from datetime import datetime
 
-from _testing_utils import mark
+import _auto_run_with_pytest  # noqa
+from emtest import await_thread_cleanup
+from walytis_beta_api import Block
 
 if True:
     brenthy_dir = os.path.join(
@@ -20,10 +22,10 @@ if True:
     from blockchains.Walytis_Beta.src.walytis_beta_api import (
         short_from_long_id,
     )
-    from walytis_beta_tools.block_model import Block
     from blockchains.Walytis_Beta.src.walytis_beta_tools.versions import (
         WALYTIS_BETA_CORE_VERSION,
     )
+    from walytis_beta_tools.block_model import Block
 
 
 class BlockchainModel:
@@ -92,17 +94,13 @@ def test_preparations() -> None:
     block1 = blockchain.add_block([block0.short_id])
     block2 = blockchain.add_block([block0.short_id, block1.short_id])
     block3 = blockchain.add_block([block1.short_id, block2.short_id])
-
     block4 = blockchain.add_block([block2.short_id, block3.short_id])
     block5 = blockchain.add_block([block0.short_id, block4.short_id])
-
     block6 = blockchain.add_block([block1.short_id, block2.short_id])
     block7 = blockchain.add_block([block0.short_id, block6.short_id])
 
     block8 = blockchain.add_block([block5.short_id, block7.short_id])
-def test_cleanup()->None:
-    # _testing_utils.terminate()
-    pass
+
 
 def test_unshared_ancestors() -> None:
     """Test that block_ancestry.list_unshared_ancestors works correctly."""
@@ -117,7 +115,7 @@ def test_unshared_ancestors() -> None:
     result.sort()
     expected_result.sort()
 
-    mark(result == expected_result, "list_unshared_ancestors")
+    assert result == expected_result, "list_unshared_ancestors"
 
 
 def test_remove_ancestors() -> None:
@@ -133,18 +131,9 @@ def test_remove_ancestors() -> None:
     expected_result.sort()
 
     result.sort()
-    mark(result == expected_result, "remove_ancestors")
-
-import _testing_utils
-def run_tests() -> None:
-    """Run all tests."""
-    print("\nRunning tests for Walytis' ancestry machinery...")
-    test_preparations()
-    test_unshared_ancestors()
-    test_remove_ancestors()
-    test_cleanup()
+    assert result == expected_result, "remove_ancestors"
 
 
-if __name__ == "__main__":
-    run_tests()
-    _testing_utils.terminate()
+def test_threads_cleanup() -> None:
+    """Test that no threads are left running."""
+    assert await_thread_cleanup(), "Threads clean up"
