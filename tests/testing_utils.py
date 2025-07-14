@@ -1,3 +1,4 @@
+from brenthy_tools_beta import brenthy_api
 from environs import Env
 import time
 from dataclasses import dataclass
@@ -37,7 +38,7 @@ env = Env()
 
 
 def get_rebuild_docker(default: bool):
-    return env.bool("REBUILD_DOCKER", default=default)
+    return env.bool("TESTS_REBUILD_DOCKER", default=default)
 
 
 @dataclass
@@ -54,6 +55,11 @@ class SharedData:
 shared_data = SharedData([], None, None, None, None)
 
 
+def assert_brenthy_online(timeout: int = 2) -> None:
+    """Check if Brenthy is reachable, raising an error if not."""
+    brenthy_api.get_brenthy_version(timeout=timeout)
+
+
 def run_walytis() -> None:
     """Test that we can run Brenthy-Core."""
     shared_data.WALYTIS_TEST_MODE = get_walytis_test_mode()
@@ -62,12 +68,14 @@ def run_walytis() -> None:
             # run.log.set_print_level("important")
             print("Running Brenthy...")
             run.run_brenthy()
+            assert_brenthy_online()
         case WalytisTestModes.EMBEDDED:
             print("Running Walytis embedded...")
             walytis_beta_embedded.run_blockchains()
             print("Running Walytis embedded.")
         case WalytisTestModes.USE_BRENTHY:
-            pass
+            print("Using Brenthy...")
+            assert_brenthy_online()
         case 0:
             raise Exception("BUG in handling of WALYTIS_TEST_MODE!")
 

@@ -566,8 +566,10 @@ class Blockchain(GenericBlockchain):
     def terminate(self) -> None:
         """Clean up all resources this object uses."""
         self._terminate = True
+        logger.debug("Terminating...")
         if self._blocks_listener:
             self._blocks_listener.terminate()
+        logger.debug("Terminated!")
 
     def __del__(self) -> None:
         """Clean up all resources this object uses."""

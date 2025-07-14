@@ -30,7 +30,7 @@ from walytis_beta_tools._experimental.ipfs_interface import ipfs
 
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
-REBUILD_DOCKER = False  # overriden by environment variable
+REBUILD_DOCKER = True  # overriden by environment variable
 REBUILD_DOCKER = get_rebuild_docker(REBUILD_DOCKER)  # override if EnvVar set
 # enable/disable breakpoints when checking intermediate test results
 
@@ -51,24 +51,24 @@ if True:
     # walytis_beta_api.log.PRINT_DEBUG = True
 
 
-@pytest.fixture(scope="module", autouse=True)
-def setup_and_teardown() -> None:
-    """Wrap around tests, running preparations and cleaning up afterwards.
+# @pytest.fixture(scope="module", autouse=True)
+# def setup_and_teardown() -> None:
+#     """Wrap around tests, running preparations and cleaning up afterwards.
+# 
+#     A module-level fixture that runs once for all tests in this file.
+#     """
+#     # Setup: code here runs before tests that uses this fixture
+#     print(f"\nRunning tests for {__name__}\n")
+#     prepare()
+# 
+#     yield  # This separates setup from teardown
+# 
+#     # Teardown: code here runs after the tests
+#     print(f"\nFinished tests for {__name__}\n")
+#     cleanup()
 
-    A module-level fixture that runs once for all tests in this file.
-    """
-    # Setup: code here runs before tests that uses this fixture
-    print(f"\nRunning tests for {__name__}\n")
-    prepare()
 
-    yield  # This separates setup from teardown
-
-    # Teardown: code here runs after the tests
-    print(f"\nFinished tests for {__name__}\n")
-    cleanup()
-
-
-def prepare() -> None:
+def test_preparations() -> None:
     """Get everything needed to run the tests ready."""
     if DELETE_ALL_BRENTHY_DOCKERS:
         delete_containers(image="local/brenthy_testing",
@@ -195,3 +195,4 @@ def test_threads_cleanup() -> None:
     shared_data.blockchain.terminate()
     testing_utils.stop_walytis()
     assert await_thread_cleanup(timeout=5)
+    cleanup()

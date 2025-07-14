@@ -28,10 +28,14 @@ console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(formatter)
 
 LOG_PATH = os.path.abspath(os.environ.get("WALYTIS_BETA_LOG_PATH", "Walytis_Beta.log"))
-# print(f"Walytis_Beta: Logging to {LOG_PATH}")
+if os.path.isdir(LOG_PATH):
+    LOG_PATH = os.path.join(LOG_PATH, "Walytis_Beta.log")
+if not os.path.exists(os.path.dirname(LOG_PATH)):
+    os.makedirs(LOG_PATH)
+print(f"Walytis_Beta: Logging to {LOG_PATH}")
 # File handler (DEBUG+ with rotation)
 file_handler = RotatingFileHandler(
-    'Walytis_Beta.log', maxBytes=5*1024*1024, backupCount=5
+    LOG_PATH, maxBytes=5*1024*1024, backupCount=5
 )
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
@@ -59,11 +63,11 @@ logger.setLevel(logging.DEBUG)
 
 logger_networking = logging.getLogger("Walytis.Networking")
 logger_api = logging.getLogger("Walytis.API")
-logger_block_creation = logging.getLogger("Walytis.BlockCreation")
-logger_block_processing = logging.getLogger("Walytis.BlockProcess")
-logger_block_records = logging.getLogger("Walytis.BlockRecords")
-logger_blockchain_model = logging.getLogger("Walytis.BlockchModel")
-logger_block_model = logging.getLogger("Walytis.BlockModel")
+logger_block_creation = logging.getLogger("Walytis.BlkCreation")
+logger_block_processing = logging.getLogger("Walytis.BlkProcess")
+logger_block_records = logging.getLogger("Walytis.BlkRecords")
+logger_blockchain_model = logging.getLogger("Walytis.BcnModel")
+logger_block_model = logging.getLogger("Walytis.BlkModel")
 logger_generics = logging.getLogger("Walytis.Generics")
 logger_ancestry = logging.getLogger("Walytis.Ancestry")
 logger_appdata = logging.getLogger("Walytis.Appdata")
