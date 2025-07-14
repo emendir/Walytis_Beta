@@ -309,6 +309,20 @@ class BlockRecords(ABC):
 
         return os.path.exists(block_datafilepath)
 
+    def is_block_cid_known(self, ipfs_cid: str) -> bool:
+        """Check if the given block ID exists in our block records.
+
+        This method is faster than find_block.
+
+        Args:
+            ipfs_cid (str): the IPFS CID of the block to lookup form
+        Returns:
+            bool found: whether or not the ID was found in the found
+        """
+        block_datafilepath = self.get_block_datafile_path_from_cid(ipfs_cid)
+
+        return os.path.exists(block_datafilepath)
+
     def get_cached_block(self, short_id: bytearray) -> bytearray | None:
         """Given a block's short ID, look up its long ID in our cache."""
         short_id = short_from_long_id(short_id)  # ensure it's a short ID
@@ -439,6 +453,9 @@ class BlockRecords(ABC):
         """Get the filepath of a block's block-file."""
         short_id = short_from_long_id(short_id)
         ipfs_cid = decode_short_id(short_id)["ipfs_cid"]
+        return self.get_block_datafile_path_from_cid(ipfs_cid)
+    def get_block_datafile_path_from_cid(self, ipfs_cid:str) -> str:
+        """Get the filepath of a block's block-file."""
         return os.path.join(self.received_blocks_dir, ipfs_cid[:4], ipfs_cid)
 
     def load_block(self, short_id: bytearray) -> Block | None:
@@ -449,6 +466,8 @@ class BlockRecords(ABC):
             return None
         self.block_record_initialised.wait()
         ipfs_cid = decode_short_id(short_id)["ipfs_cid"]
+        return self.load_block_from_cid(ipfs_cid)
+    def load_block_from_cid(self, ipfs_cid: str) -> Block | None:
         block_data = ipfs.files.read(ipfs_cid)
         block = self.read_block(block_data, ipfs_cid, live=False)
         return block

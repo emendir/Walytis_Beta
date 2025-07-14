@@ -350,7 +350,8 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                 self.current_endblocks = self.remove_ancestors(
                     self.current_endblocks + [block.short_id]
                 )
-        logger.info(f"{self.name}:  Finished adding new block to the blockchain.")
+        logger.info(
+            f"{self.name}:  Finished adding new block to the blockchain.")
 
         # DEBUG
         long_id = decode_long_id(block.long_id)
@@ -554,6 +555,21 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         """
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
+        if [
+            b
+            for b in self.unconfirmed_blocks
+            if b.ipfs_cid == ipfs_cid
+        ]:
+            logger.debug(
+                f"{self.name}:  read_block: this block is already in our "
+                "unconfirmed_blocks list "
+            )
+            return None
+        # if self.is_block_cid_known(ipfs_cid):
+        #     logger.debug(
+        #         f"{self.name}:  read_block: we already know this block."
+        #     )
+        #     return self.load_block_from_cid(ipfs_cid)
         logger.info(
             f"{self.name}:  read_block: Decoding block "
             f"{'(live)' if live else '(not live)'}"
@@ -982,7 +998,8 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                 conv.say("Don't recognise Invitation.".encode())
             conv.terminate()
         except Exception as e:
-            logger.error(f"on_join_request_received: Unhandled error {type(e)}: " + str(e))
+            logger.error(
+                f"on_join_request_received: Unhandled error {type(e)}: " + str(e))
             try:
                 conv.terminate()
             except:
@@ -1041,7 +1058,8 @@ def join_blockchain(
     blockchain_id = invitation_d["blockchain_id"]
 
     if blockchain_id in get_blockchain_ids():
-        logger.warning("Walytis_Beta.join_blockchain: Blockchain already exists")
+        logger.warning(
+            "Walytis_Beta.join_blockchain: Blockchain already exists")
         return get_blockchain(blockchain_id)
     peers = invitation_d["peers"]
     logger.info("Joining blockchain...")
@@ -1227,7 +1245,7 @@ def check_and_start_joined_blockchain(
         )
         if not genesis_block:
             logger.warning(
-                "Joining blockchain cancelled because it seems"
+                "Joining blockchain cancelled because it seems "
                 "corrupt: we couldn't find its genesis block. "
                 f"{blockchain_id}"
             )
@@ -1386,7 +1404,8 @@ def run_blockchains() -> None:
     logger.important("Running blockchains:")
     for blockchain_id in blockchain_ids:
         if get_blockchain(blockchain_id):
-            logger.important(f"run_blockchains: already loaded: {blockchain_id}")
+            logger.important(
+                f"run_blockchains: already loaded: {blockchain_id}")
             continue
         blockchain = Blockchain(id=blockchain_id, name="")
         logger.important(f" - {blockchain.name}")
