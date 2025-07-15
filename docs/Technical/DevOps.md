@@ -33,6 +33,12 @@ Brenthy/blockchains/install_walytis_beta.sh
 ### Running Tests
 
 In an appropriate testing environment as described above, ensure IPFS is running, then run the tests located in the `tests` folder with pytest.
+ 
+Build the base Brenthy docker container:
+```sh
+tests/brenthy_docker/brenthy_prereqs.sh
+```
+
 
 ```sh
 cd Brenthy/Brenthy/blockchains/Walytis_Beta/tests
