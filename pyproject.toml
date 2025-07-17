@@ -4,12 +4,11 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-dynamic = ["dependencies"]
 name = "walytis_beta"
 authors = [{ name = "Emendir" }]
-version = "0.1.2"
 description = "A flexible, lightweight, nonlinear database-blockchain. Built to be built upon."
 readme = {file = "ReadMe.md", content-type = "text/markdown"}
+dynamic = ["dependencies", "version"]
 
 [project.urls]
 # Homepage = "https://emendir.tech/Projects/Walytis"
@@ -20,6 +19,7 @@ IPFS = "https://ipfs.io/ipns/k2k4r8nismm5mmgrox2fci816xvj4l4cudnuc55gkfoealjuiae
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+version = {attr= "walytis_beta_tools.versions._WALYTIS_BETA_PACKAGE_VERSION"}
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -4,11 +4,11 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-dynamic = ["dependencies", "version"]
 name = "walytis_beta_api"
 authors = [{ name = "Emendir" }]
 description = "A library for interacting with Walytis, a flexible, lightweight, nonlinear database-blockchain. Built to be built upon."
 readme = {file = "ReadMe.md", content-type = "text/markdown"}
+dynamic = ["dependencies", "version"]
 
 [project.urls]
 # Homepage = "https://emendir.tech/Projects/Walytis"

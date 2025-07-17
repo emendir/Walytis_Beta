@@ -72,6 +72,7 @@ from walytis_beta_tools.versions import (
     WALYTIS_BETA_API_PROTOCOL_VERSION,
     WALYTIS_BETA_API_VERSION,
     WALYTIS_BETA_CORE_VERSION,
+    _WALYTIS_BETA_PACKAGE_VERSION,
 )
 
 from walytis_beta_tools._experimental.ipfs_interface import ipfs
