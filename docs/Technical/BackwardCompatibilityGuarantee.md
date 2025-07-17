@@ -32,7 +32,7 @@ Walytis was designed to enable an ecosystem of applications to flourish upon it.
 Walytis itself is built upon IPFS, which is built upon TCP/IP.
 
 To make it easier for other blockchains to be invented, Walytis compartmentalised all its OS-level IO into Brenthy.
-But not only does Walytis rely on Brenthy, Brenthy also relies on Walytis for its [automatic update system](./Update.md).
+But not only does Walytis rely on Brenthy, Brenthy also relies on Walytis for its [automatic update system](https://github.com/emendir/BrenthyAndWalytis/blob/master/Documentation/Brenthy/Technical/Update.md).
 What results is an ecosystem of interdependent components.
 When a user wants to install a simple application from this ecosystem, such as a decentralised messenger, they will have to install Walytis, Brenthy & IPFS first (all automated, one day!).
 

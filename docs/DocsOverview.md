@@ -8,9 +8,11 @@
 
 ## Technical
 
+- [BackwardCompatibilityGuarantee](Technical/BackwardCompatibilityGuarantee.md): 
 - [Block-Chaining](Technical/Block-Chaining.md): how blocks are chained in Walytis
 - [BlockchainBirth](Technical/BlockchainBirth.md): 
 - [Blocks](Technical/Blocks.md): blocks' components and how they work
+- [DevOps](Technical/DevOps.md): 
 - [Installation](Technical/Installation.md): how Walytis is installed
 - [Joining](Technical/Joining.md): the mechanisms behind nodes becoming new members of existing blockchains
 - [LeafBlockBroadcasts](Technical/LeafBlockBroadcasts.md): When a blockchain is quiet, how do members coming online get the blocks they've missed out on?
@@ -24,7 +26,7 @@
 ## Tutorials
 
 - [0-TutorialOverview](Tutorials/0-TutorialOverview.md): 
-- [1-GettingStarted](Tutorials/1-GettingStarted.md): 
+- [1-GettingStarte](Tutorials/1-GettingStarted.md): 
 - [2-JoiningBlockchains](Tutorials/2-JoiningBlockchains.md): 
 - [3-BuildingApplications](Tutorials/3-BuildingApplications.md): 
 - [4-PlayingAroun](Tutorials/4-PlayingAround.md): 
@@ -35,3 +37,8 @@
 - [Installing-walytis_api](User/Installing-walytis_api.md): how to install `walytis_api`
 - [InstallingWalytis](User/InstallingWalytis.md): how to install Walytis
 - [walytis_api-Overview](User/walytis_api-Overview.md): an overview of the functions and classes in the `walytis_api` library
+
+## documentation_validation
+
+- [ToDo_docs_val](documentation_validation/ToDo_docs_val.md): 
+
