@@ -56,18 +56,32 @@ N_STARTUP_BLOCKS = (
 # logger.set_print_level("info")
 
 
-walytis_beta_appdata_dir = os.path.join(appdirs.user_data_dir(), "BrenthyApps")
-def set_appdata_dir(appdata_dir: str):
+walytis_beta_appdata_dir = os.path.join(appdirs.user_data_dir(), "WalytisApps")
+
+def set_appdata_dir(appdata_dir: str) -> None:
     """Set the appdata directory for keeping track of apps' Walytis usage."""
     global walytis_beta_appdata_dir
     walytis_beta_appdata_dir = appdata_dir
     if not os.path.exists(walytis_beta_appdata_dir):
         os.makedirs(walytis_beta_appdata_dir)
 
-
-def get_walytis_appdata_dir():
+def get_appdata_dir() -> str:
     """Get the appdata directory for keeping track of apps' Walytis usage."""
     return walytis_beta_appdata_dir
+    
+# backward-compatibility with old path:
+_old_appdata_path = os.path.join(appdirs.user_data_dir(), "BrenthyApps")
+if os.path.exists(_old_appdata_path):
+    walytis_beta_appdata_dir = _old_appdata_path
+
+# backkward-compatibility with old function name
+def get_walytis_appdata_dir() -> str:
+    """Get the appdata directory for keeping track of apps' Walytis usage.
+    
+    Exactly the same as get_appdata_dir(), kept for backward-compatibility.
+    """
+    print("DEPRECATING: please use `get_appdata_dir()` instead.")
+    return get_appdata_dir()
 
 
 class Blockchain(GenericBlockchain):
@@ -201,7 +215,7 @@ class Blockchain(GenericBlockchain):
 
     def add_block(
         self, content: bytearray | bytes, topics: list[str] | str | None = None,
-        wait_until_handled:bool=True
+        wait_until_handled: bool = True
     ) -> Block:
         """Add a new block to this blockchain.
 
@@ -235,14 +249,13 @@ class Blockchain(GenericBlockchain):
         self._blocklist_lock.release()
         if wait_until_handled:
             self._on_new_block_received(block)
-            
+
             # wait for block received handler to finish for consistent behaviour
             while block.long_id not in self.get_block_ids():
                 sleep(0.1)
                 if self._terminate:
                     self._on_new_block_received(block, override_terminate=True)
                     break
-
 
         return block
 
@@ -378,9 +391,9 @@ class Blockchain(GenericBlockchain):
         block: Block,
         save_blocks_list: bool = True,
         already_locked: bool = False,
-        override_terminate:bool=False,
-        already_locked_block_received: bool=False,
-        
+        override_terminate: bool = False,
+        already_locked_block_received: bool = False,
+
     ) -> None:
         """Handle a newly received block.
 
@@ -437,6 +450,7 @@ class Blockchain(GenericBlockchain):
                 logger.error(f"WAPI: Blockchain._on_new_block_received: {e}")
         if not already_locked_block_received:
             self._block_received_handler_lock.release()
+
     def _update_blocks_list(
         self,
         block: Block,
