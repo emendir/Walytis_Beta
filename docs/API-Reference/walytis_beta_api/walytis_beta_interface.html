@@ -48,7 +48,7 @@ import os
 from .walytis_beta_generic_interface import BaseWalytisBetaInterface
 from datetime import datetime
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_api as logger
 
 from walytis_beta_tools.block_model import Block
 
@@ -74,7 +74,7 @@ WALYTIS_BETA = &#34;Walytis_Beta&#34;
 
 
 # --------------Settings ---------------------------
-log.PRINT_DEBUG = False
+# logger.PRINT_DEBUG = False
 
 
 
@@ -82,31 +82,9 @@ log.PRINT_DEBUG = False
 _waly: BaseWalytisBetaInterface
 
 
-class WalytisBetaApiTypes(Enum):
-    WALYTIS_BETA_BRENTHY_API = 0
-    WALYTIS_BETA_DIRECT_API = 1
+from walytis_beta_tools._experimental.config import WalytisBetaApiTypes, get_walytis_beta_api_type
 
-WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API.name
-_WALYTIS_BETA_API_TYPE = os.getenv(&#34;WALYTIS_BETA_API_TYPE&#34;)
-
-if not _WALYTIS_BETA_API_TYPE:
-    # if environment variable wasn&#39;t set, use default
-    WALYTIS_BETA_API_TYPE = WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API
-else:
-    type_match = None
-    for wapi_type in WalytisBetaApiTypes:
-        if _WALYTIS_BETA_API_TYPE == wapi_type.name:
-            type_match = wapi_type
-    if not type_match:
-        raise Exception(
-            &#34;Invalid value for environment variable WALYTIS_BETA_API_TYPE &#34;
-            f&#34;&#39;{_WALYTIS_BETA_API_TYPE}&#39;\n&#34;
-            f&#34;Valid values are: {[member.name for member in WalytisBetaApiTypes]}&#34;
-        )
-    WALYTIS_BETA_API_TYPE = type_match
-
-
-match WALYTIS_BETA_API_TYPE:
+match get_walytis_beta_api_type():
     case WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API:
         from .walytis_beta_brenthy_api import WalytisBetaNetApi
         _waly = WalytisBetaNetApi()
@@ -116,9 +94,9 @@ match WALYTIS_BETA_API_TYPE:
     case _:
         raise WalytisBugError(
             &#34;walytis_beta_interface: Didn&#39;t take into account how to process &#34;
-            f&#34;WALYTIS_BETA_API_TYPE {WALYTIS_BETA_API_TYPE}&#34;
+            f&#34;WALYTIS_BETA_API_TYPE {get_walytis_beta_api_type()}&#34;
         )
-log.info(WALYTIS_BETA_API_TYPE)
+logger.info(_waly)
 BlocksListener = _waly.BlocksListener
 
 
@@ -920,73 +898,6 @@ metadata and block content</dd>
 </dl>
 </section>
 <section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes"><code class="flex name class">
-<span>class <span class="ident">WalytisBetaApiTypes</span></span>
-<span>(</span><span>*args, **kwds)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Create a collection of name/value pairs.</p>
-<p>Example enumeration:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
-...     RED = 1
-...     BLUE = 2
-...     GREEN = 3
-</code></pre>
-<p>Access them by:</p>
-<ul>
-<li>attribute access:</li>
-</ul>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>Color.RED
-<Color.RED: 1></p>
-</blockquote>
-</blockquote>
-</blockquote>
-<ul>
-<li>value lookup:</li>
-</ul>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>Color(1)
-<Color.RED: 1></p>
-</blockquote>
-</blockquote>
-</blockquote>
-<ul>
-<li>name lookup:</li>
-</ul>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>Color['RED']
-<Color.RED: 1></p>
-</blockquote>
-</blockquote>
-</blockquote>
-<p>Enumerations can be iterated over, and know how many members they have:</p>
-<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
-3
-</code></pre>
-<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
-[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
-</code></pre>
-<p>Methods can be added to enumerations, and members can have their own
-attributes &ndash; see the documentation for details.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class WalytisBetaApiTypes(Enum):
-    WALYTIS_BETA_BRENTHY_API = 0
-    WALYTIS_BETA_DIRECT_API = 1</code></pre>
-</details>
-</dd>
-</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -1027,17 +938,6 @@ attributes &ndash; see the documentation for details.</p></div>
 <li><code><a title="walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version_string" href="#walytis_beta_api.walytis_beta_interface.get_walytis_beta_api_version_string">get_walytis_beta_api_version_string</a></code></li>
 <li><code><a title="walytis_beta_api.walytis_beta_interface.get_and_read_block" href="#walytis_beta_api.walytis_beta_interface.get_and_read_block">get_and_read_block</a></code></li>
 <li><code><a title="walytis_beta_api.walytis_beta_interface.read_block" href="#walytis_beta_api.walytis_beta_interface.read_block">read_block</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes" href="#walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes">WalytisBetaApiTypes</a></code></h4>
-<ul class="">
-<li><code><a title="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API" href="#walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_BRENTHY_API">WALYTIS_BETA_BRENTHY_API</a></code></li>
-<li><code><a title="walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_DIRECT_API" href="#walytis_beta_api.walytis_beta_interface.WalytisBetaApiTypes.WALYTIS_BETA_DIRECT_API">WALYTIS_BETA_DIRECT_API</a></code></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>

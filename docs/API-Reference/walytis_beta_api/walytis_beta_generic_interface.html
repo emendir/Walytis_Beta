@@ -94,7 +94,7 @@ from abc import ABC, abstractmethod, abstractproperty
 from datetime import datetime
 from typing import Callable, Type, TypeVar
 
-from brenthy_tools_beta import log
+from walytis_beta_tools.log import logger_generics  as logger
 
 from walytis_beta_tools.block_model import (
     Block,
@@ -150,15 +150,15 @@ class BaseBlocksListener(ABC):
         &#34;&#34;&#34;Handle new block messages, calling the user&#39;s eventhandler.&#34;&#34;&#34;
         # ensure event is relevant
         if f&#34;{self.blockchain_id}-NewBlocks&#34; not in event_topics:
-            # log.debug(
+            # logger.debug(
             #     f&#34;Discarding event with topics {event_topics} for &#34;
             #     f&#34;BlockListener for {self.blockchain_id}&#34;
             # )
             return
         block_id = string_to_bytes(data[&#34;block_id&#34;])
         block = self.get_block(block_id)
-        log.info(
-            &#34;Walytis_BetaAPI: BlocksListener: got block: &#34;
+        logger.info(
+            &#34; BlocksListener: got block: &#34;
             f&#34;{(self.topics, block.topics)}&#34;
         )
         try:
@@ -169,8 +169,8 @@ class BaseBlocksListener(ABC):
             ):
                 self.eventhandler(block)
         except Exception as error:
-            log.info(
-                &#34;Walytis_BetaAPI: BlocksListener: Error in eventhandler: &#34;
+            logger.info(
+                &#34; BlocksListener: Error in eventhandler: &#34;
                 f&#34;{type(error)} {error}&#34;
             )
 
@@ -256,7 +256,7 @@ class BaseWalytisBetaInterface(ABC):
             if name == blockchain_name:
                 return id
         error = NoSuchBlockchainError(blockchain_name=blockchain_name)
-        log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
         raise error
 
     @classmethod
@@ -281,7 +281,7 @@ class BaseWalytisBetaInterface(ABC):
         if blockchain_id in [name for id, name in blockchains]:
             return blockchain_id
         error = NoSuchBlockchainError(blockchain_id=blockchain_id)
-        log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
         raise error
 
     # --- Blockchain Lifecycle ---
@@ -340,7 +340,7 @@ class BaseWalytisBetaInterface(ABC):
                     Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
                     its identifier, not the blockchain_name.
         &#34;&#34;&#34;
-        log.debug(f&#34;WAPI: {function_name()}: Unpacking appdata...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Unpacking appdata...&#34;)
 
         import tempfile
 
@@ -349,7 +349,7 @@ class BaseWalytisBetaInterface(ABC):
         shutil.unpack_archive(
             os.path.abspath(blockchain_data_path), tempdir, &#34;zip&#34;
         )
-        log.debug(f&#34;WAPI: {function_name()}: Publishing on IPFS...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Publishing on IPFS...&#34;)
 
         # if the appdata is in the zip file&#39;s root directory
         if os.path.exists(os.path.join(tempdir, &#34;KnownBlocksIndex&#34;)):
@@ -364,10 +364,10 @@ class BaseWalytisBetaInterface(ABC):
                 &#34;The provided appdata zip file doesn&#39;t contain readable &#34;
                 &#34;blockchain appdata&#34;
             )
-            log.error(error_message)
+            logger.error(error_message)
             raise JoinFailureError(error_message=error_message)
         shutil.rmtree(tempdir)
-        log.debug(f&#34;WAPI: {function_name()}: Ready to join blockchain...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Ready to join blockchain...&#34;)
 
         return cls.join_blockchain_from_cid(blockchain_id, cid, blockchain_name)
 
@@ -708,15 +708,15 @@ when the blockchain gets a new block</dd>
         &#34;&#34;&#34;Handle new block messages, calling the user&#39;s eventhandler.&#34;&#34;&#34;
         # ensure event is relevant
         if f&#34;{self.blockchain_id}-NewBlocks&#34; not in event_topics:
-            # log.debug(
+            # logger.debug(
             #     f&#34;Discarding event with topics {event_topics} for &#34;
             #     f&#34;BlockListener for {self.blockchain_id}&#34;
             # )
             return
         block_id = string_to_bytes(data[&#34;block_id&#34;])
         block = self.get_block(block_id)
-        log.info(
-            &#34;Walytis_BetaAPI: BlocksListener: got block: &#34;
+        logger.info(
+            &#34; BlocksListener: got block: &#34;
             f&#34;{(self.topics, block.topics)}&#34;
         )
         try:
@@ -727,8 +727,8 @@ when the blockchain gets a new block</dd>
             ):
                 self.eventhandler(block)
         except Exception as error:
-            log.info(
-                &#34;Walytis_BetaAPI: BlocksListener: Error in eventhandler: &#34;
+            logger.info(
+                &#34; BlocksListener: Error in eventhandler: &#34;
                 f&#34;{type(error)} {error}&#34;
             )
 
@@ -893,7 +893,7 @@ inheritance.</p></div>
             if name == blockchain_name:
                 return id
         error = NoSuchBlockchainError(blockchain_name=blockchain_name)
-        log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
         raise error
 
     @classmethod
@@ -918,7 +918,7 @@ inheritance.</p></div>
         if blockchain_id in [name for id, name in blockchains]:
             return blockchain_id
         error = NoSuchBlockchainError(blockchain_id=blockchain_id)
-        log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
         raise error
 
     # --- Blockchain Lifecycle ---
@@ -977,7 +977,7 @@ inheritance.</p></div>
                     Applications should use a blockchain&#39;s ID (attribute &#39;id&#39;) as
                     its identifier, not the blockchain_name.
         &#34;&#34;&#34;
-        log.debug(f&#34;WAPI: {function_name()}: Unpacking appdata...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Unpacking appdata...&#34;)
 
         import tempfile
 
@@ -986,7 +986,7 @@ inheritance.</p></div>
         shutil.unpack_archive(
             os.path.abspath(blockchain_data_path), tempdir, &#34;zip&#34;
         )
-        log.debug(f&#34;WAPI: {function_name()}: Publishing on IPFS...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Publishing on IPFS...&#34;)
 
         # if the appdata is in the zip file&#39;s root directory
         if os.path.exists(os.path.join(tempdir, &#34;KnownBlocksIndex&#34;)):
@@ -1001,10 +1001,10 @@ inheritance.</p></div>
                 &#34;The provided appdata zip file doesn&#39;t contain readable &#34;
                 &#34;blockchain appdata&#34;
             )
-            log.error(error_message)
+            logger.error(error_message)
             raise JoinFailureError(error_message=error_message)
         shutil.rmtree(tempdir)
-        log.debug(f&#34;WAPI: {function_name()}: Ready to join blockchain...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Ready to join blockchain...&#34;)
 
         return cls.join_blockchain_from_cid(blockchain_id, cid, blockchain_name)
 

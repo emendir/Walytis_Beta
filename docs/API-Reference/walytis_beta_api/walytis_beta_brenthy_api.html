@@ -44,15 +44,13 @@ which is in turn intended for use by the Walytis_Beta API user.
 &#34;&#34;&#34;
 
 from __future__ import annotations
-from typing import TypeVar, Type
-import json
-import os
-import shutil
-from datetime import datetime
-from typing import Callable
+from walytis_beta_tools.log import logger_api as logger
 
-from walytis_beta_tools._experimental.ipfs_interface import ipfs
-from brenthy_tools_beta import brenthy_api, log
+import json
+from datetime import datetime
+from typing import Callable, Type
+
+from brenthy_tools_beta import brenthy_api
 from brenthy_tools_beta.utils import (
     bytes_to_string,
     decode_timestamp,
@@ -64,13 +62,12 @@ from brenthy_tools_beta.utils import (
 from brenthy_tools_beta.version_utils import (
     decode_version,
     encode_version,
-    version_to_string,
 )
-
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
 from walytis_beta_tools.block_model import (
     Block,
     decode_short_id,  # pylint: disable=unused-import
-    short_from_long_id
+    short_from_long_id,
 )
 from walytis_beta_tools.exceptions import (
     BlockchainAlreadyExistsError,
@@ -88,15 +85,17 @@ from walytis_beta_tools.versions import (
 )
 
 from .walytis_beta_generic_interface import (
-    BaseWalytisBetaInterface, BaseBlocksListener, classproperty
+    BaseBlocksListener,
+    BaseWalytisBetaInterface,
+    classproperty,
 )
+
 # storing this blockchain&#39;s name so that we don&#39;t missspell it
 WALYTIS_BETA = &#34;Walytis_Beta&#34;
 
 
 # --------------Settings ---------------------------
-log.PRINT_DEBUG = False
-
+# logger.PRINT_DEBUG = False
 
 NO_SUCH_BLOCKCHAIN_MESSAGE = &#34;no such blockchain&#34;
 NO_SUCH_INVITATION_MESSAGE = &#34;no such join-key&#34;
@@ -129,7 +128,7 @@ class _NetBlocksListener(BaseBlocksListener):
             topics (list): the name of the topic to receive blocks from
         &#34;&#34;&#34;
         blockchain_id = WalytisBetaNetApi.get_blockchain_id(blockchain_id)
-        log.info(f&#34;Walytis_BetaAPI: BlocksListener: {blockchain_id}&#34;)
+        logger.info(f&#34; BlocksListener: {blockchain_id}&#34;)
         self._blockchain_id = blockchain_id
         self._eventhandler = eventhandler
         if isinstance(topics, str):
@@ -143,18 +142,21 @@ class _NetBlocksListener(BaseBlocksListener):
             &#34;Walytis_Beta&#34;, self._bap_event_received,
             f&#34;{blockchain_id}-NewBlocks&#34;
         )
-    def _bap_event_received(self, data: dict,topic:str) -&gt; None:
-        self._on_event_received(data,set([topic]))
+
+    def _bap_event_received(self, data: dict, topic: str) -&gt; None:
+        self._on_event_received(data, set([topic]))
 
     def get_block(self, block_id: bytearray) -&gt; Block:
         return WalytisBetaNetApi.get_block(self.blockchain_id, block_id)
+
     @property
-    def topics(self)-&gt;set[str]:
+    def topics(self) -&gt; set[str]:
         return self._topics
-    
+
     @property
-    def blockchain_id(self)-&gt;str:
+    def blockchain_id(self) -&gt; str:
         return self._blockchain_id
+
     @property
     def eventhandler(self) -&gt; Callable[[Block], None]:
         return self._eventhandler
@@ -197,7 +199,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             # handle unexpected response type
             if not isinstance(response, list):
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
 
             if names_first:
@@ -208,7 +210,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
 
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     # --- Blockchain Lifecycle ---
@@ -237,11 +239,11 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             success = response[&#34;success&#34;]
         except Exception:
             error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if not success:
             error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         blockchain_id = response[&#34;blockchain_id&#34;]
@@ -272,7 +274,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
                 &#34;The parameter invitation must be of type str or dict,&#34;
                 + f&#34; not {type(invitation)}&#34;
             )
-        # log.debug(f&#34;WAPI: {function_name()}: &#34;)
+        # logger.debug(f&#34;WAPI: {function_name()}: &#34;)
         # invitation is now of type dict
         blockchain_id = invitation[&#34;blockchain_id&#34;]
 
@@ -280,14 +282,14 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
 
         if blockchain_id in [id for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if blockchain_name in [name for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(
                 blockchain_name=blockchain_name)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
-        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
 
         response = json.loads(
             cls._send_request(
@@ -300,7 +302,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
                 ).encode(),
             ).decode()
         )
-        log.debug(f&#34;WAPI: {function_name()}: Got response!&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Got response!&#34;)
 
         if response[&#34;success&#34;]:
             return blockchain_id
@@ -309,7 +311,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             if &#34;error&#34; in response.keys():
                 error = response[&#34;error&#34;]
             error = JoinFailureError(error_message=error)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
     @classmethod
@@ -333,12 +335,12 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
 
         if blockchain_id in [id for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if blockchain_name in [name for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(
                 blockchain_name=blockchain_name)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         request = json.dumps(
@@ -348,10 +350,10 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
                 &#34;blockchain_data_cid&#34;: blockchain_data_cid,
             }
         ).encode()
-        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
 
         _response = cls._send_request(&#34;join_blockchain_from_cid&#34;, request)
-        log.debug(f&#34;WAPI: {function_name()}: Got Response!&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Got Response!&#34;)
 
         try:
             response = json.loads(_response.decode())
@@ -360,7 +362,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             _error = cls._read_appcomterm_error_message(
                 response, default_error=JoinFailureError()
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
         if not success:
             raise JoinFailureError
@@ -383,11 +385,11 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             success = response[&#34;success&#34;]
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
         if not success:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -409,7 +411,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
         if not (isinstance(content, (bytearray, bytes))):
             error = ValueError(
                 &#34;Block content must be of type bytes or bytearray.&#34;)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         if isinstance(topics, str):
@@ -434,7 +436,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
         # if the blockchain says it failed to build the block
         if not response.get(&#34;success&#34;):
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
         block = cls.get_and_read_block(
@@ -458,21 +460,21 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             error = ValueError(
                 f&#34;The parameters can&#39;t be empty\n{blockchain_id}\n{block_id}&#34;
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if not isinstance(blockchain_id, str):
             error_message = (
-                &#34;Walytis_BetaAPI: get_block: parameter blockchain_id must be of &#34;
+                &#34; get_block: parameter blockchain_id must be of &#34;
                 f&#34;type str, not {type(blockchain_id)}&#34;
             )
-            log.error(error_message)
+            logger.error(error_message)
             raise TypeError(error_message)
         if not (isinstance(block_id, (bytearray, bytes))):
             error_message = (
-                &#34;Walytis_BetaAPI: get_block: parameter block_id must &#34;
+                &#34; get_block: parameter block_id must &#34;
                 f&#34;be of type bytearray or bytes, not {type(block_id)}&#34;
             )
-            log.error(error_message)
+            logger.error(error_message)
             raise TypeError(error_message)
         response = {}
         payload = json.dumps(
@@ -487,7 +489,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             _error = cls._read_appcomterm_error_message(
                 response, default_error=BlockNotFoundError()
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
         block = cls.get_and_read_block(
@@ -519,7 +521,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
         # Reading response from Brenthy
         if not response.get(&#34;success&#34;):
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
         return response[&#34;is known&#34;]
 
@@ -586,7 +588,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             return block_ids
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -611,7 +613,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
         except Exception:
             pass
         _error = cls._read_appcomterm_error_message(response)
-        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
         raise _error
 
     @classmethod
@@ -636,7 +638,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
         except Exception:
             pass
         _error = cls._read_appcomterm_error_message(response)
-        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
         raise _error
 
     @classmethod
@@ -672,7 +674,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             return response[&#34;invitation&#34;]
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -700,12 +702,12 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
                 return response[&#34;invitations&#34;]
             else:
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
 
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -728,11 +730,11 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             response = json.loads(_response.decode())
             if not response[&#34;success&#34;]:
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -756,14 +758,14 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
                 and (response.get(&#34;walytis_beta_core_version&#34;), list)
             ):
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
 
             return tuple(response[&#34;walytis_beta_core_version&#34;])
 
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -790,12 +792,12 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             block_data = ipfs.files.read(ipfs_cid)
         except Exception:
             error = BlockNotFoundError()
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         try:
             block = cls.read_block(block_data, ipfs_cid)
         except Exception as error:
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         while short_id[-1] == 0:
             short_id = short_id[:-1]
@@ -807,7 +809,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
             )
 
             exception = BlockIntegrityError(error_message)
-            log.error(f&#34;WAPI: {function_name()}: {error_message}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {error_message}&#34;)
             raise exception
         return block
 
@@ -829,14 +831,14 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
         blockfile_header = data[:content_separator].split(
             bytearray([0, 0, 0, 0]))
         metadata = blockfile_header[0].split(bytearray([0, 0]))
-        # log.important(data)
-        # log.important(blockfile_header)
-        # log.important(metadata)
+        # logger.important(data)
+        # logger.important(blockfile_header)
+        # logger.important(metadata)
         if len(blockfile_header) &gt; 1:
             parents = blockfile_header[1].split(bytearray([0, 0, 0]))
         else:
             parents = []
-            # log.important(&#34;Genesis block&#34;)
+            # logger.important(&#34;Genesis block&#34;)
         # content sits between metadata and block_hash
         content = data[content_separator + 5:]
 
@@ -880,7 +882,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
                 &#34;The received block had an incorrect hash. The block is &#34;
                 &#34;considered corrupt or fraudulently manipulated.&#34;
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         return block
@@ -923,7 +925,7 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
                     return WalytisReplyDecodeError(reply=str(data))
         if default_error:
             return default_error
-        log.error(str(WalytisReplyDecodeError(reply=str(data))))
+        logger.error(str(WalytisReplyDecodeError(reply=str(data))))
         return WalytisReplyDecodeError(reply=str(data))
 
     @classmethod
@@ -954,7 +956,8 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
     @classmethod
     def _get_block_long_from_short_id(cls, blockchain_id: str, short_id: bytearray):
         &#34;&#34;&#34;This function is needed for BACKWARDS COMPATIBILITY with older versions
-        of Walytis_Beta Core.&#34;&#34;&#34;
+        of Walytis_Beta Core.
+        &#34;&#34;&#34;
         return cls.get_block(blockchain_id, short_id).long_id</code></pre>
 </details>
 </section>
@@ -1005,7 +1008,7 @@ inheritance.</p></div>
             # handle unexpected response type
             if not isinstance(response, list):
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
 
             if names_first:
@@ -1016,7 +1019,7 @@ inheritance.</p></div>
 
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     # --- Blockchain Lifecycle ---
@@ -1045,11 +1048,11 @@ inheritance.</p></div>
             success = response[&#34;success&#34;]
         except Exception:
             error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if not success:
             error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         blockchain_id = response[&#34;blockchain_id&#34;]
@@ -1080,7 +1083,7 @@ inheritance.</p></div>
                 &#34;The parameter invitation must be of type str or dict,&#34;
                 + f&#34; not {type(invitation)}&#34;
             )
-        # log.debug(f&#34;WAPI: {function_name()}: &#34;)
+        # logger.debug(f&#34;WAPI: {function_name()}: &#34;)
         # invitation is now of type dict
         blockchain_id = invitation[&#34;blockchain_id&#34;]
 
@@ -1088,14 +1091,14 @@ inheritance.</p></div>
 
         if blockchain_id in [id for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if blockchain_name in [name for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(
                 blockchain_name=blockchain_name)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
-        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
 
         response = json.loads(
             cls._send_request(
@@ -1108,7 +1111,7 @@ inheritance.</p></div>
                 ).encode(),
             ).decode()
         )
-        log.debug(f&#34;WAPI: {function_name()}: Got response!&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Got response!&#34;)
 
         if response[&#34;success&#34;]:
             return blockchain_id
@@ -1117,7 +1120,7 @@ inheritance.</p></div>
             if &#34;error&#34; in response.keys():
                 error = response[&#34;error&#34;]
             error = JoinFailureError(error_message=error)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
     @classmethod
@@ -1141,12 +1144,12 @@ inheritance.</p></div>
 
         if blockchain_id in [id for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(blockchain_id=blockchain_id)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if blockchain_name in [name for id, name in blockchains]:
             error = BlockchainAlreadyExistsError(
                 blockchain_name=blockchain_name)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         request = json.dumps(
@@ -1156,10 +1159,10 @@ inheritance.</p></div>
                 &#34;blockchain_data_cid&#34;: blockchain_data_cid,
             }
         ).encode()
-        log.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Making request...&#34;)
 
         _response = cls._send_request(&#34;join_blockchain_from_cid&#34;, request)
-        log.debug(f&#34;WAPI: {function_name()}: Got Response!&#34;)
+        logger.debug(f&#34;WAPI: {function_name()}: Got Response!&#34;)
 
         try:
             response = json.loads(_response.decode())
@@ -1168,7 +1171,7 @@ inheritance.</p></div>
             _error = cls._read_appcomterm_error_message(
                 response, default_error=JoinFailureError()
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
         if not success:
             raise JoinFailureError
@@ -1191,11 +1194,11 @@ inheritance.</p></div>
             success = response[&#34;success&#34;]
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
         if not success:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -1217,7 +1220,7 @@ inheritance.</p></div>
         if not (isinstance(content, (bytearray, bytes))):
             error = ValueError(
                 &#34;Block content must be of type bytes or bytearray.&#34;)
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         if isinstance(topics, str):
@@ -1242,7 +1245,7 @@ inheritance.</p></div>
         # if the blockchain says it failed to build the block
         if not response.get(&#34;success&#34;):
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
         block = cls.get_and_read_block(
@@ -1266,21 +1269,21 @@ inheritance.</p></div>
             error = ValueError(
                 f&#34;The parameters can&#39;t be empty\n{blockchain_id}\n{block_id}&#34;
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         if not isinstance(blockchain_id, str):
             error_message = (
-                &#34;Walytis_BetaAPI: get_block: parameter blockchain_id must be of &#34;
+                &#34; get_block: parameter blockchain_id must be of &#34;
                 f&#34;type str, not {type(blockchain_id)}&#34;
             )
-            log.error(error_message)
+            logger.error(error_message)
             raise TypeError(error_message)
         if not (isinstance(block_id, (bytearray, bytes))):
             error_message = (
-                &#34;Walytis_BetaAPI: get_block: parameter block_id must &#34;
+                &#34; get_block: parameter block_id must &#34;
                 f&#34;be of type bytearray or bytes, not {type(block_id)}&#34;
             )
-            log.error(error_message)
+            logger.error(error_message)
             raise TypeError(error_message)
         response = {}
         payload = json.dumps(
@@ -1295,7 +1298,7 @@ inheritance.</p></div>
             _error = cls._read_appcomterm_error_message(
                 response, default_error=BlockNotFoundError()
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
         block = cls.get_and_read_block(
@@ -1327,7 +1330,7 @@ inheritance.</p></div>
         # Reading response from Brenthy
         if not response.get(&#34;success&#34;):
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
         return response[&#34;is known&#34;]
 
@@ -1394,7 +1397,7 @@ inheritance.</p></div>
             return block_ids
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -1419,7 +1422,7 @@ inheritance.</p></div>
         except Exception:
             pass
         _error = cls._read_appcomterm_error_message(response)
-        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
         raise _error
 
     @classmethod
@@ -1444,7 +1447,7 @@ inheritance.</p></div>
         except Exception:
             pass
         _error = cls._read_appcomterm_error_message(response)
-        log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+        logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
         raise _error
 
     @classmethod
@@ -1480,7 +1483,7 @@ inheritance.</p></div>
             return response[&#34;invitation&#34;]
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -1508,12 +1511,12 @@ inheritance.</p></div>
                 return response[&#34;invitations&#34;]
             else:
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
 
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -1536,11 +1539,11 @@ inheritance.</p></div>
             response = json.loads(_response.decode())
             if not response[&#34;success&#34;]:
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -1564,14 +1567,14 @@ inheritance.</p></div>
                 and (response.get(&#34;walytis_beta_core_version&#34;), list)
             ):
                 _error = cls._read_appcomterm_error_message(response)
-                log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+                logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
                 raise _error
 
             return tuple(response[&#34;walytis_beta_core_version&#34;])
 
         except Exception:
             _error = cls._read_appcomterm_error_message(response)
-            log.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(_error)}&#34;)
             raise _error
 
     @classmethod
@@ -1598,12 +1601,12 @@ inheritance.</p></div>
             block_data = ipfs.files.read(ipfs_cid)
         except Exception:
             error = BlockNotFoundError()
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         try:
             block = cls.read_block(block_data, ipfs_cid)
         except Exception as error:
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
         while short_id[-1] == 0:
             short_id = short_id[:-1]
@@ -1615,7 +1618,7 @@ inheritance.</p></div>
             )
 
             exception = BlockIntegrityError(error_message)
-            log.error(f&#34;WAPI: {function_name()}: {error_message}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {error_message}&#34;)
             raise exception
         return block
 
@@ -1637,14 +1640,14 @@ inheritance.</p></div>
         blockfile_header = data[:content_separator].split(
             bytearray([0, 0, 0, 0]))
         metadata = blockfile_header[0].split(bytearray([0, 0]))
-        # log.important(data)
-        # log.important(blockfile_header)
-        # log.important(metadata)
+        # logger.important(data)
+        # logger.important(blockfile_header)
+        # logger.important(metadata)
         if len(blockfile_header) &gt; 1:
             parents = blockfile_header[1].split(bytearray([0, 0, 0]))
         else:
             parents = []
-            # log.important(&#34;Genesis block&#34;)
+            # logger.important(&#34;Genesis block&#34;)
         # content sits between metadata and block_hash
         content = data[content_separator + 5:]
 
@@ -1688,7 +1691,7 @@ inheritance.</p></div>
                 &#34;The received block had an incorrect hash. The block is &#34;
                 &#34;considered corrupt or fraudulently manipulated.&#34;
             )
-            log.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
+            logger.error(f&#34;WAPI: {function_name()}: {str(error)}&#34;)
             raise error
 
         return block
@@ -1731,7 +1734,7 @@ inheritance.</p></div>
                     return WalytisReplyDecodeError(reply=str(data))
         if default_error:
             return default_error
-        log.error(str(WalytisReplyDecodeError(reply=str(data))))
+        logger.error(str(WalytisReplyDecodeError(reply=str(data))))
         return WalytisReplyDecodeError(reply=str(data))
 
     @classmethod
@@ -1762,7 +1765,8 @@ inheritance.</p></div>
     @classmethod
     def _get_block_long_from_short_id(cls, blockchain_id: str, short_id: bytearray):
         &#34;&#34;&#34;This function is needed for BACKWARDS COMPATIBILITY with older versions
-        of Walytis_Beta Core.&#34;&#34;&#34;
+        of Walytis_Beta Core.
+        &#34;&#34;&#34;
         return cls.get_block(blockchain_id, short_id).long_id</code></pre>
 </details>
 <h3>Inherited members</h3>
