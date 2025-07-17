@@ -1,4 +1,8 @@
-"""DEPRECATING: The fundamental machinery constituting Blocks."""
+"""The fundamental machinery constituting Blocks.
+
+See `walytis_beta_tools.block_model`
+"""
+
 
 import hashlib
 from copy import deepcopy
