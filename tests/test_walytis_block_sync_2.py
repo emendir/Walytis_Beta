@@ -27,7 +27,7 @@ REBUILD_DOCKER = get_rebuild_docker(REBUILD_DOCKER)  # override if EnvVar set
 # you can set this to true to automatically remove unpurged docker containers
 # after failed tests
 DELETE_ALL_BRENTHY_DOCKERS = True
-SYNC_DUR = 50
+SYNC_DUR = 55
 
 
 class SharedData:

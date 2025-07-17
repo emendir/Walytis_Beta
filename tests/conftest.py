@@ -2,10 +2,6 @@
 
 Runs automatically when pytest runs a test before loading the test module.
 """
-from walytis_beta_tools._experimental.config import (
-    WalytisTestModes,
-    get_walytis_test_mode,
-)
 import os
 
 import pytest
@@ -43,10 +39,14 @@ def pytest_configure(config):
     configure_pytest_reporter(config, print_errors=PRINT_ERRORS)
 
 
-if get_walytis_test_mode() == WalytisTestModes.EMBEDDED:
-    os.environ["WALYTIS_BETA_API_TYPE"] = "WALYTIS_BETA_DIRECT_API"
 if True:
     # ensure IPFS is initialised via Walytis_Beta.networking, not walytis_beta_api
+    from walytis_beta_tools._experimental.config import (
+        WalytisTestModes,
+        get_walytis_test_mode,
+    )
+    if get_walytis_test_mode() == WalytisTestModes.EMBEDDED:
+        os.environ["WALYTIS_BETA_API_TYPE"] = "WALYTIS_BETA_DIRECT_API"
     import walytis_beta_api
     import walytis_beta_embedded
     import walytis_beta_tools
