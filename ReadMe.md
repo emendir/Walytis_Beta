@@ -1,10 +1,11 @@
-![](/graphics/WalytisIcon.png)
+![](./graphics/WalytisIcon.png)
 
 
 
-# [Walytis](/docs/Meaning/IntroductionToWalytis.md)
 
-**_A flexible, lightweight, nonlinear database-blockchain. Built to be built upon._**
+# [Walytis](https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/Meaning/IntroductionToWalytis.md)
+
+**_A flexible, lightweight, nonlinear blockchain, serving as a p2p distributed database._**
 _`4D61646520776974682073696E63657265206C6F766520666F72206D616E6B696E642E`_
 
 Walytis is a database-blockchain, a type of blockchain that is nothing more than a fully distributed database-management system, with a focus on accessibility, flexibility and lightweightedness, when compared to other blockchains.
@@ -21,6 +22,7 @@ While they can always add new data to it, existing data can never be deleted or 
   
 - [Identity Management](https://github.com/emendir/WalytisIdentities): One data-base blockchain is used for every identity, publishing [DID-documents](https://www.w3.org/TR/did-1.0/) as blocks, cryptographically authenticated
   
+To learn about projects built on Walytis under active development, see https://github.com/emendir/WalytisTechnologies
 
 ### Blockchain Overlays
 
@@ -28,8 +30,8 @@ The features of Walytis blockchains can be expanded by building modules on top o
 Currently under development are tools for off-chain and encrypted data storage, authentication, access-control, identity-management and mutable data structures are built in a modular way so that application developers can choose which extra features they need for their use case. These modules can be compounded to combine their features.
 
 
-Learn about Walytis here: [Introduction to Walytis](/docs/Meaning/IntroductionToWalytis.md)  
-Learn why Walytis was developed: [Walytis' Rationale](/docs/Meaning/WalytisRationale.md)  
+Learn about Walytis here: [Introduction to Walytis](https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/Meaning/IntroductionToWalytis.md)
+Learn why Walytis was developed: [Walytis' Rationale](https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/Meaning/WalytisRationale.md)
 
 
 ## Getting Started
@@ -82,20 +84,19 @@ blockchain = waly.Blockchain.create("MyFirstBlockchain")
 block = blockchain.add_block("Hello there!".encode())
 ```
 
-Read the [Tutorial](/docs/Tutorials/0-TutorialOverview.md) to learn how to use Walytis, and start building cool stuff!
+Read the [Tutorial](https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/Tutorials/0-TutorialOverview.md) to learn how to use Walytis, and start building cool stuff!
 
 ## Documentation
 
-The above sections already contain some links to relevant parts of Brenthy & Walytis' documentation.
-It is still a work in progress, but already covers most aspects.
-Dive into the full documentation here: [Documentation Overview](/docs/DocsOverview.md)
+Walytis' documentation lives in a dedicated repository:
+- https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/DocsOverview.md
 
 ## Contributing
 
 ### Analysis and Review
 
-If you have any thoughts on Brenthy & Walytis or want to discuss the sensibility of their unique features, feel free to share them under GitHub discussions.
-I would especially appreciate reviews and analyses of [Walytis' blockchain-architecture security](/docs/Technical/WalytisBlockchainSecurity.md).
+If you have any thoughts on Walytis or want to discuss the sensibility of their unique features, feel free to share them under GitHub discussions.
+I would especially appreciate reviews and analyses of [Walytis' blockchain-architecture security](https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/Technical/WalytisBlockchainSecurity.md).
 
 ### Software Development
 
@@ -105,16 +106,29 @@ Despite the documentation on Brenthy & Walytis' DevOps not being written yet, fe
 
 If you don't have the time to learn how to contribute code directly, feel free to request features or report bugs via GitHub Issues.
 
-### Documentation Improvement
-
-#TODO
-%% GitHub wiki? %%
-
 ### Financial Support
 
-To financially support me in my work on this and other projects, you can make donations with the following currencies (more methods coming soon):
+To financially support me in my work on this and other projects, you can make donations with the following currencies:
 
 - **Bitcoin:** `BC1Q45QEE6YTNGRC5TSZ42ZL3MWV8798ZEF70H2DG0`
 - **Ethereum:** `0xA32C3bBC2106C986317f202B3aa8eBc3063323D4`
-- [**Fiat** (Credit or Debit Card, Apple Pay, Google Pay, Revolut Pay)](https://checkout.revolut.com/pay/4e4d24de-26cf-4e7d-9e84-ede89ec67f32)
+- [**Fiat** (via Credit or Debit Card, Apple Pay, Google Pay, Revolut Pay)](https://checkout.revolut.com/pay/4e4d24de-26cf-4e7d-9e84-ede89ec67f32)
 
+
+### About the Developer
+
+Walytis and the derived technologies listed here are developed by me, a human, publishing my open-source works under the name of _Emendir_. 
+
+## Related Projects
+### The Endra Tech Stack
+
+- [IPFS](https://ipfs.tech):  A p2p communication and content addressing protocol developed by ProtocolLabs.
+- [Walytis](https://github.com/emendir/Walytis_Beta): A flexible, lightweight, nonlinear database-blockchain, built on IPFS.
+- [WalytisIdentities](https://github.com/emendir/WalytisIdentities): P2P multi-controller cryptographic identity management, built on Walytis.
+- [WalytisOffchain](https://github.com/emendir/WalytisOffchain): Secure access-controlled database-blockchain, built on WalytisIdentities.
+- [WalytisMutability](https://github.com/emendir/WalytisMutability): A Walytis blockchain overlay featuring block mutability.
+- [Endra](https://github.com/emendir/Endra): A p2p encrypted messaging protocol with multiple devices per user, built on Walytis.
+- [EndraApp](https://github.com/emendir/EndraApp): A p2p encrypted messenger supporting multiple devices per user, built on Walytis.
+
+### Alternative Technologies
+- OrbitDB: a distributed IPFS-based database written in go
