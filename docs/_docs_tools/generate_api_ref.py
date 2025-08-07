@@ -36,3 +36,15 @@ for module_name in modules.keys():
 
     print(command)
     os.system(command)
+
+
+# Merge API reference docs
+shutil.move(
+    os.path.join(docs_path, "walytis_beta_tools", "block_model.html"),
+    os.path.join(docs_path, "walytis_beta_api", "block_model.html"),
+)
+shutil.move(
+    os.path.join(docs_path, "walytis_beta_tools", "exceptions.html"),
+    os.path.join(docs_path, "walytis_beta_api", "exceptions.html"),
+)
+shutil.rmtree(os.path.join(docs_path, "walytis_beta_tools"))

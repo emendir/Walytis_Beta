@@ -36,7 +36,7 @@ Learn why Walytis was developed: [Walytis' Rationale](https://github.com/emendir
 
 ## Getting Started
 
-### Install or Run from Source
+### 1. Install or Run from Source
 
 Install Walytis to run on your system as a background service using [Brenthy](https://github.com/emendir/BrenthyAndWalytis/):
 
@@ -68,7 +68,7 @@ For details on how to run Brenthy & Walytis, see [Running From Source](https://g
 
 For details on how to install Brenthy & Walytis, see [Installing Brenthy](https://github.com/emendir/BrenthyAndWalytis/blob/master/Documentation/Brenthy/User/InstallingBrenthy.md)
 
-### Use Walytis
+### 2. Use Walytis
 
 1. Install the `walytis_beta_api` Python package:
 
@@ -80,16 +80,41 @@ pip install walytis_beta_api
 
 ```python
 import walytis_beta_api as waly
+
+# create a database
 blockchain = waly.Blockchain.create("MyFirstBlockchain")
-block = blockchain.add_block("Hello there!".encode())
+
+# add data to the database
+block = blockchain.add_block(content="Hello there!".encode(), topics=["testing"])
+
+invitation = blockchain.create_invitation()
+print(invitation)
+```
+
+On another computer, join the newly created blockchain:
+```python
+invitation = # paste invitation from above
+
+import walytis_beta_api as waly
+
+# join the database created on the first computer
+blockchain = waly.Blockchain.join(invitation)
+
+# read newest block from the database
+block = blockchain.get_block(-1)
+print(block.content)
+print(block.creation_time)
+print(block.topics)
 ```
 
 Read the [Tutorial](https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/Tutorials/0-TutorialOverview.md) to learn how to use Walytis, and start building cool stuff!
 
 ## Documentation
 
-Walytis' documentation lives in a dedicated repository:
+To learn how Walytis works, read its documentation, which lives in a dedicated repository:
 - https://github.com/emendir/WalytisTechnologies/blob/master/Walytis/DocsOverview.md
+
+For notes on how to use the python API, see the [walytis_beta_api library's API reference](./docs/API-Reference/walytis_beta_api/index.html).
 
 ## Contributing
 
@@ -131,4 +156,5 @@ Walytis and the derived technologies listed here are developed by me, a human, p
 - [EndraApp](https://github.com/emendir/EndraApp): A p2p encrypted messenger supporting multiple devices per user, built on Walytis.
 
 ### Alternative Technologies
-- OrbitDB: a distributed IPFS-based database written in go
+
+- [OrbitDB](https://orbitdb.org/): a distributed IPFS-based database written in go
