@@ -1,0 +1,893 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+        <title>walytis_beta_api.walytis_beta_generic_interface module - walytis_beta 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="README.html"><div class="brand">walytis_beta 0.0.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="README.html">
+  
+  <span class="sidebar-brand-text">walytis_beta 0.0.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="walytis_beta_api.blockchain_model.html">walytis_beta_api.blockchain_model module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="walytis_beta_api.walytis_beta_interface.html">walytis_beta_api.walytis_beta_interface module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="walytis_beta_tools.block_model.html">walytis_beta_tools.block_model module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="walytis_beta_tools.exceptions.html">walytis_beta_tools.exceptions module</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/walytis_beta_api.walytis_beta_generic_interface.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-walytis_beta_api.walytis_beta_generic_interface">
+<span id="walytis-beta-api-walytis-beta-generic-interface-module"></span><h1>walytis_beta_api.walytis_beta_generic_interface module<a class="headerlink" href="#module-walytis_beta_api.walytis_beta_generic_interface" title="Link to this heading">¶</a></h1>
+<p>The machinery for communicating with Brenthy Core.</p>
+<p>It contains functions that are a direct part of Walytis_Beta API and intended
+for use by the Walytis_Beta API user (e.g. the create_blockchain() function),
+but also functions that are used only by higher-level WalytisAPI constructs
+such as BlocksListener class, which is not intended for use by the Walytis API
+user, but is used by the blockchain_model.Blockchain class instead,
+which is in turn intended for use by the Walytis_Beta API user.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta_api.walytis_beta_generic_interface.</span></span><span class="sig-name descname"><span class="pre">BaseBlocksListener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eventhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseBlocksListener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Listen for a blockchain’s new block events.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.blockchain_id">
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blockchain_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.blockchain_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.event_listener">
+<span class="sig-name descname"><span class="pre">event_listener</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.event_listener" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.eventhandler">
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eventhandler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.eventhandler" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.get_block">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseBlocksListener.get_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.get_block" title="Link to this definition">¶</a></dt>
+<dd><p>Get a block from the specified blokchain given its block ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain from which to get
+the block</p></li>
+<li><p><strong>block_id</strong> (<em>str</em>) – the id of the block</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the Block object for the requested block</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="walytis_beta.block_networking.html#walytis_beta.block_networking.Block" title="walytis_beta.block_networking.Block">Block</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.terminate">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseBlocksListener.terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.terminate" title="Link to this definition">¶</a></dt>
+<dd><p>Clean up all resources used by this object.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.topics">
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">topics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.topics" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta_api.walytis_beta_generic_interface.</span></span><span class="sig-name descname"><span class="pre">BaseWalytisBetaInterface</span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.BlocksListener">
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlocksListener</span></span><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.BlocksListener" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_block">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.create_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_block" title="Link to this definition">¶</a></dt>
+<dd><p>Create a block with the given content on the specified blockchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to create a block</p></li>
+<li><p><strong>content</strong> (<em>bytearray</em>) – the content to store on the blockchain</p></li>
+<li><p><strong>topics</strong> (<em>list</em>) – user’s metadata to encode in the block’s ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the newly created block</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="walytis_beta.block_networking.html#walytis_beta.block_networking.Block" title="walytis_beta.block_networking.Block">Block</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_blockchain">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_blockchain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.create_blockchain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_blockchain" title="Link to this definition">¶</a></dt>
+<dd><p>Create and run a new blockchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blockchain_name</strong> (<em>str</em>) – blockchain’s local name: a human-readable label
+to ease recognition when manually interacting with Walytis_API.
+Note: A blockchain’s name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain’s ID (attribute ‘id’) as
+its identifier, not the blockchain_name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ID of the created blockchain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_invitation">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_invitation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shared</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.create_invitation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_invitation" title="Link to this definition">¶</a></dt>
+<dd><p>Create a code which other nodes can use to join this blockchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to create a
+invitation for</p></li>
+<li><p><strong>one_time</strong> (<em>bool</em>) – (optional, default True) whether this code is valid
+only for one use only instead of being reusable</p></li>
+<li><p><strong>shared</strong> (<em>bool</em>) – whether this invitation should be hosted by other
+nodes who join this blockchain too, or just by this one</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>an invitation code that can be used by other computers to join</dt><dd><p>this blockchain</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_blockchain">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_blockchain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.delete_blockchain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_blockchain" title="Link to this definition">¶</a></dt>
+<dd><p>Delete the blockchain with the given id or name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to delete</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_invitation">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_invitation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invitation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.delete_invitation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_invitation" title="Link to this definition">¶</a></dt>
+<dd><p>Delete an invitation from the specified blockchain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to delete an
+invitation from</p></li>
+<li><p><strong>invitation</strong> (<em>str</em>) – the invitation to delete</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_and_read_block">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_and_read_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_and_read_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_and_read_block" title="Link to this definition">¶</a></dt>
+<dd><p>Given a block’s ID, download and verify it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>short_id</strong> (<em>str</em>) – the ID of the block to get</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>an object representing the specified block, containing all its</dt><dd><p>metadata and block content</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="walytis_beta.block_networking.html#walytis_beta.block_networking.Block" title="walytis_beta.block_networking.Block">Block</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_block">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_block" title="Link to this definition">¶</a></dt>
+<dd><p>Get a block from the specified blokchain given its block ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain from which to get
+the block</p></li>
+<li><p><strong>block_id</strong> (<em>str</em>) – the id of the block</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the Block object for the requested block</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="walytis_beta.block_networking.html#walytis_beta.block_networking.Block" title="walytis_beta.block_networking.Block">Block</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_data">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_blockchain_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_blockchain_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_data" title="Link to this definition">¶</a></dt>
+<dd><p>Create a zip file of all this blockchain’s data, returning its path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to zip</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the path of the zip file created</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_id">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_blockchain_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_blockchain_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_id" title="Link to this definition">¶</a></dt>
+<dd><p>Given a blockchain’s name, returns its ID.</p>
+<p>If a blockchain’s ID is given, it returns the ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blockchain_name</strong> (<em>str</em>) – the name of the blockchain to look up</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the ID of the blockchain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_name">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_blockchain_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_blockchain_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_name" title="Link to this definition">¶</a></dt>
+<dd><p>Given a blockchain’s id, returns its name.</p>
+<p>If a blockchain’s name is given, it returns the name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blockchain_id</strong> (<em>str</em>) – the id of the blockchain to look up</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the name of the blockchain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_invitations">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_invitations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_invitations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_invitations" title="Link to this definition">¶</a></dt>
+<dd><p>Get the specified blockchain’s active invitations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain whose invitations
+to look up</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the invitations of this blockchain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_latest_blocks">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_latest_blocks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_ids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_latest_blocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_latest_blocks" title="Link to this definition">¶</a></dt>
+<dd><p>Get the latest few blocks on the blockchain.</p>
+<p>The amount of which is determined by the paramters.
+The blocks are returned in order of reception or creation date (CHECK!)
+from most recent to oldest.
+One of the paramaters amount or since_date must be set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to look up</p></li>
+<li><p><strong>amount</strong> (<em>int</em>) – how many blocks should be returned</p></li>
+<li><p><strong>since_date</strong> (<em>datetime</em>) – the maximum age of the blocks to look for.
+This function will return several even older blocks,
+some of which may have been received after the specified date</p></li>
+<li><p><strong>topics</strong> (<em>list</em>) – the topics to filter by, returning only
+blocks published on those topics, if this paramater is set.
+If not set, this function returns all blocks within the range
+of the first two parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of IDs of the latest few blocks</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_peers">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_peers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_peers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_peers" title="Link to this definition">¶</a></dt>
+<dd><p>Get a list of IPFS IDs of the given blockchain’s currently online nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to look up</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the IPFS IDs of the blockchain’s currently online nodes</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_walytis_beta_api_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_walytis_beta_api_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version" title="Link to this definition">¶</a></dt>
+<dd><p>Get the software version of the this walytis_beta_api library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the software version of the this walytis_beta_api library</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version_string">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_walytis_beta_api_version_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_walytis_beta_api_version_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version_string" title="Link to this definition">¶</a></dt>
+<dd><p>Get the software version of the this walytis_beta_api library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the software version of the this walytis_beta_api library</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_walytis_beta_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_walytis_beta_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version" title="Link to this definition">¶</a></dt>
+<dd><p>Get the software version of the locally running Walytis node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the software version of the locally running Walytis_Beta node</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version_string">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_walytis_beta_version_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.get_walytis_beta_version_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version_string" title="Link to this definition">¶</a></dt>
+<dd><p>Get the software version of the locally running Walytis_Beta node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the software version of the locally running Walytis_Beta node</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.is_block_known">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_block_known</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.is_block_known"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.is_block_known" title="Link to this definition">¶</a></dt>
+<dd><p>Check whether or not the specified blockchain has the given block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the id or name of the blockchain to which the
+block to look up belongs</p></li>
+<li><p><strong>block_id</strong> (<em>bytearray</em>) – the block ID to look up in the block ID records</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Whether the block is a known block</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">join_blockchain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invitation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockchain_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.join_blockchain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain" title="Link to this definition">¶</a></dt>
+<dd><p>Join a blockchain using an invitation generated by a blockchain node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>invitation</strong> (<em>str</em>) – the invitation generated by a blockchain member</p></li>
+<li><p><strong>blockchain_name</strong> (<em>str</em>) – blockchain’s local name: a human-readable label
+to ease recognition when manually interacting with WalytisAPI.
+Note: A blockchain’s name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain’s ID (attribute ‘id’) as
+its identifier, not the blockchain_name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the ID of the joined blockchain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_cid">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">join_blockchain_from_cid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockchain_data_cid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockchain_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.join_blockchain_from_cid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_cid" title="Link to this definition">¶</a></dt>
+<dd><p>Join an existing live blockchain, given the IPFS CID of its appdata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the name of the blockchain</p></li>
+<li><p><strong>blockchain_data_cid</strong> (<em>str</em>) – IPFS CID of the zip file containing the
+blockchain’s data</p></li>
+<li><p><strong>blockchain_name</strong> (<em>str</em>) – blockchain’s local name: a human-readable label
+to ease recognition when manually interacting with WalytisAPI.
+Note: A blockchain’s name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain’s ID (attribute ‘id’) as
+its identifier, not the blockchain_name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_zip">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">join_blockchain_from_zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockchain_data_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockchain_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.join_blockchain_from_zip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_zip" title="Link to this definition">¶</a></dt>
+<dd><p>Join an existing live blockchain, given a zip file of all its data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain_id</strong> (<em>str</em>) – the name of the blockchain</p></li>
+<li><p><strong>blockchain_data_path</strong> (<em>str</em>) – path of the zip file containing the
+blockchain’s data</p></li>
+<li><p><strong>blockchain_name</strong> (<em>str</em>) – blockchain’s local name: a human-readable label
+to ease recognition when manually interacting with WalytisAPI.
+Note: A blockchain’s name only exists in the scope of a single
+node, meaning it is not guaranteed to be globally unique.
+Applications should use a blockchain’s ID (attribute ‘id’) as
+its identifier, not the blockchain_name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_ids">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_blockchain_ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.list_blockchain_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Get the ids of all the blockchains we have.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of the names of all the Walytis_Beta blockchains we have.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_names">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_blockchain_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.list_blockchain_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_names" title="Link to this definition">¶</a></dt>
+<dd><p>Get the names of all the blockchains we have.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of the names of all the Walytis_Beta blockchains we have.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchains">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_blockchains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names_first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.list_blockchains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchains" title="Link to this definition">¶</a></dt>
+<dd><p>Get the IDs names of all the blockchains we have.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names_first</strong> – determines the order of the the tuple contents in the
+return value. See Returns.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of tuples of the names and IDs of all the Walytis_Beta</dt><dd><p>blockchains we have. Tuples are (id, name) by default,
+but (name, id) if names_first == True</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.read_block">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ipfs_cid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a></span></span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#BaseWalytisBetaInterface.read_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.read_block" title="Link to this definition">¶</a></dt>
+<dd><p>Read a block-file, generating a block object if it’s valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>block_data</strong> (<em>bytearray</em>) – the raw data of the block to read.</p></li>
+<li><p><strong>ipfs_cid</strong> (<em>str</em>) – the IPFS content ID of the block</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a Block object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="walytis_beta.block_networking.html#walytis_beta.block_networking.Block" title="walytis_beta.block_networking.Block">Block</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="walytis_beta_api.walytis_beta_generic_interface.classproperty">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta_api.walytis_beta_generic_interface.</span></span><span class="sig-name descname"><span class="pre">classproperty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">R</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/walytis_beta_api/walytis_beta_generic_interface.html#classproperty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta_api.walytis_beta_generic_interface.classproperty" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">R</span></code>]</p>
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">walytis_beta_api.walytis_beta_generic_interface module</a><ul>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener"><code class="docutils literal notranslate"><span class="pre">BaseBlocksListener</span></code></a><ul>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.blockchain_id"><code class="docutils literal notranslate"><span class="pre">BaseBlocksListener.blockchain_id</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.event_listener"><code class="docutils literal notranslate"><span class="pre">BaseBlocksListener.event_listener</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.eventhandler"><code class="docutils literal notranslate"><span class="pre">BaseBlocksListener.eventhandler</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.get_block"><code class="docutils literal notranslate"><span class="pre">BaseBlocksListener.get_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.terminate"><code class="docutils literal notranslate"><span class="pre">BaseBlocksListener.terminate()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseBlocksListener.topics"><code class="docutils literal notranslate"><span class="pre">BaseBlocksListener.topics</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface</span></code></a><ul>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.BlocksListener"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.BlocksListener</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_block"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.create_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_blockchain"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.create_blockchain()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.create_invitation"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.create_invitation()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_blockchain"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.delete_blockchain()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.delete_invitation"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.delete_invitation()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_and_read_block"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_and_read_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_block"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_data"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_blockchain_data()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_id"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_blockchain_id()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_blockchain_name"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_blockchain_name()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_invitations"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_invitations()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_latest_blocks"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_latest_blocks()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_peers"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_peers()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_walytis_beta_api_version()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_api_version_string"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_walytis_beta_api_version_string()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_walytis_beta_version()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.get_walytis_beta_version_string"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.get_walytis_beta_version_string()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.is_block_known"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.is_block_known()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.join_blockchain()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_cid"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.join_blockchain_from_cid()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.join_blockchain_from_zip"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.join_blockchain_from_zip()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_ids"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.list_blockchain_ids()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchain_names"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.list_blockchain_names()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.list_blockchains"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.list_blockchains()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.BaseWalytisBetaInterface.read_block"><code class="docutils literal notranslate"><span class="pre">BaseWalytisBetaInterface.read_block()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#walytis_beta_api.walytis_beta_generic_interface.classproperty"><code class="docutils literal notranslate"><span class="pre">classproperty</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=7026087e"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

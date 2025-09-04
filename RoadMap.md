@@ -48,9 +48,10 @@ _preparing for release_
 
 - [x] separate Brenthy & Walytis into different repos
 - [ ] develop library for embedding Walytis in application
-  - [x] working prototype
-  - [ ] stable release
-  - [ ] documentation
+	- [x] working prototype
+	- [ ] stable release
+	- [ ] documentation
+	- [ ] tutorials
 - [ ] develop full Brenthy installers for Windows, MacOS and non-systemd linux
 - [ ] develop new features:
   - [x] WalytisAPI block queries
