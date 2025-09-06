@@ -10,4 +10,4 @@ cd $SCRIPT_DIR
 source ${SCRIPT_DIR}/paths.sh
 
 sphinx-apidoc -o $API_REF_TEMPLATE -e $SRC_DIR
-sphinx-build -b html $API_REF_TEMPLATE ../API-Reference
+sphinx-build -b html $API_REF_TEMPLATE $OUTPUT_API

@@ -9,6 +9,6 @@ Most of Walytis' documentation lives in a dedicated repository:
 
 ## API Reference
 
-You can find [the walytis_beta_api library's API reference here](./API-Reference/walytis_beta_api/index.html).
+You can find [the walytis_beta_api library's API reference here](/docs/API-Reference/README.html).
 
 

@@ -60,7 +60,8 @@ clean: ## Remove items from CLEANUP section in .gitignore
 		| grep -v '^[[:space:]]*$$' > $$tmpfile; \
 	git ls-files --ignored --exclude-from=$$tmpfile --others --directory -z \
 		| xargs -0 rm -rf; \
-	rm $$tmpfile
+	rm $$tmpfile; \
+	$(MAKE) -C docs/_docs_tools clean
 
 # install: build ## Install built wheel into environment
 # 	$(PIP) install $(DIST_DIR)/*.whl
@@ -73,6 +74,11 @@ clean: ## Remove items from CLEANUP section in .gitignore
 docs: ## Build Sphinx documentation
 	$(MAKE) -C docs/_docs_tools all
 
+.PHONY: hanuki
+
+hanuki: ## Open project in web-browser
+	@cid=$$(ipfs add -rHq . | tail -n 1 | xargs ipfs cid base32); \
+			brave-browser "http://$$cid.ipfs.localhost:8080"
 # # ----------------------------
 # # Release Helpers
 # # ----------------------------

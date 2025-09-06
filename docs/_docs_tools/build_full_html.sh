@@ -24,6 +24,6 @@ done
 cp -r $SPHINX_CONF_DIR/* "$BUILD_DIR"
 
 ## Generate Docs
-sphinx-build -b html $BUILD_DIR $OUTPUT_DIR
+sphinx-build -b html $BUILD_DIR $OUTPUT_FULL
 
 rm -r $BUILD_DIR
