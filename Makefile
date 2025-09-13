@@ -20,7 +20,7 @@ all: check build ## Run checks and build the package
 # Dependency Management
 # ----------------------------
 .PHONY: deps
-deps: ## Install dependencies from requirements.txt
+deps: ## Install dependencies
 	$(PIP) install -r requirements.txt
 
 # ----------------------------
@@ -28,19 +28,19 @@ deps: ## Install dependencies from requirements.txt
 # ----------------------------
 .PHONY: test lint typecheck format check coverage
 
-test: ## Run test suite with pytest
-	$(PYTHON) -m pytest -v tests
-
-# lint: ## Lint code with ruff
+# lint: ## Lint code
 # 	ruff check src tests
 #
-# typecheck: ## Type-check with mypy
+# typecheck: ## Type-check
 # 	mypy src tests
 
-format: ## Autoformat code with ruff
+format: ## Autoformat code
 	ruff format src tests
 
 # check: lint typecheck test ## Run lint, typecheck, and test
+
+test: ## Run test suite
+	$(PYTHON) -m pytest -v tests
 
 coverage: ## Run tests with coverage report
 	$(PYTHON) -m pytest --cov=src --cov-report=term-missing
@@ -48,9 +48,9 @@ coverage: ## Run tests with coverage report
 # ----------------------------
 # Build & Packaging
 # ----------------------------
-.PHONY: build clean install
+.PHONY: build clean clean-preview install
 
-build: clean ## Build distribution package
+build: clean deps ## Build distribution package
 	$(PYTHON) -m build
 
 clean: ## Remove items from CLEANUP section in .gitignore
@@ -63,7 +63,15 @@ clean: ## Remove items from CLEANUP section in .gitignore
 	rm $$tmpfile; \
 	$(MAKE) -C docs/_docs_tools clean
 
-# install: build ## Install built wheel into environment
+clean-preview: ## Show what would be deleted by the `clean` target
+	@tmpfile=$$(mktemp); \
+	sed -n '/# >>> CLEANUP/,/# <<< CLEANUP/p' .gitignore \
+		| grep -v '^#' \
+		| grep -v '^[[:space:]]*$$' > $$tmpfile; \
+	git ls-files --ignored --exclude-from=$$tmpfile --others --directory; \
+	rm $$tmpfile
+
+# install: build ## Install on local machine
 # 	$(PIP) install $(DIST_DIR)/*.whl
 
 # ----------------------------
@@ -71,14 +79,9 @@ clean: ## Remove items from CLEANUP section in .gitignore
 # ----------------------------
 .PHONY: docs
 
-docs: ## Build Sphinx documentation
+docs: ## Build/process documentation
 	$(MAKE) -C docs/_docs_tools all
 
-.PHONY: hanuki
-
-hanuki: ## Open project in web-browser
-	@cid=$$(ipfs add -rHq . | tail -n 1 | xargs ipfs cid base32); \
-			brave-browser "http://$$cid.ipfs.localhost:8080"
 # # ----------------------------
 # # Release Helpers
 # # ----------------------------
