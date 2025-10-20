@@ -2,7 +2,7 @@
 
 This package contains the blockchain-application developer's API for
 interacting with Walytis, as well as utilities common to both Walytis and
-`wlaytis_beta_api`.
+`walytis_beta_api`.
 """
 
 from .walytis_beta_interface import (

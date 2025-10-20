@@ -1,4 +1,9 @@
-from .config import get_ipfs_tk_mode, IpfsTkModes, IPFS_REPO_DIR, DEF_IPFS_REPO_DIR
+from .config import (
+    get_ipfs_tk_mode,
+    IpfsTkModes,
+    IPFS_REPO_DIR,
+    DEF_IPFS_REPO_DIR,
+)
 
 from walytis_beta_tools.log import logger
 import os
@@ -19,7 +24,8 @@ if get_ipfs_tk_mode() == IpfsTkModes.EMBEDDED:
     ipfs = IpfsNode(IPFS_REPO_DIR)
 else:
     from ipfs_remote import IpfsRemote
-    ipfs = IpfsRemote("localhost:5001")
+
+    ipfs = IpfsRemote("/dns/localhost/tcp/5001/http")
     try:
         ipfs.wait_till_ipfs_is_running(timeout_sec=5)
     except TimeoutError:

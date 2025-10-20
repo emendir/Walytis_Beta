@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -236,54 +236,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-walytis_beta.block_networking">
-<span id="walytis-beta-block-networking-module"></span><h1>walytis_beta.block_networking module<a class="headerlink" href="#module-walytis_beta.block_networking" title="Link to this heading">¶</a></h1>
-<p>The networking machinery of the Block class.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.Block">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta.block_networking.</span></span><span class="sig-name descname"><span class="pre">Block</span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#Block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.Block" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><code class="xref py py-class docutils literal notranslate"><span class="pre">Block</span></code></a></p>
-<p>The Walytis_Beta block.</p>
-<p>The networking functionality is defined in this child class,
-its parent block_model.Block contains the more fundamental functionality.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.Block.announce_block">
-<span class="sig-name descname"><span class="pre">announce_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#Block.announce_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.Block.announce_block" title="Link to this definition">¶</a></dt>
-<dd><p>Publish a PubSub message about the new block.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.Block.publish_and_generate_id">
-<span class="sig-name descname"><span class="pre">publish_and_generate_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_pubsub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#Block.publish_and_generate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.Block.publish_and_generate_id" title="Link to this definition">¶</a></dt>
-<dd><p>Publish this block, generating its long ID.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.Block.publish_file_data">
-<span class="sig-name descname"><span class="pre">publish_file_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#Block.publish_file_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.Block.publish_file_data" title="Link to this definition">¶</a></dt>
-<dd><p>Put this block’s block file on IPFS.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.IpfsCidExistsError">
-<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta.block_networking.</span></span><span class="sig-name descname"><span class="pre">IpfsCidExistsError</span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#IpfsCidExistsError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.IpfsCidExistsError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>When publishing a new block but the intended IPFS CID already exists.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.IpfsCidExistsError.message">
-<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'An</span> <span class="pre">IPFS</span> <span class="pre">file</span> <span class="pre">with</span> <span class="pre">this</span> <span class="pre">content</span> <span class="pre">ID</span> <span class="pre">already</span> <span class="pre">exists!'</span></em><a class="headerlink" href="#walytis_beta.block_networking.IpfsCidExistsError.message" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+          <section id="walytis-beta-block-networking-module">
+<h1>walytis_beta.block_networking module<a class="headerlink" href="#walytis-beta-block-networking-module" title="Link to this heading">¶</a></h1>
 </section>
 
         </article>
@@ -311,36 +271,8 @@ its parent block_model.Block contains the more fundamental functionality.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">walytis_beta.block_networking module</a><ul>
-<li><a class="reference internal" href="#walytis_beta.block_networking.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
-<li><a class="reference internal" href="#walytis_beta.block_networking.Block.announce_block"><code class="docutils literal notranslate"><span class="pre">Block.announce_block()</span></code></a></li>
-<li><a class="reference internal" href="#walytis_beta.block_networking.Block.publish_and_generate_id"><code class="docutils literal notranslate"><span class="pre">Block.publish_and_generate_id()</span></code></a></li>
-<li><a class="reference internal" href="#walytis_beta.block_networking.Block.publish_file_data"><code class="docutils literal notranslate"><span class="pre">Block.publish_file_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#walytis_beta.block_networking.IpfsCidExistsError"><code class="docutils literal notranslate"><span class="pre">IpfsCidExistsError</span></code></a><ul>
-<li><a class="reference internal" href="#walytis_beta.block_networking.IpfsCidExistsError.message"><code class="docutils literal notranslate"><span class="pre">IpfsCidExistsError.message</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

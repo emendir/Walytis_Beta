@@ -6,7 +6,8 @@ from logging.handlers import RotatingFileHandler
 # formatter = logging.Formatter(
 #     '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
 # )
-MAX_RECORD_NAME_LENGTH=16
+MAX_RECORD_NAME_LENGTH = 16
+
 
 class AlignedFormatter(logging.Formatter):
     def format(self, record):
@@ -15,19 +16,27 @@ class AlignedFormatter(logging.Formatter):
         if len(record.name) > MAX_RECORD_NAME_LENGTH:
             record.name = record.name[:MAX_RECORD_NAME_LENGTH]
         # Format: [LEVEL] + padding (outside brackets)
-        padded_level = f"[{original_levelname}]" + " " * (10 - len(original_levelname))
+        padded_level = f"[{original_levelname}]" + " " * (
+            10 - len(original_levelname)
+        )
         record.padded_level = padded_level
 
         return super().format(record)
+
+
 formatter = AlignedFormatter(
-    f'%(asctime)s %(padded_level)s %(name)-{MAX_RECORD_NAME_LENGTH}s: %(message)s'
+    f"%(asctime)s %(padded_level)s %(name)-{
+        MAX_RECORD_NAME_LENGTH
+    }s: %(message)s"
 )
 # Console handler (INFO+)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(formatter)
 
-LOG_PATH = os.path.abspath(os.environ.get("WALYTIS_BETA_LOG_PATH", "Walytis_Beta.log"))
+LOG_PATH = os.path.abspath(
+    os.environ.get("WALYTIS_BETA_LOG_PATH", "Walytis_Beta.log")
+)
 if os.path.isdir(LOG_PATH):
     LOG_PATH = os.path.join(LOG_PATH, "Walytis_Beta.log")
 if not os.path.exists(os.path.dirname(LOG_PATH)):
@@ -35,7 +44,7 @@ if not os.path.exists(os.path.dirname(LOG_PATH)):
 print(f"Walytis_Beta: Logging to {LOG_PATH}")
 # File handler (DEBUG+ with rotation)
 file_handler = RotatingFileHandler(
-    LOG_PATH, maxBytes=5*1024*1024, backupCount=5
+    LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=5
 )
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
@@ -44,9 +53,12 @@ file_handler.setFormatter(formatter)
 # Log level IMPORTANT
 IMPORTANT_LEVEL_NUM = 25
 logging.addLevelName(IMPORTANT_LEVEL_NUM, "IMPORTANT")
+
+
 def important(self, message, *args, **kwargs):
     if self.isEnabledFor(IMPORTANT_LEVEL_NUM):
         self._log(IMPORTANT_LEVEL_NUM, message, args, **kwargs)
+
 
 logging.Logger.important = important
 
@@ -71,6 +83,7 @@ logger_block_model = logging.getLogger("Walytis.BlkModel")
 logger_generics = logging.getLogger("Walytis.Generics")
 logger_ancestry = logging.getLogger("Walytis.Ancestry")
 logger_appdata = logging.getLogger("Walytis.Appdata")
+logger_join = logging.getLogger("Walytis.Join")
 
 logger.setLevel(IMPORTANT_LEVEL_NUM)
 logger_networking.setLevel(IMPORTANT_LEVEL_NUM)
@@ -83,6 +96,7 @@ logger_block_model.setLevel(IMPORTANT_LEVEL_NUM)
 logger_generics.setLevel(IMPORTANT_LEVEL_NUM)
 logger_ancestry.setLevel(IMPORTANT_LEVEL_NUM)
 logger_appdata.setLevel(IMPORTANT_LEVEL_NUM)
+logger_join.setLevel(IMPORTANT_LEVEL_NUM)
 
 logger.addHandler(console_handler)
 logger_networking.addHandler(console_handler)
@@ -95,6 +109,7 @@ logger_block_model.addHandler(console_handler)
 logger_generics.addHandler(console_handler)
 logger_ancestry.addHandler(console_handler)
 logger_appdata.addHandler(console_handler)
+logger_join.addHandler(console_handler)
 
 logger.addHandler(file_handler)
 logger_networking.addHandler(file_handler)
@@ -107,3 +122,4 @@ logger_block_model.addHandler(file_handler)
 logger_generics.addHandler(file_handler)
 logger_ancestry.addHandler(file_handler)
 logger_appdata.addHandler(file_handler)
+logger_join.addHandler(file_handler)

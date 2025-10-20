@@ -1,9 +1,10 @@
 import os
-from ipfs_tk_generics import IpfsClient
+from ipfs_tk_generics.client import IpfsClient
 from walytis_beta_tools.log import logger
 
 from enum import Enum
 from environs import Env
+
 env = Env()
 # initialise IPFS
 USE_IPFS_NODE = os.environ.get("USE_IPFS_NODE", "").lower() in ["true", "1"]
@@ -45,7 +46,6 @@ class WalytisBetaApiTypes(Enum):
 
 
 def get_walytis_beta_api_type():
-
     return env.enum(
         "WALYTIS_BETA_API_TYPE",
         enum=WalytisBetaApiTypes,

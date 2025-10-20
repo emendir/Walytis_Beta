@@ -1,4 +1,5 @@
 """Run all tests in all variations."""
+
 import os
 import sys
 
@@ -12,7 +13,7 @@ pytest_args = sys.argv[1:]
 def run_tests() -> None:
     """Run each test file with pytest."""
     pytest_args = sys.argv[1:]
-    os.system(f"pytest {WORKDIR} {" ".join(pytest_args)}")
+    os.system(f"pytest {WORKDIR} {' '.join(pytest_args)}")
 
 
 if True:

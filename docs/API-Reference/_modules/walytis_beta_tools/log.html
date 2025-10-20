@@ -244,7 +244,8 @@
 <span class="c1"># formatter = logging.Formatter(</span>
 <span class="c1">#     &#39;%(asctime)s [%(levelname)s] %(name)s: %(message)s&#39;</span>
 <span class="c1"># )</span>
-<span class="n">MAX_RECORD_NAME_LENGTH</span><span class="o">=</span><span class="mi">16</span>
+<span class="n">MAX_RECORD_NAME_LENGTH</span> <span class="o">=</span> <span class="mi">16</span>
+
 
 <div class="viewcode-block" id="AlignedFormatter">
 <a class="viewcode-back" href="../../walytis_beta_tools.log.html#walytis_beta_tools.log.AlignedFormatter">[docs]</a>
@@ -257,21 +258,29 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_RECORD_NAME_LENGTH</span><span class="p">:</span>
             <span class="n">record</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="n">MAX_RECORD_NAME_LENGTH</span><span class="p">]</span>
         <span class="c1"># Format: [LEVEL] + padding (outside brackets)</span>
-        <span class="n">padded_level</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">original_levelname</span><span class="si">}</span><span class="s2">]&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_levelname</span><span class="p">))</span>
+        <span class="n">padded_level</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">original_levelname</span><span class="si">}</span><span class="s2">]&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mi">10</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_levelname</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">record</span><span class="o">.</span><span class="n">padded_level</span> <span class="o">=</span> <span class="n">padded_level</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span></div>
 </div>
 
+
+
 <span class="n">formatter</span> <span class="o">=</span> <span class="n">AlignedFormatter</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s1">&#39;%(asctime)s %(padded_level)s %(name)-</span><span class="si">{</span><span class="n">MAX_RECORD_NAME_LENGTH</span><span class="si">}</span><span class="s1">s: %(message)s&#39;</span>
+    <span class="sa">f</span><span class="s2">&quot;%(asctime)s %(padded_level)s %(name)-</span><span class="si">{</span>
+<span class="w">        </span><span class="n">MAX_RECORD_NAME_LENGTH</span>
+<span class="w">    </span><span class="si">}</span><span class="s2">s: %(message)s&quot;</span>
 <span class="p">)</span>
 <span class="c1"># Console handler (INFO+)</span>
 <span class="n">console_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
 <span class="n">console_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">console_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
 
-<span class="n">LOG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WALYTIS_BETA_LOG_PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;Walytis_Beta.log&quot;</span><span class="p">))</span>
+<span class="n">LOG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;WALYTIS_BETA_LOG_PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;Walytis_Beta.log&quot;</span><span class="p">)</span>
+<span class="p">)</span>
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">LOG_PATH</span><span class="p">):</span>
     <span class="n">LOG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">LOG_PATH</span><span class="p">,</span> <span class="s2">&quot;Walytis_Beta.log&quot;</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">LOG_PATH</span><span class="p">)):</span>
@@ -279,7 +288,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Walytis_Beta: Logging to </span><span class="si">{</span><span class="n">LOG_PATH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="c1"># File handler (DEBUG+ with rotation)</span>
 <span class="n">file_handler</span> <span class="o">=</span> <span class="n">RotatingFileHandler</span><span class="p">(</span>
-    <span class="n">LOG_PATH</span><span class="p">,</span> <span class="n">maxBytes</span><span class="o">=</span><span class="mi">5</span><span class="o">*</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">,</span> <span class="n">backupCount</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">LOG_PATH</span><span class="p">,</span> <span class="n">maxBytes</span><span class="o">=</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">backupCount</span><span class="o">=</span><span class="mi">5</span>
 <span class="p">)</span>
 <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
@@ -288,11 +297,14 @@
 <span class="c1"># Log level IMPORTANT</span>
 <span class="n">IMPORTANT_LEVEL_NUM</span> <span class="o">=</span> <span class="mi">25</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">,</span> <span class="s2">&quot;IMPORTANT&quot;</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="important">
 <a class="viewcode-back" href="../../walytis_beta_tools.log.html#walytis_beta_tools.log.important">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">important</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 
 
 <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="o">.</span><span class="n">important</span> <span class="o">=</span> <span class="n">important</span>
@@ -318,6 +330,7 @@
 <span class="n">logger_generics</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;Walytis.Generics&quot;</span><span class="p">)</span>
 <span class="n">logger_ancestry</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;Walytis.Ancestry&quot;</span><span class="p">)</span>
 <span class="n">logger_appdata</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;Walytis.Appdata&quot;</span><span class="p">)</span>
+<span class="n">logger_join</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;Walytis.Join&quot;</span><span class="p">)</span>
 
 <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">)</span>
 <span class="n">logger_networking</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">)</span>
@@ -330,6 +343,7 @@
 <span class="n">logger_generics</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">)</span>
 <span class="n">logger_ancestry</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">)</span>
 <span class="n">logger_appdata</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">)</span>
+<span class="n">logger_join</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">IMPORTANT_LEVEL_NUM</span><span class="p">)</span>
 
 <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
 <span class="n">logger_networking</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
@@ -342,6 +356,7 @@
 <span class="n">logger_generics</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
 <span class="n">logger_ancestry</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
 <span class="n">logger_appdata</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
+<span class="n">logger_join</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
 
 <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
 <span class="n">logger_networking</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
@@ -354,6 +369,7 @@
 <span class="n">logger_generics</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
 <span class="n">logger_ancestry</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
 <span class="n">logger_appdata</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+<span class="n">logger_join</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>

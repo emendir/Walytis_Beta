@@ -1,7 +1,7 @@
 """`walytis_beta_api` Blockchain class.
 
 The herein contained Blockchain class isn't the code running the Walytis
-blockchains themselves, it is merely a construct in `wlaytis_beta_api` for
+blockchains themselves, it is merely a construct in `walytis_beta_api` for
 providing the means to interact with a Walytis blockchain.
 
 The real blockchain class for running blockchains in Walytis-Core is in:
@@ -21,14 +21,19 @@ from brenthy_tools_beta.utils import (
     string_to_bytes,
 )
 
-from walytis_beta_tools._experimental.block_lazy_loading import BlocksList, BlockLazilyLoaded
+from walytis_beta_tools._experimental.block_lazy_loading import (
+    BlocksList,
+    BlockLazilyLoaded,
+)
 from walytis_beta_tools.block_model import Block, short_from_long_id
 from walytis_beta_tools.exceptions import (  # pylint: disable=unused-import
     BlockCreationError,
     BlockNotFoundError,
     NotSupposedToHappenError,
 )
-from ._experimental.generic_blockchain import _GenericBlockchainImpl as GenericBlockchain
+from ._experimental.generic_blockchain import (
+    _GenericBlockchainImpl as GenericBlockchain,
+)
 from .walytis_beta_interface import (
     WALYTIS_BETA,
     BlocksListener,
@@ -58,6 +63,7 @@ N_STARTUP_BLOCKS = (
 
 walytis_beta_appdata_dir = os.path.join(appdirs.user_data_dir(), "WalytisApps")
 
+
 def set_appdata_dir(appdata_dir: str) -> None:
     """Set the appdata directory for keeping track of apps' Walytis usage."""
     global walytis_beta_appdata_dir
@@ -65,19 +71,23 @@ def set_appdata_dir(appdata_dir: str) -> None:
     if not os.path.exists(walytis_beta_appdata_dir):
         os.makedirs(walytis_beta_appdata_dir)
 
+
 def get_appdata_dir() -> str:
     """Get the appdata directory for keeping track of apps' Walytis usage."""
     return walytis_beta_appdata_dir
-    
+
+
 # backward-compatibility with old path:
 _old_appdata_path = os.path.join(appdirs.user_data_dir(), "BrenthyApps")
 if os.path.exists(_old_appdata_path):
     walytis_beta_appdata_dir = _old_appdata_path
 
 # backkward-compatibility with old function name
+
+
 def get_walytis_appdata_dir() -> str:
     """Get the appdata directory for keeping track of apps' Walytis usage.
-    
+
     Exactly the same as get_appdata_dir(), kept for backward-compatibility.
     """
     print("DEPRECATING: please use `get_appdata_dir()` instead.")
@@ -125,7 +135,7 @@ class Blockchain(GenericBlockchain):
                 this application was offline.
             forget_appdata (bool): whether or not to ignore and overwrite any
                 existing records of which blocks applications with the
-                providede `app_name` have processed
+                provided `app_name` have processed
             sequential_block_handling (bool): if True, the provided block-
                 received handler will be executed on the main thread, and
                 the handler will only be executed for the next block
@@ -214,8 +224,10 @@ class Blockchain(GenericBlockchain):
             self.load_missed_blocks(N_STARTUP_BLOCKS)
 
     def add_block(
-        self, content: bytearray | bytes, topics: list[str] | str | None = None,
-        wait_until_handled: bool = True
+        self,
+        content: bytearray | bytes,
+        topics: list[str] | str | None = None,
+        wait_until_handled: bool = True,
     ) -> Block:
         """Add a new block to this blockchain.
 
@@ -259,7 +271,9 @@ class Blockchain(GenericBlockchain):
 
         return block
 
-    def get_blocks(self, reverse: bool = False) -> Generator[BlockLazilyLoaded]:
+    def get_blocks(
+        self, reverse: bool = False
+    ) -> Generator[BlockLazilyLoaded]:
         return self._blocks.get_blocks(reverse=reverse)
 
     def get_block_ids(self) -> list[bytes]:
@@ -302,7 +316,9 @@ class Blockchain(GenericBlockchain):
         else:
             id_bytearray = bytearray(id)
             len_id = len(id_bytearray)
-            if bytearray([0, 0, 0, 0]) not in id_bytearray:  # if a short ID was passed
+            if (
+                bytearray([0, 0, 0, 0]) not in id_bytearray
+            ):  # if a short ID was passed
                 short_id = None
                 for long_id in self.get_block_ids():
                     if bytearray(long_id)[:len_id] == id_bytearray:
@@ -393,7 +409,6 @@ class Blockchain(GenericBlockchain):
         already_locked: bool = False,
         override_terminate: bool = False,
         already_locked_block_received: bool = False,
-
     ) -> None:
         """Handle a newly received block.
 
@@ -424,7 +439,7 @@ class Blockchain(GenericBlockchain):
                         save_blocks_list=save_blocks_list,
                         # already_locked=True
                         already_locked=already_locked,
-                        already_locked_block_received=True
+                        already_locked_block_received=True,
                     )
             try:
                 if self.update_blockids_before_handling:
@@ -455,7 +470,7 @@ class Blockchain(GenericBlockchain):
         self,
         block: Block,
         save_blocks_list: bool = True,
-        already_locked: bool = False
+        already_locked: bool = False,
     ) -> None:
         if not already_locked:
             self._blocklist_lock.acquire()
@@ -499,7 +514,8 @@ class Blockchain(GenericBlockchain):
         # self._blocklist_lock.acquire()
         logger.info(amount)
         latest_blocks = get_latest_blocks(
-            self.blockchain_id, amount=amount, long_ids=True)
+            self.blockchain_id, amount=amount, long_ids=True
+        )
         if not latest_blocks:
             # self._blocklist_lock.release()
             error = NotSupposedToHappenError(
@@ -523,9 +539,7 @@ class Blockchain(GenericBlockchain):
                         # already_locked=True
                     )
                 except Exception as e:
-                    logger.error(
-                        f" Blockchain.load_missed_blocks: {e}"
-                    )
+                    logger.error(f" Blockchain.load_missed_blocks: {e}")
             else:
                 count += 1
 
@@ -551,17 +565,25 @@ class Blockchain(GenericBlockchain):
 
             # AppData migration from storing short IDs to long_ids
             # for BACKWARDS COMPATIBILITY
-            if bytearray([0, 0, 0, 0]) not in bytearray(block_ids[0]) or bytearray([0, 0, 0, 0]) not in bytearray(block_ids[-1]):
+            if bytearray([0, 0, 0, 0]) not in bytearray(
+                block_ids[0]
+            ) or bytearray([0, 0, 0, 0]) not in bytearray(block_ids[-1]):
                 print("Migrating...")
-                block_long_ids = dict([
-                    (bytes(short_from_long_id(long_id)), long_id)
-                    for long_id in get_latest_blocks(self.blockchain_id, long_ids=True)
-                ])
-                block_ids = [block_long_ids[bytes(short_id)]
-                             for short_id in block_ids]
+                block_long_ids = dict(
+                    [
+                        (bytes(short_from_long_id(long_id)), long_id)
+                        for long_id in get_latest_blocks(
+                            self.blockchain_id, long_ids=True
+                        )
+                    ]
+                )
+                block_ids = [
+                    block_long_ids[bytes(short_id)] for short_id in block_ids
+                ]
 
             self._blocks = BlocksList.from_block_ids(
-                block_ids, BlockLazilyLoaded)
+                block_ids, BlockLazilyLoaded
+            )
         self._blocklist_lock.release()
 
     @property
@@ -607,7 +629,7 @@ class Blockchain(GenericBlockchain):
         forget_appdata: bool = False,
         sequential_block_handling: bool = True,
         update_blockids_before_handling: bool = False,
-    ) -> 'Blockchain':
+    ) -> "Blockchain":
         """Create and run a new blockchain.
 
         Args:
@@ -679,7 +701,7 @@ class Blockchain(GenericBlockchain):
         forget_appdata: bool = False,
         sequential_block_handling: bool = True,
         update_blockids_before_handling: bool = False,
-    ) -> 'Blockchain':
+    ) -> "Blockchain":
         """Join a blockchain using an invitation generated by another node.
 
         Args:
@@ -753,7 +775,7 @@ class Blockchain(GenericBlockchain):
         forget_appdata: bool = False,
         sequential_block_handling: bool = True,
         update_blockids_before_handling: bool = False,
-    ) -> 'Blockchain':
+    ) -> "Blockchain":
         """Create an object to represent a Walytis blockchain.
 
         Args:

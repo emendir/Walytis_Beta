@@ -1,6 +1,19 @@
 """Core Walytis blockchain functionality."""
 # pylint: disable=import-error
 
+from .walytis_beta_appdata import (
+    BlockchainAppdata,
+    create_temp_dir,
+    get_walytis_appdata_dir,
+)
+from .networking import Networking, ipfs
+from .exceptions import BlockchainNotInitialised, BlockchainTerminatedError
+from .block_records import BlockRecords
+from .block_networking import (
+    Block,
+    IpfsCidExistsError,
+)
+from . import walytis_beta_api_terminal
 import copy
 import json
 import os
@@ -30,22 +43,12 @@ from walytis_beta_tools.block_model import (
 from walytis_beta_tools.exceptions import NotSupposedToHappenError
 
 # import api_terminal as AppCom
-from walytis_beta_tools.log import logger
+from walytis_beta_tools.log import logger, logger_join
 from walytis_beta_tools.versions import WALYTIS_BETA_CORE_VERSION
 
-from . import walytis_beta_api_terminal
-from .block_networking import (
-    Block,
-    IpfsCidExistsError,
-)
-from .block_records import BlockRecords
-from .exceptions import BlockchainNotInitialised, BlockchainTerminatedError
-from .networking import Networking, ipfs
-from .walytis_beta_appdata import (
-    BlockchainAppdata,
-    create_temp_dir,
-    get_walytis_appdata_dir,
-)
+import logging
+
+logger_join.setLevel(logging.DEBUG)
 
 # a variable with this blockchain's name so that we don't missspell it
 WALYTIS_BETA = "Walytis_Beta"
@@ -236,9 +239,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         if self._genesis:
             topics = ["genesis"]
         elif "genesis" in topics:
-            error_message = (
-                "I won't create a block with topic 'genesis'"
-            )
+            error_message = "I won't create a block with topic 'genesis'"
             logger.error(error_message)
             raise ValueError(error_message)
 
@@ -303,7 +304,6 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             n_parents=block_n_parents,
             parents=block_parents,
             blockchain_version=block_blockchain_version,
-
             ipfs_cid="",
             content_hash_algorithm="",
             content_hash=bytearray(),
@@ -351,7 +351,8 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                     self.current_endblocks + [block.short_id]
                 )
         logger.info(
-            f"{self.name}:  Finished adding new block to the blockchain.")
+            f"{self.name}:  Finished adding new block to the blockchain."
+        )
 
         # DEBUG
         long_id = decode_long_id(block.long_id)
@@ -452,7 +453,9 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         logger.info(f"{self.name}:  Received new block.")
         self.download_and_process_block(short_id)
 
-    def download_and_process_block(self, long_id: bytearray, live=True) -> Block | None:
+    def download_and_process_block(
+        self, long_id: bytearray, live=True
+    ) -> Block | None:
         """Download a new block, add it to our block history if it is ok."""
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
@@ -555,11 +558,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         """
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
-        if [
-            b
-            for b in self.unconfirmed_blocks
-            if b.ipfs_cid == ipfs_cid
-        ]:
+        if [b for b in self.unconfirmed_blocks if b.ipfs_cid == ipfs_cid]:
             logger.debug(
                 f"{self.name}:  read_block: this block is already in our "
                 "unconfirmed_blocks list "
@@ -610,7 +609,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             parents = []
             # logger.important("Genesis block")
         # content sits between metadata and block_hash
-        content = data[content_separator + 5:]
+        content = data[content_separator + 5 :]
 
         # # duplicate
         # blockchain_version = decode_version(metadata[0])
@@ -670,7 +669,6 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
         # creating a new block object from the decoded block data
         block = Block.from_metadata(
-
             blockchain_version=blockchain_version,
             creator_id=creator_id,
             creation_time=creation_time,
@@ -954,11 +952,15 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         self.peer_monitor.register_contact_event(peer_id)
         try:
             import time
+
             time.sleep(0.5)  # TODO: FIX THIS DELAY WITH TRNAMISSION RETRIES
 
             # conv.join(conversation_name, peer_id, conversation_name)
             conv = ipfs.join_conversation(
-                conversation_name, peer_id, conversation_name, )
+                conversation_name,
+                peer_id,
+                conversation_name,
+            )
             logger.debug("WJR: joined conversation")
             invitation = conv.listen(timeout=2 * JOIN_COMMS_TIMEOUT_S).decode()
             if self.get_invitation(invitation):
@@ -978,13 +980,14 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                     )
                     if progress == 1:
                         os.remove(appdata_zip)
+
                 logger.debug("WJR: Transmitting appdata...")
                 sleep(0.5)
                 conv.transmit_file(
                     appdata_zip,
                     "Here you go".encode(),
                     progress_handler=check_on_progress,
-                    transm_send_timeout_sec=2 * JOIN_COMMS_TIMEOUT_S
+                    transm_send_timeout_sec=2 * JOIN_COMMS_TIMEOUT_S,
                 )
                 logger.debug("WJR: Transmitted appdata!")
                 if json.loads(invitation)["one_time"]:
@@ -999,7 +1002,9 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             conv.terminate()
         except Exception as e:
             logger.error(
-                f"on_join_request_received: Unhandled error {type(e)}: " + str(e))
+                f"on_join_request_received: Unhandled error {type(e)}: "
+                + str(e)
+            )
             try:
                 conv.terminate()
             except:
@@ -1058,59 +1063,61 @@ def join_blockchain(
     blockchain_id = invitation_d["blockchain_id"]
 
     if blockchain_id in get_blockchain_ids():
-        logger.warning(
-            "Walytis_Beta.join_blockchain: Blockchain already exists")
+        logger_join.warning(
+            "Walytis_Beta.join_blockchain: Blockchain already exists"
+        )
         return get_blockchain(blockchain_id)
     peers = invitation_d["peers"]
-    logger.info("Joining blockchain...")
+    logger_join.info("Joining blockchain...")
+    peers_count = 0
     for peer in peers:
         if peer == ipfs.peer_id:
             continue
-        logger.debug(f"WJ: trying peer {peer}")
+        peers_count += 1
+        logger_join.debug(f"WJ: trying peer {peer}")
         tempdir = create_temp_dir()
         conv = None
         try:
-            logger.debug("WJ: starting conversation")
+            logger_join.debug("WJ: starting conversation")
             conv = ipfs.start_conversation(
                 f"{blockchain_id}: JoinRequest: {ipfs.peer_id}",
                 peer,
                 f"{blockchain_id}: JoinRequest",
-                dir=tempdir,
-                timeout_sec=JOIN_COMMS_TIMEOUT_S
+                download_dir=tempdir,
+                timeout_sec=JOIN_COMMS_TIMEOUT_S,
             )
-            logger.info("Asking peer for AppdataZip")
+            logger_join.info("Asking peer for AppdataZip")
             sleep(0.5)
 
             success = conv.say(
                 json.dumps(invitation_d).encode(),
-                timeout_sec=JOIN_COMMS_TIMEOUT_S
+                timeout_sec=JOIN_COMMS_TIMEOUT_S,
             )
             if not success:
-                logger.debug("WJ: Failed to communicate with peer.")
+                logger_join.debug("WJ: Failed to communicate with peer.")
                 conv.terminate()
                 continue
             response = conv.listen(JOIN_COMMS_TIMEOUT_S)
             if not response:
-                logger.info("Join: No response from peer")
+                logger_join.info("Join: No response from peer")
                 conv.terminate()
                 continue
             if response == "All right.".encode():
-                logger.info("Join: Awaiting appdata file....")
+                logger_join.info("Join: Awaiting appdata file....")
                 response = conv.listen_for_file(no_coms_timeout=180)
                 if not response:
-                    logger.info("Join: No file response from peer")
+                    logger_join.info("Join: No file response from peer")
                     conv.terminate()
                     continue
                 appdata_zipfile = os.path.join(tempdir, response["filepath"])
-                logger.info(
-                    f"Join: Received join Appdata! "
-                    f"{appdata_zipfile}"
+                logger_join.info(
+                    f"Join: Received join Appdata! {appdata_zipfile}"
                 )
                 blockchain = join_blockchain_from_zip(
                     blockchain_id, appdata_zipfile, blockchain_name
                 )
                 if blockchain:  # if joining was successful
-                    logger.info("Join: Joined blockchain!")
+                    logger_join.info("Join: Joined blockchain!")
                     os.remove(appdata_zipfile)
                     conv.terminate()
                     shutil.rmtree(tempdir)
@@ -1121,19 +1128,17 @@ def join_blockchain(
                 else:
                     if os.path.exists(appdata_zipfile):
                         os.remove(appdata_zipfile)
-                    logger.info(
-                        "Join: Joining from zip file failed"
-                    )
+                    logger_join.info("Join: Joining from zip file failed")
                     conv.terminate()
             else:
-                logger.info(
+                logger_join.info(
                     "Join: Peer refused join request, peer said:"
                     f"\n{response.decode()}"
                 )
                 conv.terminate()
             conv.terminate()
         except Exception as e:
-            logger.error(f"Join: Unhandled error {type(e)}: " + str(e))
+            logger_join.error(f"Join: Unhandled error {type(e)}: " + str(e))
             try:
                 if conv:
                     conv.terminate()
@@ -1143,7 +1148,7 @@ def join_blockchain(
             shutil.rmtree(tempdir)
         if os.path.exists(tempdir):
             shutil.rmtree(tempdir)
-
+    logger.debug(f"Failed to join blockchain ater trying {peers_count} peers.")
     return None
 
 
@@ -1161,7 +1166,7 @@ def join_blockchain_from_cid(
     Returns:
         Blockchain: the blockchain object representing the joined blockchain
     """
-    logger.info(f"Joining blockchain from CID: {blockchain_data_cid}")
+    logger_join.info(f"Joining blockchain from CID: {blockchain_data_cid}")
     bc_appdata_path = os.path.join(get_walytis_appdata_dir(), blockchain_id)
     if [
         bc
@@ -1169,20 +1174,20 @@ def join_blockchain_from_cid(
         if bc.name in (blockchain_name, blockchain_id)
         or bc.blockchain_id in (blockchain_name, blockchain_id)
     ]:
-        logger.info(
+        logger_join.info(
             "blockchain_manager.join_blockchain_from_cid:"
             "blockchain already exists"
         )
         return None
     if os.path.exists(bc_appdata_path):
-        logger.info(
+        logger_join.info(
             "blockchain_manager.join_blockchain_from_cid:"
             + "blockchain's appdata path already exists"
         )
         return None
-    logger.debug("WJ: getting join data from IPFS...")
+    logger_join.debug("WJ: getting join data from IPFS...")
     ipfs.files.download(blockchain_data_cid, dest_path=bc_appdata_path)
-    logger.debug("WJ: got join data from IPFS!")
+    logger_join.debug("WJ: got join data from IPFS!")
 
     return check_and_start_joined_blockchain(blockchain_id, blockchain_name)
 
@@ -1207,13 +1212,13 @@ def join_blockchain_from_zip(
         if bc.name in (blockchain_name, blockchain_id)
         or bc.blockchain_id in (blockchain_name, blockchain_id)
     ]:
-        logger.info(
+        logger_join.info(
             "blockchain_manager.join_blockchain_from_zip:"
             "blockchain already exists"
         )
         return None
     if os.path.exists(bc_appdata_path):
-        logger.info(
+        logger_join.info(
             "blockchain_manager.join_blockchain_from_zip:"
             + "blockchain's appdata path already exists"
         )
@@ -1236,7 +1241,7 @@ def check_and_start_joined_blockchain(
         blockchain: Blockchain = Blockchain(
             blockchain_id, name=blockchain_name
         )
-        logger.debug("WJ: Reconstructed blockchain.")
+        logger_join.debug("WJ: Reconstructed blockchain.")
 
         blockchains.append(blockchain)
 
@@ -1244,7 +1249,7 @@ def check_and_start_joined_blockchain(
             blockchain.load_latest_block_ids()[0]
         )
         if not genesis_block:
-            logger.warning(
+            logger_join.warning(
                 "Joining blockchain cancelled because it seems "
                 "corrupt: we couldn't find its genesis block. "
                 f"{blockchain_id}"
@@ -1256,7 +1261,7 @@ def check_and_start_joined_blockchain(
             genesis_block.ipfs_cid == blockchain_id
             or blockchain_id in ["BrenthyUpdates", "BrenthyUpdatesTEST"]
         ):
-            logger.warning(
+            logger_join.warning(
                 "Joining blockchain cancelled because the "
                 "blockchain ID did not match the genesis block. "
                 f"{blockchain_id}"
@@ -1264,7 +1269,7 @@ def check_and_start_joined_blockchain(
             blockchain_ok = False
 
         if not len(genesis_block.parents) == 0:
-            logger.warning(
+            logger_join.warning(
                 "Joining blockchain canceled because the "
                 f"genesis block has parents. {len(genesis_block.parents)}"
             )
@@ -1272,10 +1277,10 @@ def check_and_start_joined_blockchain(
         if not blockchain_ok:
             delete_blockchain(blockchain_id)
             return None
-        logger.debug("WJ: checked joined blockchain")
+        logger_join.debug("WJ: checked joined blockchain")
         return blockchain
     except Exception as error:
-        logger.error(error)
+        logger_join.error(error)
         return None
 
 
@@ -1320,9 +1325,7 @@ def delete_blockchain(blockchain_id: str) -> bool:
     ]
     if blockchain_search:
         blockchain: Blockchain = blockchain_search[0]
-        logger.important(
-            f"deleting blockchain {blockchain.name}..."
-        )
+        logger.important(f"deleting blockchain {blockchain.name}...")
         if blockchain in blockchains:
             blockchains.remove(blockchain)
         else:
@@ -1350,9 +1353,7 @@ def delete_blockchain(blockchain_id: str) -> bool:
 
         return True
 
-    logger.warning(
-        f"delete_blockchain: no such blockchain {blockchain_id}"
-    )
+    logger.warning(f"delete_blockchain: no such blockchain {blockchain_id}")
     return False
 
 
@@ -1405,7 +1406,8 @@ def run_blockchains() -> None:
     for blockchain_id in blockchain_ids:
         if get_blockchain(blockchain_id):
             logger.important(
-                f"run_blockchains: already loaded: {blockchain_id}")
+                f"run_blockchains: already loaded: {blockchain_id}"
+            )
             continue
         blockchain = Blockchain(id=blockchain_id, name="")
         logger.important(f" - {blockchain.name}")

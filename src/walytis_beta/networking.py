@@ -1,6 +1,6 @@
 """Networking machinery for the Walytis Blockchain (except joining)."""
 
-from ipfs_tk_generics import IpfsClient
+from ipfs_tk_generics.client import IpfsClient
 import json
 import os
 import time
@@ -16,9 +16,8 @@ if True:
     # pylint: disable=import-error
     from walytis_beta_tools.log import logger_networking as logger
     from brenthy_tools_beta.utils import bytes_to_string, string_to_bytes
-    
-    from walytis_beta_tools._experimental.ipfs_interface import ipfs
 
+    from walytis_beta_tools._experimental.ipfs_interface import ipfs
 
     # walytis_beta_tools must be loaded only after IPFS is initialised
     from walytis_beta_tools.block_model import decode_short_id
@@ -219,9 +218,8 @@ class Networking(ABC):
 
     def get_pubsub_peers(self):
         if (
-            (datetime.utcnow() - self._last_pubsub_peers_check).total_seconds()
-            > PUBSUB_PEERS_CHECK_INTERVALL_S
-        ):
+            datetime.utcnow() - self._last_pubsub_peers_check
+        ).total_seconds() > PUBSUB_PEERS_CHECK_INTERVALL_S:
             self._pubsub_peers = ipfs.pubsub.list_peers(self.blockchain_id)
             self._last_pubsub_peers_check = datetime.utcnow()
         return self._pubsub_peers
