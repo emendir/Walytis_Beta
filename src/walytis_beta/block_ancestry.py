@@ -9,20 +9,20 @@ from walytis_beta_tools.block_model import decode_long_id, Block
 class BlockModel:
     """Representation of a block for purposes of ancestry processing."""
 
-    id: bytearray  # long ID
+    block_id: bytearray  # long ID
     parents: list[bytearray]  # list of short IDs
     ancestors: list[bytearray]  # list of long IDs
     oldest_known_generation: list  # list of BlockModels
 
     def __init__(
         self,
-        id: bytearray,
+        block_id: bytearray,
         parents: list[bytearray] | None = None,
         ancestors: list[bytearray] | None = None,
         oldest_known_generation: list | None = None,
     ):
         """Create a BlockModel object."""
-        self.blockchain_id = id
+        self.block_id = block_id
         self.parents = parents if parents else []
         self.ancestors = ancestors if ancestors else []
         self.oldest_known_generation = (
@@ -31,7 +31,7 @@ class BlockModel:
         self.parents = (
             parents
             if parents
-            else decode_long_id(self.blockchain_id)["parents"]
+            else decode_long_id(self.block_id)["parents"]
         )
         self.common_to_all = False
 
@@ -67,7 +67,7 @@ def list_unshared_ancestors(
 
         # create a BlockModel to represent this block
         block_model = BlockModel(
-            id=long_id,
+            block_id=long_id,
             parents=parents,
         )
 
@@ -109,7 +109,7 @@ def list_unshared_ancestors(
                     continue
                 common_to_all = True
                 for _block in org_blocks:
-                    if ancestor.blockchain_id not in _block.ancestors:
+                    if ancestor.block_id not in _block.ancestors:
                         common_to_all = False
                         all_ancestors_common = False
                         break
