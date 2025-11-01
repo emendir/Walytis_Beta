@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractclassmethod, abstractproperty
 from datetime import datetime
+from datetime import timezone
 
 
 class GenericBlock(ABC):
@@ -61,7 +62,7 @@ class _GenericBlockImpl(GenericBlock):
         self._short_id = bytearray()
         self._long_id = bytearray()
         self._creator_id = bytearray()
-        self._creation_time = datetime.utcnow()
+        self._creation_time = datetime.now(timezone.utc)
         self._topics = []
         self._content = bytearray()
         self._parents = []

@@ -6,6 +6,7 @@ import os
 import time
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
+from datetime import timezone
 from random import randint
 from threading import Lock
 from ipfs_tk_peer_monitor import PeerMonitor
@@ -36,7 +37,7 @@ PUBSUB_PEERS_CHECK_INTERVALL_S = 100
 class Networking(ABC):
     """The Walytis blockchain's networking machinery."""
 
-    lastcoms_time = datetime.utcnow()
+    lastcoms_time = datetime.now(timezone.utc)
     pubsub_topic = ""
     # variable for keeping track of the newest of LatestBlockRequests replies
     __shared_leaf_blocks: dict[str, datetime] = {}
@@ -65,7 +66,7 @@ class Networking(ABC):
         self.peer_monitor.file_write_interval_sec = PM_FILE_WRITE_INTERVALL_SEC
         # initialise pubsub peer count tracking
         self._pubsub_peers = 0
-        self._last_pubsub_peers_check = datetime.utcnow() - timedelta(
+        self._last_pubsub_peers_check = datetime.now(timezone.utc) - timedelta(
             seconds=PUBSUB_PEERS_CHECK_INTERVALL_S + 1
         )
         self.ipfs_peer_id = ipfs.peer_id
@@ -100,13 +101,13 @@ class Networking(ABC):
             self.peer_monitor.register_contact_event(sender_id)
         if message == "New block!":
             # logger.info(f"PubSub: Received data for new block on {self.name}.")
-            self.lastcoms_time = datetime.utcnow()
+            self.lastcoms_time = datetime.now(timezone.utc)
             self.update_shared_leaf_blocks([data["block_id"]])
             self.new_block_published(string_to_bytes(data["block_id"]))
 
         elif message == "Leaf blocks:":
             # logger.info(f"PubSub: Received leaf blocks broadcast on {self.name}.")
-            self.lastcoms_time = datetime.utcnow()
+            self.lastcoms_time = datetime.now(timezone.utc)
             # leaf_blocks = [
             #     string_to_bytes(block_id) for block_id in data["leaf_blocks"]
             # ]
@@ -133,7 +134,7 @@ class Networking(ABC):
         self, leaf_blocks: list[str], already_locked: bool = False
     ) -> None:
         """Add the provided block IDs to our list of shared leaf-blocks."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if not already_locked:
             self.__lslb_lock.acquire()
         # update list with newly broadcast blocks
@@ -199,7 +200,7 @@ class Networking(ABC):
             time_since_last_coms = None
             if self.lastcoms_time:
                 time_since_last_coms = (
-                    datetime.utcnow() - self.lastcoms_time
+                    datetime.now(timezone.utc) - self.lastcoms_time
                 ).total_seconds()
             if (
                 not time_since_last_coms
@@ -218,10 +219,10 @@ class Networking(ABC):
 
     def get_pubsub_peers(self):
         if (
-            datetime.utcnow() - self._last_pubsub_peers_check
+            datetime.now(timezone.utc) - self._last_pubsub_peers_check
         ).total_seconds() > PUBSUB_PEERS_CHECK_INTERVALL_S:
             self._pubsub_peers = ipfs.pubsub.list_peers(self.blockchain_id)
-            self._last_pubsub_peers_check = datetime.utcnow()
+            self._last_pubsub_peers_check = datetime.now(timezone.utc)
         return self._pubsub_peers
 
     def network_random_duration(self) -> int:

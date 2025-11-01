@@ -6,6 +6,7 @@ from copy import deepcopy
 # from random import seed
 # from random import randint
 from datetime import datetime
+from datetime import timezone
 from secrets import randbits
 
 from walytis_beta_tools.log import logger_block_model as logger
@@ -40,7 +41,7 @@ class Block(GenericBlock):
         self._short_id = bytearray()
         self._long_id = bytearray()
         self._creator_id = bytearray()
-        self._creation_time = datetime.utcnow()
+        self._creation_time = datetime.now(timezone.utc)
         self._topics = []
         self._content = bytearray()
         self._parents = []

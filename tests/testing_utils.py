@@ -47,12 +47,13 @@ class SharedData:
 
     brenthy_dockers: list[BrenthyDocker]
     blockchain: Blockchain | None
+    num_blocks: int |None
     invitation: str | None
     created_block: Block | None
     WALYTIS_TEST_MODE: WalytisTestModes | None
 
 
-shared_data = SharedData([], None, None, None, None)
+shared_data = SharedData([], None,None, None, None, None)
 
 
 def assert_brenthy_online(timeout: int = 2) -> None:

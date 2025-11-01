@@ -7,6 +7,7 @@ Simply execute this script instead.
 
 import os
 import sys
+from datetime import timezone
 from datetime import datetime
 
 import _auto_run_with_pytest  # noqa
@@ -40,7 +41,7 @@ class BlockchainModel:
         content = "TESTING".encode()
         block = Block.from_metadata(
             creator_id="TESTING".encode("utf-8"),
-            creation_time=datetime.utcnow(),
+            creation_time=datetime.now(timezone.utc),
             topics=["TESTING"],
             content=content,
             content_length=len(content),

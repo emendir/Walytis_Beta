@@ -45,7 +45,7 @@ from walytis_beta_tools.exceptions import NotSupposedToHappenError
 # import api_terminal as AppCom
 from walytis_beta_tools.log import logger, logger_join
 from walytis_beta_tools.versions import WALYTIS_BETA_CORE_VERSION
-
+from datetime import timezone
 import logging
 
 logger_join.setLevel(logging.DEBUG)
@@ -118,6 +118,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             )
             BlockchainAppdata.__init__(self)
             BlockRecords.__init__(self)
+            self.load_block_records()
             Networking.__init__(self)
             if not self.name:
                 self.name = self.blockchain_id[:14]
@@ -161,7 +162,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         # initialise the part of the uninitialised BlockRecords which we need
         self.block_id_cache = []
 
-        seed(datetime.now().microsecond)
+        seed(datetime.now(timezone.utc).microsecond)
         genesis_blocks = []
 
         logger.info("Generating genesis blocks...")
@@ -219,6 +220,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         os.makedirs(self.appdata_dir)
         BlockchainAppdata.__init__(self)
         BlockRecords.__init__(self)
+        self.create_block_records(genesis_block.creation_time)
         Networking.__init__(self)
 
     def create_block(
@@ -260,7 +262,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         self.create_block_lock.acquire()
         block_blockchain_version = WALYTIS_BETA_CORE_VERSION
         block_content = content
-        block_creation_time = datetime.utcnow()
+        block_creation_time = datetime.now(timezone.utc)
 
         block_parents = []
         # Adding parent blocks
@@ -313,7 +315,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         )
 
         def finish_and_publish_block() -> None:
-            block._creation_time = datetime.utcnow()
+            block._creation_time = datetime.now(timezone.utc)
             block.generate_content_hash()
             block.generate_parents_hash()
             block.generate_file_data()
@@ -345,6 +347,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             self.check_new_block(block)
 
         with self.endblocks_lock:
+
             if block.short_id not in self.current_endblocks:
                 # add block to current_endblocks, remove ancestors
                 self.current_endblocks = self.remove_ancestors(
@@ -656,7 +659,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                 logger.info(f"{self.name}:  Genesis block!")
 
             # Check block's timestamp is in the past
-            if creation_time > datetime.now():
+            if creation_time > datetime.now(timezone.utc):
                 logger.warning(
                     (
                         "Received a block with a timestamp in the future: "

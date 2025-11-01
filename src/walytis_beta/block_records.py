@@ -11,6 +11,7 @@ ID recording format: long_id + 000000
 import os
 
 from .networking import ipfs
+from datetime import timezone
 
 if True:
     # pylint: disable=import-error
@@ -47,17 +48,16 @@ class BlockRecords(ABC):
     This class is inherited by the Blockchain class.
     """
 
-    # @abstractproperty
-    name = ""
+    name:str
 
     # defined in walytis_beta_appdata
-    received_blocks_dir = ""
-    known_blocks_index_dir = ""
-    block_record_initialised = Event()
+    received_blocks_dir :str
+    known_blocks_index_dir:str
+    block_record_initialised:Event 
+    max_num_blocks_per_file = 1000
 
     def __init__(self):
         """Initialise block records management."""
-        self.max_num_blocks_per_file = 1000
         self.index_dir = ""
 
         # elements: Tuple(index_file_name, index_file_creation_time),
@@ -68,12 +68,7 @@ class BlockRecords(ABC):
         self.number_of_known_ids = None
         # how many blocks are recorded in the current index file
         self.current_file_length = 0
-
-        self.block_record_initialised = Event()
-
-        self.index_dir = self.known_blocks_index_dir
-        self.create_index()
-        self.ensure_ipfs_pinned()
+        self.index_files=[]
 
         self._genesis_block_id = None
 
@@ -81,7 +76,17 @@ class BlockRecords(ABC):
         # so that they don't have to be looked up in the index files
         self.block_id_cache = []
 
+        self.block_record_initialised = Event()
+        self.index_dir = self.known_blocks_index_dir
+
+    def load_block_records(self):
+        self.load_block_records_index()
+        self.ensure_ipfs_pinned()
         self.block_record_initialised.set()
+    def create_block_records(self, birth_time:datetime) -> None:
+        assert not self.index_files
+        self.create_new_index_file(birth_time)
+        self.load_block_records()
 
     def check_new_block(self, block: Block) -> bool:
         """Check if a block is known, if not record it in the block records.
@@ -418,19 +423,19 @@ class BlockRecords(ABC):
 
         while short_id[-1] == 0:
             short_id = short_id[:-1]
-        timestamp = decode_short_id(short_id)["creation_time"]
+        block_time = decode_short_id(short_id)["creation_time"]
         right_file = None
 
         for file, file_time in self.index_files_times[::-1]:
-            if file_time < timestamp:
+            if file_time <= block_time:
                 right_file = file
                 break
         if right_file is None:
             message = (
                 f"{self.name} Block Records: Asked for block that is "
-                "older than our records."
+                "older than our records: "
             )
-            message += str(timestamp) + self.name
+            message += str(block_time) 
             logger.warning(message)
         return right_file
 
@@ -472,8 +477,8 @@ class BlockRecords(ABC):
         block = self.read_block(block_data, ipfs_cid, live=False)
         return block
 
-    def create_index(self) -> None:
-        """Create a list of all index files constituting the Block ID Records.
+    def load_block_records_index(self) -> None:
+        """Load our list of all index files constituting the Block ID Records.
 
         If no index files are found, create the first index file.
         """
@@ -487,7 +492,7 @@ class BlockRecords(ABC):
         index_files.sort()
         # if there are no index files at all, create one
         if len(index_files) == 0:
-            index_files = [self.create_new_index_file()]
+            raise Exception("Blockchain appdata block records has no index files.")
         # going through all the IDs in the file
         ID_count = self.count_ids(index_files[0])
         self.current_file_length = ID_count
@@ -499,16 +504,20 @@ class BlockRecords(ABC):
         for file in index_files:
             self.index_files_times.append((file, string_to_time(file)))
 
-    def create_new_index_file(self) -> str:
+
+    def create_new_index_file(self, filetime=None) -> str:
         """Create a new index file for storing block IDs."""
+        logger.debug("Creating new index file")
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
-        filename = time_to_string(datetime(2022, 1, 1))
+        if not filetime:
+            filetime  = datetime.now(timezone.utc)
+        filename = time_to_string(filetime)
         f = open(os.path.join(self.index_dir, filename), "w+")
         f.close()
         # registering new index file in our list of index files and their
         # creation times
-        self.index_files_times.append((filename, string_to_time(filename)))
+        self.index_files_times.append((filename, filetime))
         # updating the counter for the number of blocks recrded in the latest
         # index file
         self.current_file_length = 0
