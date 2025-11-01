@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -236,14 +236,338 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="walytis-beta-block-records-module">
-<h1>walytis_beta.block_records module<a class="headerlink" href="#walytis-beta-block-records-module" title="Link to this heading">¶</a></h1>
+          <section id="module-walytis_beta.block_records">
+<span id="walytis-beta-block-records-module"></span><h1>walytis_beta.block_records module<a class="headerlink" href="#module-walytis_beta.block_records" title="Link to this heading">¶</a></h1>
+<p>Machinery for recording and looking up block IDs.</p>
+<p>Storing all the long IDs of all the blocks ever created in one file
+would be rather inefficient because that file would grow to several gigabytes.
+Therefore, this index system creates new files for recording new block IDs
+when the older files become too large.</p>
+<p>ID recording format: long_id + 000000</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta.block_records.</span></span><span class="sig-name descname"><span class="pre">BlockRecords</span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Class for managing a blockchain’s block records.</p>
+<p>This class is inherited by the Blockchain class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.block_record_initialised">
+<span class="sig-name descname"><span class="pre">block_record_initialised</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Event</span></em><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.block_record_initialised" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.cache_block">
+<span class="sig-name descname"><span class="pre">cache_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">long_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.cache_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.cache_block" title="Link to this definition">¶</a></dt>
+<dd><p>Cache a block’s long ID.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.check_alive">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.check_alive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.check_alive" title="Link to this definition">¶</a></dt>
+<dd><p>Raise an exception if this blockchain is not running.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.check_new_block">
+<span class="sig-name descname"><span class="pre">check_new_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.check_new_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.check_new_block" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a block is known, if not record it in the block records.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block</strong> (<a class="reference internal" href="walytis_beta.block_networking.html#walytis_beta.block_networking.Block" title="walytis_beta.block_networking.Block"><em>Block</em></a>) – the new block to check</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>whether or not the block is already known</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.count_ids">
+<span class="sig-name descname"><span class="pre">count_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.count_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.count_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Count how many IDs are in the specified index file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the name of the index file in which to count the ID
+entries</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>If the file is corrupt, returns None. Otherwise,</p></li>
+<li><p>int count: the number of IDs stored in the specified index file</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.create_block_records">
+<span class="sig-name descname"><span class="pre">create_block_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">birth_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.create_block_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.create_block_records" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.create_new_index_file">
+<span class="sig-name descname"><span class="pre">create_new_index_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.create_new_index_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.create_new_index_file" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new index file for storing block IDs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.ensure_ipfs_pinned">
+<span class="sig-name descname"><span class="pre">ensure_ipfs_pinned</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.ensure_ipfs_pinned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.ensure_ipfs_pinned" title="Link to this definition">¶</a></dt>
+<dd><p>Ensure all block’s data-files are pinned on our IPFS node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.find_block">
+<span class="sig-name descname"><span class="pre">find_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytearray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.find_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.find_block" title="Link to this definition">¶</a></dt>
+<dd><p>Given a block’s short ID, return its long ID.</p>
+<p>Checks our cache first, then checks the index files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.get_block_datafile_path">
+<span class="sig-name descname"><span class="pre">get_block_datafile_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.get_block_datafile_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.get_block_datafile_path" title="Link to this definition">¶</a></dt>
+<dd><p>Get the filepath of a block’s block-file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.get_block_datafile_path_from_cid">
+<span class="sig-name descname"><span class="pre">get_block_datafile_path_from_cid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipfs_cid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.get_block_datafile_path_from_cid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.get_block_datafile_path_from_cid" title="Link to this definition">¶</a></dt>
+<dd><p>Get the filepath of a block’s block-file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.get_cached_block">
+<span class="sig-name descname"><span class="pre">get_cached_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytearray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.get_cached_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.get_cached_block" title="Link to this definition">¶</a></dt>
+<dd><p>Given a block’s short ID, look up its long ID in our cache.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.get_genesis_block">
+<span class="sig-name descname"><span class="pre">get_genesis_block</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytearray</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.get_genesis_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.get_genesis_block" title="Link to this definition">¶</a></dt>
+<dd><p>Get this blockchain’s genesis block.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.index_file_reader">
+<span class="sig-name descname"><span class="pre">index_file_reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytearray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.index_file_reader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.index_file_reader" title="Link to this definition">¶</a></dt>
+<dd><p>Read index files.</p>
+<p>This function can be used to perform a range of different tasks
+that require an index file to be read,
+such as looking up Block IDs or counting the number of IDs.</p>
+<dl>
+<dt>Tasks:</dt><dd><ul>
+<li><dl>
+<dt>find_block: checks if a Block ID exists in the block records</dt><dd><p>task: must be “find_block”
+args: string block_id: the ID to lookup, in its long form
+Returns:</p>
+<blockquote>
+<div><p>bool found: whether or not the ID was found in the found</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>count_ids: counts how many IDs are in the specified index file</dt><dd><p>task: must be “count_ids”
+args: string filename: the name of the index file in which to</p>
+<blockquote>
+<div><p>count the ID entries</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns: int count: the number of IDs stored in the specified</dt><dd><p>index file</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>list_ids: returns a list of all the IDs in the specified index</dt><dd><blockquote>
+<div><p>file</p>
+</div></blockquote>
+<p>task: must be “list_ids”
+args: string filename: the name of the index file to extract</p>
+<blockquote>
+<div><p>all IDs from</p>
+</div></blockquote>
+<p>Returns: bytearray ID</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Aegs:</dt><dd><dl class="simple">
+<dt>See the ‘Tasks’ section above for explanations on specific</dt><dd><p>meanings and usage.</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><dl class="simple">
+<dt>task (str): sets what task this function will perform,</dt><dd><p>determined by why we need to read an index file</p>
+</dd>
+</dl>
+</li>
+<li><p>args: the parameters specific to the task to perform</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If the index file read was found to be corrupt, None is returned.
+Otherwise, the return variables depend on what task was performed.
+See the ‘Tasks’ section.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.is_block_cid_known">
+<span class="sig-name descname"><span class="pre">is_block_cid_known</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipfs_cid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.is_block_cid_known"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.is_block_cid_known" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the given block ID exists in our block records.</p>
+<p>This method is faster than find_block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ipfs_cid</strong> (<em>str</em>) – the IPFS CID of the block to lookup form</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>whether or not the ID was found in the found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.is_block_known">
+<span class="sig-name descname"><span class="pre">is_block_known</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.is_block_known"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.is_block_known" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the given block ID exists in our block records.</p>
+<p>This method is faster than find_block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block_id</strong> (<em>str</em>) – the ID to lookup, in its long or short form</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>whether or not the ID was found in the found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.known_blocks_index_dir">
+<span class="sig-name descname"><span class="pre">known_blocks_index_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.known_blocks_index_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.list_ids">
+<span class="sig-name descname"><span class="pre">list_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.list_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.list_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Get a list of all the IDs recorded in the specified index-file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the name of the index file to extract all IDs from</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list(bytearray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.load_block">
+<span class="sig-name descname"><span class="pre">load_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.load_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.load_block" title="Link to this definition">¶</a></dt>
+<dd><p>Load a block Block object from the block records.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.load_block_from_cid">
+<span class="sig-name descname"><span class="pre">load_block_from_cid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipfs_cid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.load_block_from_cid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.load_block_from_cid" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.load_block_records">
+<span class="sig-name descname"><span class="pre">load_block_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.load_block_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.load_block_records" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.load_block_records_index">
+<span class="sig-name descname"><span class="pre">load_block_records_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.load_block_records_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.load_block_records_index" title="Link to this definition">¶</a></dt>
+<dd><p>Load our list of all index files constituting the Block ID Records.</p>
+<p>If no index files are found, create the first index file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.load_latest_block_ids">
+<span class="sig-name descname"><span class="pre">load_latest_block_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.load_latest_block_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.load_latest_block_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Get the IDs of latest few blocks from the block records.</p>
+<p>The order of the returned blocks is roughly from most recent to oldest,
+but cannot be guaranteed. In the same way it cannot be guaranteed that
+the blocks returned are truely the newest received if the amount
+parameter is set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>amount</strong> (<em>int</em>) – how many blocks should be returned (None -&gt; no limit)</p></li>
+<li><p><strong>since_date</strong> (<em>datetime</em>) – the maximum age of the blocks to look for
+(None for no limit)</p></li>
+<li><p><strong>topics</strong> (<em>str</em>) – string or list of strings of topics to filter by,
+returning only blocks published on those topics
+(None for no filtering by topics)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of Block IDs</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[bytearray]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.max_num_blocks_per_file">
+<span class="sig-name descname"><span class="pre">max_num_blocks_per_file</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1000</span></em><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.max_num_blocks_per_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.read_block">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ipfs_cid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">live</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.read_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.read_block" title="Link to this definition">¶</a></dt>
+<dd><p>Read a block file, returning a Block object if it is valid.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.received_blocks_dir">
+<span class="sig-name descname"><span class="pre">received_blocks_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.received_blocks_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.save_block">
+<span class="sig-name descname"><span class="pre">save_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="walytis_beta_tools.block_model.html#walytis_beta_tools.block_model.Block" title="walytis_beta_tools.block_model.Block"><span class="pre">Block</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.save_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.save_block" title="Link to this definition">¶</a></dt>
+<dd><p>Save all the given block’s data &amp; metadata in the block records.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.block_records.BlockRecords.which_file">
+<span class="sig-name descname"><span class="pre">which_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">short_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_records.html#BlockRecords.which_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_records.BlockRecords.which_file" title="Link to this definition">¶</a></dt>
+<dd><p>Work out in which index-file the specified ID should be stored.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -271,8 +595,58 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">walytis_beta.block_records module</a><ul>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords"><code class="docutils literal notranslate"><span class="pre">BlockRecords</span></code></a><ul>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.block_record_initialised"><code class="docutils literal notranslate"><span class="pre">BlockRecords.block_record_initialised</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.cache_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.cache_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.check_alive"><code class="docutils literal notranslate"><span class="pre">BlockRecords.check_alive()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.check_new_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.check_new_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.count_ids"><code class="docutils literal notranslate"><span class="pre">BlockRecords.count_ids()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.create_block_records"><code class="docutils literal notranslate"><span class="pre">BlockRecords.create_block_records()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.create_new_index_file"><code class="docutils literal notranslate"><span class="pre">BlockRecords.create_new_index_file()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.ensure_ipfs_pinned"><code class="docutils literal notranslate"><span class="pre">BlockRecords.ensure_ipfs_pinned()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.find_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.find_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.get_block_datafile_path"><code class="docutils literal notranslate"><span class="pre">BlockRecords.get_block_datafile_path()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.get_block_datafile_path_from_cid"><code class="docutils literal notranslate"><span class="pre">BlockRecords.get_block_datafile_path_from_cid()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.get_cached_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.get_cached_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.get_genesis_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.get_genesis_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.index_file_reader"><code class="docutils literal notranslate"><span class="pre">BlockRecords.index_file_reader()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.is_block_cid_known"><code class="docutils literal notranslate"><span class="pre">BlockRecords.is_block_cid_known()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.is_block_known"><code class="docutils literal notranslate"><span class="pre">BlockRecords.is_block_known()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.known_blocks_index_dir"><code class="docutils literal notranslate"><span class="pre">BlockRecords.known_blocks_index_dir</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.list_ids"><code class="docutils literal notranslate"><span class="pre">BlockRecords.list_ids()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.load_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.load_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.load_block_from_cid"><code class="docutils literal notranslate"><span class="pre">BlockRecords.load_block_from_cid()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.load_block_records"><code class="docutils literal notranslate"><span class="pre">BlockRecords.load_block_records()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.load_block_records_index"><code class="docutils literal notranslate"><span class="pre">BlockRecords.load_block_records_index()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.load_latest_block_ids"><code class="docutils literal notranslate"><span class="pre">BlockRecords.load_latest_block_ids()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.max_num_blocks_per_file"><code class="docutils literal notranslate"><span class="pre">BlockRecords.max_num_blocks_per_file</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.name"><code class="docutils literal notranslate"><span class="pre">BlockRecords.name</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.read_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.read_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.received_blocks_dir"><code class="docutils literal notranslate"><span class="pre">BlockRecords.received_blocks_dir</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.save_block"><code class="docutils literal notranslate"><span class="pre">BlockRecords.save_block()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_records.BlockRecords.which_file"><code class="docutils literal notranslate"><span class="pre">BlockRecords.which_file()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

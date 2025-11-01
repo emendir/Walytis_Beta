@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -236,14 +236,88 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="walytis-beta-block-ancestry-module">
-<h1>walytis_beta.block_ancestry module<a class="headerlink" href="#walytis-beta-block-ancestry-module" title="Link to this heading">¶</a></h1>
+          <section id="module-walytis_beta.block_ancestry">
+<span id="walytis-beta-block-ancestry-module"></span><h1>walytis_beta.block_ancestry module<a class="headerlink" href="#module-walytis_beta.block_ancestry" title="Link to this heading">¶</a></h1>
+<p>Machinery for processing blocks’ ancestries.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.BlockModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta.block_ancestry.</span></span><span class="sig-name descname"><span class="pre">BlockModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oldest_known_generation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/walytis_beta/block_ancestry.html#BlockModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_ancestry.BlockModel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of a block for purposes of ancestry processing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.BlockModel.ancestors">
+<span class="sig-name descname"><span class="pre">ancestors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#walytis_beta.block_ancestry.BlockModel.ancestors" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.BlockModel.block_id">
+<span class="sig-name descname"><span class="pre">block_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bytearray</span></em><a class="headerlink" href="#walytis_beta.block_ancestry.BlockModel.block_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.BlockModel.oldest_known_generation">
+<span class="sig-name descname"><span class="pre">oldest_known_generation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#walytis_beta.block_ancestry.BlockModel.oldest_known_generation" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.BlockModel.parents">
+<span class="sig-name descname"><span class="pre">parents</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#walytis_beta.block_ancestry.BlockModel.parents" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.list_unshared_ancestors">
+<span class="sig-prename descclassname"><span class="pre">walytis_beta.block_ancestry.</span></span><span class="sig-name descname"><span class="pre">list_unshared_ancestors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="walytis_beta.walytis_beta.html#walytis_beta.walytis_beta.Blockchain" title="walytis_beta.walytis_beta.Blockchain"><span class="pre">Blockchain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta/block_ancestry.html#list_unshared_ancestors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_ancestry.list_unshared_ancestors" title="Link to this definition">¶</a></dt>
+<dd><p>Get all the ancestors the given blocks don’t all have in common.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain</strong> (<a class="reference internal" href="walytis_beta.walytis_beta.html#walytis_beta.walytis_beta.Blockchain" title="walytis_beta.walytis_beta.Blockchain"><em>Blockchain</em></a>) – the blockchain these blocks belong to</p></li>
+<li><p><strong>blocks</strong> (<em>list</em>) – list of Block objects or block IDs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>long IDs of blocks</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.remove_ancestors">
+<span class="sig-prename descclassname"><span class="pre">walytis_beta.block_ancestry.</span></span><span class="sig-name descname"><span class="pre">remove_ancestors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="walytis_beta.walytis_beta.html#walytis_beta.walytis_beta.Blockchain" title="walytis_beta.walytis_beta.Blockchain"><span class="pre">Blockchain</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">bytearray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/walytis_beta/block_ancestry.html#remove_ancestors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_ancestry.remove_ancestors" title="Link to this definition">¶</a></dt>
+<dd><p>Given a list of blocks, remove any which is an ancestors of another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockchain</strong> (<a class="reference internal" href="walytis_beta.walytis_beta.html#walytis_beta.walytis_beta.Blockchain" title="walytis_beta.walytis_beta.Blockchain"><em>Blockchain</em></a>) – the blockchain these blocks belong to</p></li>
+<li><p><strong>blocks</strong> (<em>list</em>) – list of Block objects or block IDs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>long IDs of blocks</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="walytis_beta.block_ancestry.remove_duplicates">
+<span class="sig-prename descclassname"><span class="pre">walytis_beta.block_ancestry.</span></span><span class="sig-name descname"><span class="pre">remove_duplicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_ancestry.html#remove_duplicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_ancestry.remove_duplicates" title="Link to this definition">¶</a></dt>
+<dd><p>Remove duplicates from the given list.</p>
+</dd></dl>
+
 </section>
 
         </article>
@@ -271,8 +345,36 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">walytis_beta.block_ancestry module</a><ul>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.BlockModel"><code class="docutils literal notranslate"><span class="pre">BlockModel</span></code></a><ul>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.BlockModel.ancestors"><code class="docutils literal notranslate"><span class="pre">BlockModel.ancestors</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.BlockModel.block_id"><code class="docutils literal notranslate"><span class="pre">BlockModel.block_id</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.BlockModel.oldest_known_generation"><code class="docutils literal notranslate"><span class="pre">BlockModel.oldest_known_generation</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.BlockModel.parents"><code class="docutils literal notranslate"><span class="pre">BlockModel.parents</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.list_unshared_ancestors"><code class="docutils literal notranslate"><span class="pre">list_unshared_ancestors()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.remove_ancestors"><code class="docutils literal notranslate"><span class="pre">remove_ancestors()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.block_ancestry.remove_duplicates"><code class="docutils literal notranslate"><span class="pre">remove_duplicates()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

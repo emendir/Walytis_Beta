@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -236,14 +236,95 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="walytis-beta-walytis-beta-appdata-module">
-<h1>walytis_beta.walytis_beta_appdata module<a class="headerlink" href="#walytis-beta-walytis-beta-appdata-module" title="Link to this heading">¶</a></h1>
+          <section id="module-walytis_beta.walytis_beta_appdata">
+<span id="walytis-beta-walytis-beta-appdata-module"></span><h1>walytis_beta.walytis_beta_appdata module<a class="headerlink" href="#module-walytis_beta.walytis_beta_appdata" title="Link to this heading">¶</a></h1>
+<p>The machinery that interacts with this program’s appdata.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">walytis_beta.walytis_beta_appdata.</span></span><span class="sig-name descname"><span class="pre">BlockchainAppdata</span></span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#BlockchainAppdata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Blockchain class’s appdata machinery, inherited by class Blockchain.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.appdata_dir">
+<span class="sig-name descname"><span class="pre">appdata_dir</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.appdata_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.config_path">
+<span class="sig-name descname"><span class="pre">config_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.config_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.invitations_path">
+<span class="sig-name descname"><span class="pre">invitations_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.invitations_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.load_config">
+<span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#BlockchainAppdata.load_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.load_config" title="Link to this definition">¶</a></dt>
+<dd><p>Load user-defined configurations from appdata.</p>
+<p>Only fills the Walytis_Beta class’s attributes if they are empty,
+doesn’t override them. If those attributes already have non-empty,
+their values are saved to the config file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.load_invitations">
+<span class="sig-name descname"><span class="pre">load_invitations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#BlockchainAppdata.load_invitations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.load_invitations" title="Link to this definition">¶</a></dt>
+<dd><p>Load invitations from appdata.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">already_locked</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#BlockchainAppdata.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.save_config" title="Link to this definition">¶</a></dt>
+<dd><p>Save user-defined configurations for this blockchain.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.save_invitations">
+<span class="sig-name descname"><span class="pre">save_invitations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#BlockchainAppdata.save_invitations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.save_invitations" title="Link to this definition">¶</a></dt>
+<dd><p>Save invitations to appdata.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.BlockchainAppdata.zip_appdata">
+<span class="sig-name descname"><span class="pre">zip_appdata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#BlockchainAppdata.zip_appdata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.zip_appdata" title="Link to this definition">¶</a></dt>
+<dd><p>Create a zip file of all this blockchain’s data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.create_temp_dir">
+<span class="sig-prename descclassname"><span class="pre">walytis_beta.walytis_beta_appdata.</span></span><span class="sig-name descname"><span class="pre">create_temp_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#create_temp_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.create_temp_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.get_walytis_appdata_dir">
+<span class="sig-prename descclassname"><span class="pre">walytis_beta.walytis_beta_appdata.</span></span><span class="sig-name descname"><span class="pre">get_walytis_appdata_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#get_walytis_appdata_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.get_walytis_appdata_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="walytis_beta.walytis_beta_appdata.set_appdata_dir">
+<span class="sig-prename descclassname"><span class="pre">walytis_beta.walytis_beta_appdata.</span></span><span class="sig-name descname"><span class="pre">set_appdata_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">appdata_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/walytis_beta/walytis_beta_appdata.html#set_appdata_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.walytis_beta_appdata.set_appdata_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 
         </article>
@@ -271,8 +352,42 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">walytis_beta.walytis_beta_appdata module</a><ul>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata</span></code></a><ul>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.appdata_dir"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.appdata_dir</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.config_path"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.config_path</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.id"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.id</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.invitations_path"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.invitations_path</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.load_config"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.load_config()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.load_invitations"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.load_invitations()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.name"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.name</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.save_config"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.save_config()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.save_invitations"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.save_invitations()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.BlockchainAppdata.zip_appdata"><code class="docutils literal notranslate"><span class="pre">BlockchainAppdata.zip_appdata()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.create_temp_dir"><code class="docutils literal notranslate"><span class="pre">create_temp_dir()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.get_walytis_appdata_dir"><code class="docutils literal notranslate"><span class="pre">get_walytis_appdata_dir()</span></code></a></li>
+<li><a class="reference internal" href="#walytis_beta.walytis_beta_appdata.set_appdata_dir"><code class="docutils literal notranslate"><span class="pre">set_appdata_dir()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
