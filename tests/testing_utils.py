@@ -46,6 +46,7 @@ class SharedData:
     """Structure for storing objects created and shared between tests."""
 
     brenthy_dockers: list[BrenthyDocker]
+    blockchains: list[Blockchain]
     blockchain: Blockchain | None
     num_blocks: int |None
     invitation: str | None
@@ -53,7 +54,7 @@ class SharedData:
     WALYTIS_TEST_MODE: WalytisTestModes | None
 
 
-shared_data = SharedData([], None,None, None, None, None)
+shared_data = SharedData([], [], None,None, None, None, None)
 
 
 def assert_brenthy_online(timeout: int = 2) -> None:

@@ -32,6 +32,7 @@ from testing_utils import shared_data
 from build_docker import build_docker_image
 from brenthy_docker import BrenthyDocker, delete_containers
 from testing_utils import get_rebuild_docker
+
 REBUILD_DOCKER = False  # overriden by environment variable
 REBUILD_DOCKER = get_rebuild_docker(REBUILD_DOCKER)  # override if EnvVar set
 NUMBER_OF_FIND_ATTEMPTS = 10
@@ -47,6 +48,7 @@ DELETE_ALL_BRENTHY_DOCKERS = True
 if True:
     # import run
     import run
+
     run.TRY_INSTALL = False
     import walytis_beta_api
 
@@ -59,8 +61,9 @@ def test_preparations() -> None:
     """Get everything needed to run the tests ready."""
     if DELETE_ALL_BRENTHY_DOCKERS:
         print("Deleting docker containers...")
-        delete_containers(image="local/brenthy_testing",
-                          container_name_substr="brenthy")
+        delete_containers(
+            image="local/brenthy_testing", container_name_substr="brenthy"
+        )
 
     if REBUILD_DOCKER:
         build_docker_image(verbose=False)
@@ -70,12 +73,11 @@ def test_preparations() -> None:
     print("Preparing Docker containers...")
     shared_data.brenthy_dockers = []
     for i in range(NUMBER_OF_CONTAINERS):
-
         shared_data.brenthy_dockers.append(
             BrenthyDocker(
                 image="local/brenthy_testing",
                 container_name=DOCKER_CONTAINER_NAME + "0" + str(i),
-                auto_run=False
+                auto_run=False,
             )
         )
     print("Running Walytis...")
@@ -95,13 +97,18 @@ def get_docker_latest_block_content(
     docker_container: BrenthyDocker,
 ) -> str:
     """Get the content of the latest block on the specified container."""
-    return docker_container.run_python_code(";".join([
-        "import walytis_beta_api",
-        f"bc = walytis_beta_api.Blockchain('{
-            shared_data.blockchain.blockchain_id}')",
-        "print(bc.get_block(-1).content.decode())",
-        "bc.terminate()"
-    ]), print_output=False
+    return docker_container.run_python_code(
+        ";".join(
+            [
+                "import walytis_beta_api",
+                f"bc = walytis_beta_api.Blockchain('{
+                    shared_data.blockchain.blockchain_id
+                }')",
+                "print(bc.get_block(-1).content.decode())",
+                "bc.terminate()",
+            ]
+        ),
+        print_output=False,
     ).strip("\n")
 
 
@@ -229,7 +236,7 @@ def test_get_peers() -> None:
     for container in brenthy_dockers:
         # container.start()
         container.restart()
-    polite_wait(5)
+    polite_wait(20)
     peers = blockchain.get_peers()
 
     # we're testing for if ANY docker peer is listed, because
