@@ -245,12 +245,12 @@ class Networking(ABC):
         Returns:
             bool: whether or not this blockchain is still running
         """
-        self.check_alive()  # ensure this Blockchain object isn't shutting down
-
-        for i in range(seconds):
-            time.sleep(1)
+        for i in range(round(seconds * 100)):
             if self._terminate:
                 return False
+            time.sleep(0.01)
+        if self._terminate:
+            return False
         return True
 
     def get_newest_block_id(self) -> bytearray | None:

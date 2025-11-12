@@ -347,7 +347,6 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             self.check_new_block(block)
 
         with self.endblocks_lock:
-
             if block.short_id not in self.current_endblocks:
                 # add block to current_endblocks, remove ancestors
                 self.current_endblocks = self.remove_ancestors(
@@ -878,7 +877,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         while not self._terminate:
             self.look_for_blocks_to_find()
             self.check_on_unconfirmed_blocks()
-            time.sleep(self.blocks_finder_thread_cycle_duration_s)
+            self.wait_seconds(self.blocks_finder_thread_cycle_duration_s)
 
     def create_invitation(
         self, one_time: bool = True, shared: bool = False
