@@ -25,7 +25,7 @@ if get_ipfs_tk_mode() == IpfsTkModes.EMBEDDED:
 else:
     from ipfs_remote import IpfsRemote
 
-    ipfs = IpfsRemote("/dns/localhost/tcp/5001/http")
+    ipfs = IpfsRemote()
     try:
         ipfs.wait_till_ipfs_is_running(timeout_sec=5)
     except TimeoutError:
