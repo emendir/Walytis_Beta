@@ -48,12 +48,12 @@ class BlockRecords(ABC):
     This class is inherited by the Blockchain class.
     """
 
-    name:str
+    name: str
 
     # defined in walytis_beta_appdata
-    received_blocks_dir :str
-    known_blocks_index_dir:str
-    block_record_initialised:Event 
+    received_blocks_dir: str
+    known_blocks_index_dir: str
+    block_record_initialised: Event
     max_num_blocks_per_file = 1000
 
     def __init__(self):
@@ -68,7 +68,7 @@ class BlockRecords(ABC):
         self.number_of_known_ids = None
         # how many blocks are recorded in the current index file
         self.current_file_length = 0
-        self.index_files=[]
+        self.index_files = []
 
         self._genesis_block_id = None
 
@@ -83,7 +83,8 @@ class BlockRecords(ABC):
         self.load_block_records_index()
         self.ensure_ipfs_pinned()
         self.block_record_initialised.set()
-    def create_block_records(self, birth_time:datetime) -> None:
+
+    def create_block_records(self, birth_time: datetime) -> None:
         assert not self.index_files
         self.create_new_index_file(birth_time)
         self.load_block_records()
@@ -108,7 +109,7 @@ class BlockRecords(ABC):
         while long_id[0] == bytearray([0]):
             long_id = long_id[1:]
         while long_id[-1] == bytearray([0]):
-            long_id = long_id[0: len(long_id) - 1]
+            long_id = long_id[0 : len(long_id) - 1]
 
         # if the block is already in the records
         if self.is_block_known(long_id):
@@ -117,24 +118,26 @@ class BlockRecords(ABC):
             # result[2] is the name of the index file in which the ID should be
             # recorded
             right_index_file = self.which_file(short_from_long_id(long_id))
-            self.index_lock.acquire()
-            f = open(os.path.join(self.index_dir, right_index_file), "ab")
-            f.write(
-                to_b255_no_0s(len(long_id))
-                + bytearray([0])
-                + long_id
-                + bytearray([0, 0, 0, 0, 0, 0])
-            )
-            f.close()
-            logger.info(f"{self.name}:  Block is new. Added block to ID Records.")
-            if self.number_of_known_ids is not None:
-                self.number_of_known_ids += 1
+            with self.index_lock:
+                with open(
+                    os.path.join(self.index_dir, right_index_file), "ab"
+                ) as f:
+                    f.write(
+                        to_b255_no_0s(len(long_id))
+                        + bytearray([0])
+                        + long_id
+                        + bytearray([0, 0, 0, 0, 0, 0])
+                    )
+                logger.info(
+                    f"{self.name}:  Block is new. Added block to ID Records."
+                )
+                if self.number_of_known_ids is not None:
+                    self.number_of_known_ids += 1
 
-            self.current_file_length += 1
-            if self.current_file_length >= self.max_num_blocks_per_file:
-                self.create_new_index_file()
+                self.current_file_length += 1
+                if self.current_file_length >= self.max_num_blocks_per_file:
+                    self.create_new_index_file()
 
-            self.index_lock.release()
             self.cache_block(long_id)
 
             # it is important to save the block datafile only after saving its
@@ -208,97 +211,93 @@ class BlockRecords(ABC):
             return None
         if not file:
             return None
-        self.index_lock.acquire()
 
-        if not os.path.exists(os.path.join(self.index_dir, file)):
-            logger.error(
-                f"BlockRecords {task}: Index file doesn't exist: {file}\n"
-                f"{traceback.format_stack(limit=8)}"
-            )
-            self.index_lock.release()
-            return None
-
-        ID_count = 0  # counter for counting the number of IDs in the file
-        # gets called when end of file is reached or error is found in file
-
-        def Finished(success: bool) -> int | bytearray | list[bytes] | None:
-            file_reader.close()
-            self.index_lock.release()
-            if not success:
+        with self.index_lock:
+            if not os.path.exists(os.path.join(self.index_dir, file)):
                 logger.error(
-                    f"{self.name}: BlockRecords: error reading an index file."
+                    f"BlockRecords {task}: Index file doesn't exist: {file}\n"
+                    f"{traceback.format_stack(limit=8)}"
                 )
                 return None
 
-            if find_id:
-                # The end of the file was reached without finding the ID.
-                return None
-            elif count_ids:
-                return ID_count
-            elif list_ids:
-                return entry_list
-            logger.error(
-                f"{self.name}: BlockRecords: Bug in index_file_reader(), this "
-                "line isn't to be reached."
-            )
-            return None
+            ID_count = 0  # counter for counting the number of IDs in the file
+            # gets called when end of file is reached or error is found in file
 
-        # checking  if the ID is recorded in the file
-        file_reader = open(os.path.join(self.index_dir, file), "rb")
-        # Loop reading one ID after the other:
-        while True:
-            # Reading the length of the next ID
-            next_id_length_255 = bytearray([])
+            def Finished(
+                success: bool,
+            ) -> int | bytearray | list[bytes] | None:
+                if not success:
+                    logger.error(
+                        f"{self.name}: BlockRecords: error reading an index file."
+                    )
+                    return None
 
-            # going through one byte of the block_id length number after the
-            # other until we reach 0, the code for the end of the block_id
-            # length number
-            while True:
-                byte = file_reader.read(1)
-                # if we've finished reading the ID length code, break the loop
-                if byte == bytearray([0]):
-                    break
-                elif len(byte) == 0:  # if we've reached the end of the file
-                    return Finished(True)
-                else:  # we're still reading the block_id length number
-                    next_id_length_255 = next_id_length_255 + byte
-            # decoding the bytearray representation of the length
-            next_id_length = from_b255_no_0s(next_id_length_255)
-
-            # reading the next ID
-            index_entry = bytearray(file_reader.read(next_id_length))
-
-            # making sure the end code is in place
-            if file_reader.read(6) != bytearray([0, 0, 0, 0, 0, 0]):
+                if find_id:
+                    # The end of the file was reached without finding the ID.
+                    return None
+                elif count_ids:
+                    return ID_count
+                elif list_ids:
+                    return entry_list
                 logger.error(
-                    f"{self.name}: error in the Block ID records in index file"
-                    f" {file}. Block ID entry was not followed by the entry "
-                    "separator bytearray([0,0,0,0,0,0])."
+                    f"{self.name}: BlockRecords: Bug in index_file_reader(), this "
+                    "line isn't to be reached."
                 )
-                file_reader.close()
-                # ID_count (we don't know how many IDs were stored in the file)
-                self.index_lock.release()
-
                 return None
-            # finished reading index entry
 
-            if find_id:
-                # comparison compatible with short id and long id
-                # if it's the block we're looking for
-                if (
-                    index_entry == block_id
-                    or short_from_long_id(index_entry) == block_id
-                ):
-                    file_reader.close()
-                    # True: that the block was found
-                    self.index_lock.release()
-                    return index_entry
-            elif list_ids:
-                entry_list.append(index_entry)
-            # incrementing the counter that keeps track of how many IDs have
-            # been processed so far
-            ID_count = ID_count + 1
-        self.index_lock.release()
+            # checking  if the ID is recorded in the file
+            with open(os.path.join(self.index_dir, file), "rb") as file_reader:
+                # Loop reading one ID after the other:
+                while True:
+                    # Reading the length of the next ID
+                    next_id_length_255 = bytearray([])
+
+                    # going through one byte of the block_id length number after the
+                    # other until we reach 0, the code for the end of the block_id
+                    # length number
+                    while True:
+                        byte = file_reader.read(1)
+                        # if we've finished reading the ID length code, break the loop
+                        if byte == bytearray([0]):
+                            break
+                        elif (
+                            len(byte) == 0
+                        ):  # if we've reached the end of the file
+                            return Finished(True)
+                        else:  # we're still reading the block_id length number
+                            next_id_length_255 = next_id_length_255 + byte
+                    # decoding the bytearray representation of the length
+                    next_id_length = from_b255_no_0s(next_id_length_255)
+
+                    # reading the next ID
+                    index_entry = bytearray(file_reader.read(next_id_length))
+
+                    # making sure the end code is in place
+                    if file_reader.read(6) != bytearray([0, 0, 0, 0, 0, 0]):
+                        logger.error(
+                            f"{self.name}: error in the Block ID records in index file"
+                            f" {file}. Block ID entry was not followed by the entry "
+                            "separator bytearray([0,0,0,0,0,0])."
+                        )
+                        # ID_count (we don't know how many IDs were stored in the file)
+
+                        return None
+                    # finished reading index entry
+
+                    if find_id:
+                        # comparison compatible with short id and long id
+                        # if it's the block we're looking for
+                        if (
+                            index_entry == block_id
+                            or short_from_long_id(index_entry) == block_id
+                        ):
+                            # True: that the block was found
+                            return index_entry
+                    elif list_ids:
+                        entry_list.append(index_entry)
+                    # incrementing the counter that keeps track of how many IDs have
+                    # been processed so far
+                    ID_count = ID_count + 1
 
     def is_block_known(self, block_id: bytearray) -> bool:
         """Check if the given block ID exists in our block records.
@@ -435,7 +434,7 @@ class BlockRecords(ABC):
                 f"{self.name} Block Records: Asked for block that is "
                 "older than our records: "
             )
-            message += str(block_time) 
+            message += str(block_time)
             logger.warning(message)
         return right_file
 
@@ -459,7 +458,8 @@ class BlockRecords(ABC):
         short_id = short_from_long_id(short_id)
         ipfs_cid = decode_short_id(short_id)["ipfs_cid"]
         return self.get_block_datafile_path_from_cid(ipfs_cid)
-    def get_block_datafile_path_from_cid(self, ipfs_cid:str) -> str:
+
+    def get_block_datafile_path_from_cid(self, ipfs_cid: str) -> str:
         """Get the filepath of a block's block-file."""
         return os.path.join(self.received_blocks_dir, ipfs_cid[:4], ipfs_cid)
 
@@ -472,6 +472,7 @@ class BlockRecords(ABC):
         self.block_record_initialised.wait()
         ipfs_cid = decode_short_id(short_id)["ipfs_cid"]
         return self.load_block_from_cid(ipfs_cid)
+
     def load_block_from_cid(self, ipfs_cid: str) -> Block | None:
         block_data = ipfs.files.read(ipfs_cid)
         block = self.read_block(block_data, ipfs_cid, live=False)
@@ -492,7 +493,9 @@ class BlockRecords(ABC):
         index_files.sort()
         # if there are no index files at all, create one
         if len(index_files) == 0:
-            raise Exception("Blockchain appdata block records has no index files.")
+            raise Exception(
+                "Blockchain appdata block records has no index files."
+            )
         # going through all the IDs in the file
         ID_count = self.count_ids(index_files[0])
         self.current_file_length = ID_count
@@ -504,17 +507,16 @@ class BlockRecords(ABC):
         for file in index_files:
             self.index_files_times.append((file, string_to_time(file)))
 
-
     def create_new_index_file(self, filetime=None) -> str:
         """Create a new index file for storing block IDs."""
         logger.debug("Creating new index file")
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
         if not filetime:
-            filetime  = datetime.now(timezone.utc)
+            filetime = datetime.now(timezone.utc)
         filename = time_to_string(filetime)
-        f = open(os.path.join(self.index_dir, filename), "w+")
-        f.close()
+        with open(os.path.join(self.index_dir, filename), "w+") as _:
+            pass
         # registering new index file in our list of index files and their
         # creation times
         self.index_files_times.append((filename, filetime))

@@ -61,9 +61,7 @@ class Block(GenericBlock):
         self.__integrity_checked = False
 
     @classmethod
-    def from_id(
-        cls, long_id: bytearray
-    ):
+    def from_id(cls, long_id: bytearray):
         block = cls()
         block._long_id = long_id
         return block
@@ -85,8 +83,7 @@ class Block(GenericBlock):
         parents: list[bytearray],
         file_data: bytearray,
         blockchain_version: tuple,
-
-    ) -> 'Block':
+    ) -> "Block":
         """Create a block object with the given fields.
 
         CAREFUL: No checks or generations are performed.
@@ -171,7 +168,9 @@ class Block(GenericBlock):
             bool: whether this block's data is self-consistent and valid.
         """
         if not self._blockchain_version:
-            logger.warning("Block Integrity Check: blockchain_version not set.")
+            logger.warning(
+                "Block Integrity Check: blockchain_version not set."
+            )
             return False
         if not self.ipfs_cid:
             logger.warning("Block Integrity Check: ipfs_cid not set.")
@@ -228,14 +227,18 @@ class Block(GenericBlock):
             return False
         # checking if encoded parents count matches actual parent's count
         if not len(self.parents) == self._n_parents:
-            logger.warning("Block Integrity Check: number of parents incorrect")
+            logger.warning(
+                "Block Integrity Check: number of parents incorrect"
+            )
             return False
 
         # check if parents are sorted
         sorted_parents = deepcopy(self.parents)
         sorted_parents.sort()
         if self.parents != sorted_parents:
-            logger.warning("Block Integrity Check: parents blocks aren't sorted")
+            logger.warning(
+                "Block Integrity Check: parents blocks aren't sorted"
+            )
             return False
 
         # Checking generated parts
@@ -347,7 +350,9 @@ class Block(GenericBlock):
             logger.warning("Block.generate_id(): Content length not set.")
             return None
         if not self._content_hash_algorithm:
-            logger.warning("Block.generate_id(): content_hash_algorithm not set.")
+            logger.warning(
+                "Block.generate_id(): content_hash_algorithm not set."
+            )
             return None
         if not self._content_hash:
             logger.warning("Block.generate_id(): Hash not set.")
@@ -356,7 +361,9 @@ class Block(GenericBlock):
         #     logger.warning("Block.generate_id(): n_parents not set.")
         #     return None
         if not self._parents_hash_algorithm:
-            logger.warning("Block.generate_id(): parents_hash_algorithm not set.")
+            logger.warning(
+                "Block.generate_id(): parents_hash_algorithm not set."
+            )
             return None
         if not self._parents_hash:
             logger.warning("Block.generate_id(): parents_hash not set.")
@@ -459,9 +466,8 @@ class Block(GenericBlock):
             path (str): the filepath to write the blockfile to.
         """
         if len(self.file_data) > 0:
-            file = open(path, "wb")
-            file.write(self.file_data)
-            file.close()
+            with open(path, "wb") as file:
+                file.write(self.file_data)
         else:
             logger.error("Couldn't save block to file cause data is null.")
 
@@ -567,7 +573,9 @@ def short_from_long_id(long_id: bytearray) -> bytearray:
         bytearray: the extracted short block ID
     """
     if not (isinstance(long_id, (bytearray, bytes))):
-        raise TypeError(f"long_id must be of type bytearray, not {type(long_id)}")
+        raise TypeError(
+            f"long_id must be of type bytearray, not {type(long_id)}"
+        )
     try:
         short_id = long_id.split(bytearray([0, 0, 0]))[0]
     except:
