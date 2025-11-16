@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from datetime import timezone
 from random import randint
-from threading import Lock
+from threading import Lock, Thread
 from ipfs_tk_peer_monitor import PeerMonitor
 
 from .exceptions import BlockchainTerminatedError
@@ -32,6 +32,8 @@ estimated_pubsub_latency_sec = 10  # TODO: measure pubsub latency
 
 # at what intervall should we check the number of pubsub-connected peers
 PUBSUB_PEERS_CHECK_INTERVALL_S = 100
+IPFS_PIN_CACHE_AGE_SEC = 300
+IPFS_PIN_RENEWAL_PERIOD_SEC = IPFS_PIN_CACHE_AGE_SEC - 150
 
 
 class Networking(ABC):
@@ -70,6 +72,15 @@ class Networking(ABC):
             seconds=PUBSUB_PEERS_CHECK_INTERVALL_S + 1
         )
         self.ipfs_peer_id = ipfs.peer_id
+        self.pin_checker_thr = Thread(
+            target=self.renew_ipfs_pin_cache, name="Walytis-Pin-Checker"
+        )
+        self.pin_checker_thr.start()
+
+    def renew_ipfs_pin_cache(self):
+        while not self._terminate:
+            ipfs.files.list_pins(cids_only=True)
+            self.wait_seconds(IPFS_PIN_RENEWAL_PERIOD_SEC)
 
     def listen_for_blocks(self) -> None:
         """Start listening for new blocks on this blockchain."""

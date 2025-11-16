@@ -165,7 +165,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         seed(datetime.now(timezone.utc).microsecond)
         genesis_blocks = []
 
-        logger.info("Generating genesis blocks...")
+        logger.debug("Generating genesis blocks...")
         self.number_of_known_ids = 0
         for b in range(N_GENESIS_BLOCKS):
             block = self.create_block(
@@ -176,7 +176,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             self._genesis_block_id = genesis_blocks[0].long_id
         self.__born(genesis_blocks[0])
         self._genesis_block_id = genesis_blocks[0].long_id
-        logger.info("Storing genesis blocks...")
+        logger.debug("Storing genesis blocks...")
         self.current_endblocks = []
         for block in genesis_blocks:
             self.download_and_process_block(block.short_id)
@@ -187,7 +187,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
         for block in genesis_blocks:
             self.publish_new_block(block)
-        logger.info("Finished processing Genesis blocks!")
+        logger.debug("Finished processing Genesis blocks!")
         self.listen_for_blocks()
 
     def __born(self, genesis_block: Block) -> None:
@@ -1295,6 +1295,7 @@ def create_blockchain(blockchain_name: str = "") -> Blockchain | None:
     Returns:
         Blockchain: the newly created Blockchain object
     """
+    logger.info(f"Creating blockchain: {blockchain_name}")
     if (
         blockchain_name
         and [bc for bc in blockchains if bc.name == blockchain_name]

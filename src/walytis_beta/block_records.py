@@ -10,7 +10,7 @@ ID recording format: long_id + 000000
 
 import os
 
-from .networking import ipfs
+from .networking import ipfs, IPFS_PIN_CACHE_AGE_SEC
 from datetime import timezone
 
 if True:
@@ -79,15 +79,17 @@ class BlockRecords(ABC):
         self.block_record_initialised = Event()
         self.index_dir = self.known_blocks_index_dir
 
-    def load_block_records(self):
+    def load_block_records(self, ensure_ipfs_pinned=True):
+        logger.debug("Loading block records...")
         self.load_block_records_index()
-        self.ensure_ipfs_pinned()
+        if ensure_ipfs_pinned:
+            self.ensure_ipfs_pinned()
         self.block_record_initialised.set()
 
     def create_block_records(self, birth_time: datetime) -> None:
         assert not self.index_files
         self.create_new_index_file(birth_time)
-        self.load_block_records()
+        self.load_block_records(ensure_ipfs_pinned=False)
 
     def check_new_block(self, block: Block) -> bool:
         """Check if a block is known, if not record it in the block records.
@@ -615,7 +617,9 @@ class BlockRecords(ABC):
         """Ensure all block's data-files are pinned on our IPFS node."""
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
-        ipfs_pins = ipfs.files.list_pins(cids_only=True, cache_age_s=300)
+        ipfs_pins = ipfs.files.list_pins(
+            cids_only=True, cache_age_s=IPFS_PIN_CACHE_AGE_SEC
+        )
         for subfolder in os.listdir(self.received_blocks_dir):
             subfolder_dir = os.path.join(self.received_blocks_dir, subfolder)
             if not os.path.isdir(subfolder_dir):

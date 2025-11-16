@@ -6,7 +6,8 @@ import json
 import os
 from tempfile import NamedTemporaryFile
 
-from walytis_beta_tools.log import logger_networking  as logger
+from threading import Thread
+from walytis_beta_tools.log import logger_networking as logger
 from brenthy_tools_beta.utils import (  # pylint: disable=unused-import
     bytes_to_string,
 )
@@ -14,6 +15,7 @@ from brenthy_tools_beta.utils import (  # pylint: disable=unused-import
 from walytis_beta_tools import block_model
 
 from .networking import ipfs
+
 PREFERRED_HASH_ALGORITHM = "sha512"
 
 
@@ -30,18 +32,20 @@ class Block(block_model.Block):
         """Publish this block, generating its long ID."""
         # make sure all the necessary components of the short_id have been set
         if len(self.creator_id) != 0 and len(self._content_hash) != 0:
-            self._ipfs_cid = self.publish_file_data()
+            logger.debug("Block: publishing...")
+            self._ipfs_cid = self.publish_file_data(
+                blockchain_id=blockchain_id, skip_pubsub=skip_pubsub
+            )
+            logger.debug("Block: generating ID...")
             self.generate_id()
-            if not skip_pubsub:
-                self.announce_block(blockchain_id)
 
-    def publish_file_data(self) -> str:
+    def publish_file_data(
+        self, blockchain_id: str, skip_pubsub: bool = False
+    ) -> str:
         """Put this block's block file on IPFS."""
         logger.info("Publishing file...")
         if not (len(self.file_data) > 0):
-            error_message = (
-                "Block.publish_file_data: file_data is empty"
-            )
+            error_message = "Block.publish_file_data: file_data is empty"
             logger.error(error_message)
             raise ValueError(error_message)
         with NamedTemporaryFile(delete=False) as tempf:
@@ -54,9 +58,19 @@ class Block(block_model.Block):
                     "IPFS content with this CID already exists!"
                 )
                 raise IpfsCidExistsError()
-            cid = ipfs.files.publish(tempf.name)
-            os.remove(tempf.name)
-            ipfs.files.pin(cid)
+
+            def _publish():
+                logger.debug("Publishing...")
+                cid = ipfs.files.publish(tempf.name)
+                os.remove(tempf.name)
+                logger.debug("Pinning...")
+                ipfs.files.pin(cid)
+                if not skip_pubsub:
+                    logger.debug("Block: announcing on pubsub")
+                    self.announce_block(blockchain_id)
+                logger.debug("Published!")
+
+            Thread(target=_publish, name="Block-Publisher-Temp").start()
             return cid
 
     def announce_block(self, blockchain_id: str) -> None:
