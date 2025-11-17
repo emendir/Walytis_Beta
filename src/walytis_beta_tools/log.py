@@ -25,9 +25,8 @@ class AlignedFormatter(logging.Formatter):
 
 
 formatter = AlignedFormatter(
-    f"%(asctime)s %(padded_level)s %(name)-{
-        MAX_RECORD_NAME_LENGTH
-    }s: %(message)s"
+    f"%(asctime)s %(padded_level)s %(name)-"
+    f"{MAX_RECORD_NAME_LENGTH}s: %(message)s"
 )
 # Console handler (INFO+)
 console_handler = logging.StreamHandler()
@@ -123,3 +122,9 @@ logger_generics.addHandler(file_handler)
 logger_ancestry.addHandler(file_handler)
 logger_appdata.addHandler(file_handler)
 logger_join.addHandler(file_handler)
+
+
+# logger.setLevel(logging.DEBUG)
+# logger_block_records.setLevel(logging.DEBUG)
+# logger_networking.setLevel(logging.DEBUG)
+# console_handler.setLevel(logging.DEBUG)
