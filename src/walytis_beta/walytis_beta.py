@@ -21,7 +21,7 @@ import shutil
 import threading
 import time
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 from random import randint, seed
 from threading import Lock, Thread
 from time import sleep
@@ -220,7 +220,12 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         os.makedirs(self.appdata_dir)
         BlockchainAppdata.__init__(self)
         BlockRecords.__init__(self)
-        self.create_block_records(genesis_block.creation_time)
+        # -1 second for backwards-compatibility with older versions
+        # where BlockRecords only looks for blocks within index files
+        # dated earlier than their creation time
+        self.create_block_records(
+            genesis_block.creation_time - timedelta(seconds=1)
+        )
         Networking.__init__(self)
 
     def create_block(

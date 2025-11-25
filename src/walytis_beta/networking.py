@@ -288,7 +288,7 @@ class Networking(ABC):
         # get peer IDs and date of last contact of peers from whome we have
         # received messages from recently who are currently online
         contacted_peers = [
-            (peer.peer_id(), peer.last_seen())
+            (peer.peer_id(), peer.last_seen() or datetime.now(timezone.utc))
             for peer in self.peer_monitor.peers()
             if peer.peer_id() in pubsub_peers
         ]

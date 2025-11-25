@@ -9,7 +9,7 @@ authors = [{ name = "Emendir" }]
 description = "A flexible, lightweight, nonlinear database-blockchain. Built to be built upon."
 readme = {file = "ReadMe.md", content-type = "text/markdown"}
 dynamic = ["dependencies", "version"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 [project.urls]
 # Homepage = "https://emendir.tech/Projects/Walytis"
