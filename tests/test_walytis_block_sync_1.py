@@ -101,9 +101,8 @@ def get_docker_latest_block_content(
         ";".join(
             [
                 "import walytis_beta_api",
-                f"bc = walytis_beta_api.Blockchain('{
-                    shared_data.blockchain.blockchain_id
-                }')",
+                f"bc = walytis_beta_api.Blockchain("
+                f"'{shared_data.blockchain.blockchain_id}')",
                 "print(bc.get_block(-1).content.decode())",
                 "bc.terminate()",
             ]
