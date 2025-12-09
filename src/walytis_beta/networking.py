@@ -114,7 +114,10 @@ class Networking(ABC):
             # logger.info(f"PubSub: Received data for new block on {self.name}.")
             self.lastcoms_time = datetime.now(timezone.utc)
             self.update_shared_leaf_blocks([data["block_id"]])
-            self.new_block_published(string_to_bytes(data["block_id"]))
+            block_id = string_to_bytes(data["block_id"])
+            if not block_id:
+                raise Exception("Pubsub Message Handler: Empty block ID")
+            self.new_block_published(block_id)
 
         elif message == "Leaf blocks:":
             # logger.info(f"PubSub: Received leaf blocks broadcast on {self.name}.")

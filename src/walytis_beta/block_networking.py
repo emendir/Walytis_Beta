@@ -31,58 +31,56 @@ class Block(block_model.Block):
     ) -> None:
         """Publish this block, generating its long ID."""
         # make sure all the necessary components of the short_id have been set
-        if len(self.creator_id) != 0 and len(self._content_hash) != 0:
-            logger.debug("Block: publishing...")
-            self._ipfs_cid = self.publish_file_data(
-                blockchain_id=blockchain_id, skip_pubsub=skip_pubsub
-            )
-            logger.debug("Block: generating ID...")
-            self.generate_id()
+        if not (len(self.creator_id) != 0 and len(self._content_hash) != 0):
+            return
 
-    def publish_file_data(
-        self, blockchain_id: str, skip_pubsub: bool = False
-    ) -> str:
-        """Put this block's block file on IPFS."""
-        logger.info("Publishing file...")
         if not (len(self.file_data) > 0):
             error_message = "Block.publish_file_data: file_data is empty"
             logger.error(error_message)
             raise ValueError(error_message)
-        with NamedTemporaryFile(delete=False) as tempf:
-            tempf.write(self.file_data)
-            tempf.close()
-            cid = ipfs.files.predict_cid(tempf.name)
-            if cid in ipfs.files.list_pins(cache_age_s=1000):
-                logger.error(
-                    "Block.publish_file_data: "
-                    "IPFS content with this CID already exists!"
-                )
-                raise IpfsCidExistsError()
 
-            def _publish():
-                logger.debug("Publishing...")
-                cid = ipfs.files.publish(tempf.name)
-                os.remove(tempf.name)
-                logger.debug("Pinning...")
-                ipfs.files.pin(cid)
-                if not skip_pubsub:
-                    logger.debug("Block: announcing on pubsub")
-                    self.announce_block(blockchain_id)
-                logger.debug("Published!")
+        logger.info("Publishing file...")
+        tempf = NamedTemporaryFile(delete=False)
+        tempf.write(self.file_data)
+        tempf.close()
+        cid = ipfs.files.predict_cid(tempf.name)
+        if cid in ipfs.files.list_pins(cache_age_s=1000):
+            logger.error(
+                "Block.publish_file_data: "
+                "IPFS content with this CID already exists!"
+            )
+            raise IpfsCidExistsError()
+        self._ipfs_cid = cid
 
-            Thread(target=_publish, name="Block-Publisher-Temp").start()
-            return cid
+        logger.debug("Block: generating ID...")
+        self.generate_id()
 
-    def announce_block(self, blockchain_id: str) -> None:
-        """Publish a PubSub message about the new block."""
-        data = json.dumps(
-            {
-                "message": "New block!",
-                "block_id": bytes_to_string(self.short_id),
-            }
-        ).encode()
+        def _publish(short_id: str) -> None:
+            logger.debug("Publishing...")
+            cid = ipfs.files.publish(tempf.name)
+            os.remove(tempf.name)
+            logger.debug("Pinning...")
+            ipfs.files.pin(cid)
+            if not skip_pubsub:
+                # Publish a PubSub message about the new block.
+                logger.debug("Block: announcing on pubsub")
+                if not short_id:
+                    raise Exception("Announce block on PubSub: empty block ID")
+                data = json.dumps(
+                    {
+                        "message": "New block!",
+                        "block_id": bytes_to_string(short_id),
+                    }
+                ).encode()
 
-        ipfs.pubsub.publish(blockchain_id, data)
+                ipfs.pubsub.publish(blockchain_id, data)
+            logger.debug("Published!")
+
+        Thread(
+            target=_publish,
+            args=(self.short_id,),
+            name="Block-Publisher-Temp",
+        ).start()
 
 
 class IpfsCidExistsError(Exception):
