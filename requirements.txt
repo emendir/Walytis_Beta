@@ -1,7 +1,7 @@
 termcolor
 tqdm
 eciespy
-ipfs_tk >=0.1.10
+ipfs_tk >=0.1.11
 ipfs_toolkit>=0.6.0rc8
 ipfs_node>=0.1.12rc5
 brenthy_tools_beta>=4.0.11
