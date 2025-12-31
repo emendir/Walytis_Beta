@@ -1,15 +1,15 @@
 from brenthy_tools_beta import brenthy_api
-from environs import Env
 import time
 from dataclasses import dataclass
+from conftest import get_rebuild_docker  # noqa
 
 import pytest
-import walytis_beta_embedded
 from walytis_beta_tools._experimental.config import (
     WalytisTestModes,
     get_walytis_test_mode,
 )
 from emtest import are_we_in_docker
+
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
 REBUILD_DOCKER = False
@@ -23,6 +23,7 @@ if True:
     # import run
     if not are_we_in_docker():
         import run
+
         run.TRY_INSTALL = False
     import walytis_beta_api
 
@@ -34,13 +35,6 @@ if True:
     # walytis_beta_api.log.PRINT_DEBUG = True
 
 
-env = Env()
-
-
-def get_rebuild_docker(default: bool):
-    return env.bool("TESTS_REBUILD_DOCKER", default=default)
-
-
 @dataclass
 class SharedData:
     """Structure for storing objects created and shared between tests."""
@@ -48,13 +42,13 @@ class SharedData:
     brenthy_dockers: list[BrenthyDocker]
     blockchains: list[Blockchain]
     blockchain: Blockchain | None
-    num_blocks: int |None
+    num_blocks: int | None
     invitation: str | None
     created_block: Block | None
     WALYTIS_TEST_MODE: WalytisTestModes | None
 
 
-shared_data = SharedData([], [], None,None, None, None, None)
+shared_data = SharedData([], [], None, None, None, None, None)
 
 
 def assert_brenthy_online(timeout: int = 2) -> None:
@@ -73,6 +67,8 @@ def run_walytis() -> None:
             assert_brenthy_online()
         case WalytisTestModes.EMBEDDED:
             print("Running Walytis embedded...")
+            import walytis_beta_embedded
+
             walytis_beta_embedded.run_blockchains()
             print("Running Walytis embedded.")
         case WalytisTestModes.USE_BRENTHY:
@@ -88,6 +84,8 @@ def stop_walytis() -> None:
         case WalytisTestModes.RUN_BRENTHY:
             run.stop_brenthy()
         case WalytisTestModes.EMBEDDED:
+            import walytis_beta_embedded
+
             walytis_beta_embedded.terminate()
         case WalytisTestModes.USE_BRENTHY:
             pass
@@ -129,11 +127,14 @@ def test_add_block() -> None:
         pytest.skip("No blockchain created.")
     block = blockchain.add_block("Hello there!".encode())
     success = (
-        block.short_id in blockchain._blocks.get_short_ids() and
-        block.long_id in blockchain._blocks.get_long_ids() and
-        blockchain.get_block(
-            blockchain._blocks.get_short_ids()[-1]).content.decode()
-        == blockchain.get_block(blockchain._blocks.get_long_ids()[-1]).content.decode()
+        block.short_id in blockchain._blocks.get_short_ids()
+        and block.long_id in blockchain._blocks.get_long_ids()
+        and blockchain.get_block(
+            blockchain._blocks.get_short_ids()[-1]
+        ).content.decode()
+        == blockchain.get_block(
+            blockchain._blocks.get_long_ids()[-1]
+        ).content.decode()
         == "Hello there!"
     )
     assert success, "Blockchain.add_block"

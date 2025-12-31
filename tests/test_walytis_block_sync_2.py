@@ -1,4 +1,5 @@
-# import _auto_run_with_pytest  # noqa
+import _auto_run_with_pytest  # noqa
+from walytis_beta_tools.exceptions import NoSuchBlockchainError
 import json
 import os
 from time import sleep
@@ -44,12 +45,13 @@ class SharedData:
 shared_data = SharedData()
 
 
-
 def test_preparations() -> None:
     """Get everything needed to run the tests ready."""
     if DELETE_ALL_BRENTHY_DOCKERS:
-        delete_containers(image="local/brenthy_testing",
-                          container_name_substr="brenthy_tests_")
+        delete_containers(
+            image="local/brenthy_testing",
+            container_name_substr="brenthy_tests_",
+        )
 
     if REBUILD_DOCKER:
         build_docker_image(verbose=False)
@@ -57,12 +59,12 @@ def test_preparations() -> None:
     shared_data.brenthy_docker_1 = BrenthyDocker(
         image="local/brenthy_testing",
         container_name=f"{DOCKER_CONTAINER_NAME}_1",
-        auto_run=True
+        auto_run=True,
     )
     shared_data.brenthy_docker_2 = BrenthyDocker(
         image="local/brenthy_testing",
         container_name=f"{DOCKER_CONTAINER_NAME}_2",
-        auto_run=True
+        auto_run=True,
     )
     run_walytis()
 
@@ -90,17 +92,26 @@ sys.path.append('/opt/Brenthy/Brenthy/blockchains/Walytis_Beta/tests/')
 import docker_scripts
 """
 
-DOCKER_1_PART_1 = DOCKER_CODE_PRELUDE + """
+DOCKER_1_PART_1 = (
+    DOCKER_CODE_PRELUDE
+    + """
 docker_scripts.docker_1_part_1("BC_ID", "APPDATA_CID")
 """
+)
 
-DOCKER_2_PART_1 = DOCKER_CODE_PRELUDE + """
+DOCKER_2_PART_1 = (
+    DOCKER_CODE_PRELUDE
+    + """
 docker_scripts.docker_2_part_1("BC_ID", "APPDATA_CID")
 """
+)
 
-DOCKER_1_PART_2 = DOCKER_CODE_PRELUDE + """
+DOCKER_1_PART_2 = (
+    DOCKER_CODE_PRELUDE
+    + """
 docker_scripts.docker_1_part_2()
 """
+)
 
 DOCKER_2_PART_2 = DOCKER_1_PART_2
 
@@ -116,9 +127,7 @@ def test_block_sync() -> None:
     shared_data.brenthy_docker_1.run_python_code(
         DOCKER_1_PART_1.replace(
             "APPDATA_CID", shared_data.appdata_cid
-        ).replace(
-            "BC_ID", shared_data.blockchain_id
-        ),
+        ).replace("BC_ID", shared_data.blockchain_id),
         print_output=True,
     )
     shared_data.brenthy_docker_1.stop()
@@ -126,9 +135,7 @@ def test_block_sync() -> None:
     shared_data.brenthy_docker_2.run_python_code(
         DOCKER_2_PART_1.replace(
             "APPDATA_CID", shared_data.appdata_cid
-        ).replace(
-            "BC_ID", shared_data.blockchain_id
-        ),
+        ).replace("BC_ID", shared_data.blockchain_id),
         print_output=True,
     )
     shared_data.brenthy_docker_2.stop()
@@ -141,22 +148,31 @@ def test_block_sync() -> None:
     )
     last_line = output.split("\n")[-1].strip()
     blocks_content = json.loads(last_line.replace("'", '"'))
-    assert (
-        blocks_content == [MESSAGE_1, MESSAGE_2, MESSAGE_2,
-                           MESSAGE_2, MESSAGE_3, MESSAGE_3, MESSAGE_3]
-
-    ), "docker_1 synchronised!"
+    assert blocks_content == [
+        MESSAGE_1,
+        MESSAGE_2,
+        MESSAGE_2,
+        MESSAGE_2,
+        MESSAGE_3,
+        MESSAGE_3,
+        MESSAGE_3,
+    ], "docker_1 synchronised!"
     output = shared_data.brenthy_docker_2.run_python_code(
         DOCKER_2_PART_2, print_output=True
     )
     last_line = output.split("\n")[-1].strip()
     blocks_content = json.loads(last_line.replace("'", '"'))
-    assert (
-        blocks_content == [MESSAGE_1, MESSAGE_2, MESSAGE_2,
-                           MESSAGE_2, MESSAGE_3, MESSAGE_3, MESSAGE_3]
-    ),      "docker_2 synchronised!"
+    assert blocks_content == [
+        MESSAGE_1,
+        MESSAGE_2,
+        MESSAGE_2,
+        MESSAGE_2,
+        MESSAGE_3,
+        MESSAGE_3,
+        MESSAGE_3,
+    ], "docker_2 synchronised!"
 
-from walytis_beta_tools.exceptions import NoSuchBlockchainError
+
 def test_threads_cleanup() -> None:
     """Test that no threads are left running."""
     blockchain = shared_data.blockchain
