@@ -37,7 +37,7 @@ REBUILD_DOCKER = False  # overriden by environment variable
 REBUILD_DOCKER = get_rebuild_docker(REBUILD_DOCKER)  # override if EnvVar set
 NUMBER_OF_FIND_ATTEMPTS = 10
 NUMBER_OF_JOIN_ATTEMPTS = 10
-DOCKER_CONTAINER_NAME = "brenthy_tests_onboarding"
+DOCKER_CONTAINER_NAME = "test_walytis_sync_1"
 NUMBER_OF_CONTAINERS = 5
 # enable/disable breakpoints when checking intermediate test results
 
@@ -172,7 +172,6 @@ def test_sync_block_creation() -> None:
         time.sleep(5)
         result = get_docker_latest_block_content(brenthy_dockers[0])
         result = [line for line in result.split("\n") if line][-1]
-        print(result)
         success = result == "Test1"
         if success:
             break

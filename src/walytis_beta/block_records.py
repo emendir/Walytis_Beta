@@ -11,7 +11,7 @@ ID recording format: long_id + 000000
 import os
 
 from .networking import ipfs, IPFS_PIN_CACHE_AGE_SEC
-from datetime import timezone
+from datetime import timezone, timedelta
 
 if True:
     # pylint: disable=import-error
@@ -438,6 +438,9 @@ class BlockRecords(ABC):
             )
             message += str(block_time)
             logger.warning(message)
+            right_file = self.create_new_index_file(
+                block_time - timedelta(hours=1)
+            )
         return right_file
 
     def save_block(self, block: Block) -> None:

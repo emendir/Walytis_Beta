@@ -272,23 +272,23 @@ class Block(GenericBlock):
                 self._parents_hash = old_parents_hash
                 return False
 
-            # ensure all parent blocks have older timestamps than this block
-            if [
-                parent_id
-                for parent_id in self.parents
-                if (
-                    decode_short_id(parent_id)["creation_time"]
-                    > self.creation_time
-                )
-            ]:
-                error_message = (
-                    "Block Integrity Check: Parent block's creation time "
-                    "is greater than this block's creation time "
-                    f"{self.creation_time}. This is most likely due to this "
-                    "node's clock not being synchronised."
-                )
-                logger.warning(error_message)
-                return False
+            # # ensure all parent blocks have older timestamps than this block
+            # if [
+            #     parent_id
+            #     for parent_id in self.parents
+            #     if (
+            #         decode_short_id(parent_id)["creation_time"]
+            #         > self.creation_time
+            #     )
+            # ]:
+            #     error_message = (
+            #         "Block Integrity Check: Parent block's creation time "
+            #         "is greater than this block's creation time "
+            #         f"{self.creation_time}. This is most likely due to this "
+            #         "node's clock not being synchronised."
+            #     )
+            #     logger.warning(error_message)
+            #     return False
 
         # Checking if file_data matches block properties if they are ALL set
         # trying to generate file-data anew from block properties
@@ -564,6 +564,14 @@ def decode_long_id(long_id: bytearray) -> dict:
     return result
 
 
+def is_block_id_long(block_id: bytearray) -> bool:
+    """Check if the given block ID looks like a long ID.
+
+    Does not check the block ID integrity, for efficiency.
+    """
+    return bytearray([0, 0, 0, 0]) in block_id
+
+
 def short_from_long_id(long_id: bytearray) -> bytearray:
     """Convert a long ID into a short ID.
 
@@ -577,7 +585,7 @@ def short_from_long_id(long_id: bytearray) -> bytearray:
             f"long_id must be of type bytearray, not {type(long_id)}"
         )
     try:
-        short_id = long_id.split(bytearray([0, 0, 0]))[0]
+        short_id = long_id.split(bytearray([0, 0, 0, 0]))[0]
     except:
         raise InvalidBlockIdError()
     return short_id

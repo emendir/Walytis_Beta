@@ -1,8 +1,11 @@
 """Machinery for processing blocks' ancestries."""
 
+from walytis_beta_tools.block_model import is_block_id_long
+from datetime import datetime
+from datetime import timezone
 from walytis_beta_tools.log import logger_ancestry as logger
 
-from .walytis_beta import Blockchain
+# from .walytis_beta import Blockchain
 from walytis_beta_tools.block_model import decode_long_id, Block
 
 
@@ -29,15 +32,13 @@ class BlockModel:
             oldest_known_generation if oldest_known_generation else []
         )
         self.parents = (
-            parents
-            if parents
-            else decode_long_id(self.block_id)["parents"]
+            parents if parents else decode_long_id(self.block_id)["parents"]
         )
         self.common_to_all = False
 
 
 def list_unshared_ancestors(
-    blockchain: Blockchain, blocks: list
+    blockchain: "Blockchain", blocks: list
 ) -> list[bytearray]:
     """Get all the ancestors the given blocks don't all have in common.
 
@@ -143,7 +144,7 @@ def remove_duplicates(array: list) -> list:
 
 
 def remove_ancestors(
-    blockchain: Blockchain, blocks: list[bytearray]
+    blockchain: "Blockchain", blocks: list[bytearray]
 ) -> list[bytearray]:
     """Given a list of blocks, remove any which is an ancestors of another.
 
@@ -168,3 +169,40 @@ def remove_ancestors(
         if long_id not in unshared_ancestors:
             result.append(long_id)
     return result
+
+
+def _remove_future_blocks(
+    blockchain: "Blockchain",
+    block_ids: list[bytearray],
+    creation_time: datetime,
+) -> list[bytearray]:
+    """Replace block IDs with timestamps in the future with their parents.
+
+    Doesn't remove shared ancestors.
+    """
+    result = []
+    for block_id in block_ids:
+        if is_block_id_long(block_id):
+            long_id = block_id
+        else:
+            long_id = blockchain.find_block(block_id)
+
+        block_metadata = decode_long_id(long_id)
+        if block_metadata["creation_time"] >= creation_time:
+            result += _remove_future_blocks(
+                blockchain, block_metadata["parents"], creation_time
+            )
+            result = list(set(result))  # remove duplicates
+        else:
+            result.append(long_id)
+
+
+def remove_future_blocks(
+    blockchain: "Blockchain",
+    block_ids: list[bytearray],
+    creation_time: datetime,
+) -> list[bytearray]:
+    """Replace block IDs with timestamps in the future with their parents."""
+    return remove_ancestors(
+        _remove_future_blocks(blockchain, block_ids, creation_time)
+    )

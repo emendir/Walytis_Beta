@@ -6,6 +6,7 @@ from .walytis_beta_appdata import (
     create_temp_dir,
     get_walytis_appdata_dir,
 )
+from .block_ancestry import remove_ancestors, remove_future_blocks
 from .networking import Networking, ipfs
 from .exceptions import BlockchainNotInitialised, BlockchainTerminatedError
 from .block_records import BlockRecords
@@ -76,7 +77,6 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
     blocks_finder_thread_cycle_duration_s = 5
     create_block_lock: Lock
-    genesis: bool
 
     def __init__(self, id: str = "", name: str = ""):
         """Load an existing blockchain, or creat a new one.
@@ -272,30 +272,38 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         block_parents = []
         # Adding parent blocks
         with self.endblocks_lock:
-            block_parents = self.remove_ancestors(self.current_endblocks)
-            self.current_endblocks = []  # clear current_endblocks
+            block_parents = [x for x in self.current_endblocks]  # copy list
 
-        # if parents is only one block, add genesis block
-        if len(block_parents) == 1:
-            block_parents.append(short_from_long_id(self.get_genesis_block()))
-        # sort parent blocks
-        block_parents.sort()
-        # ensure that all parent blocks have older timestamps than this block
-        if [
-            prnt_id
-            for prnt_id in block_parents
-            if decode_short_id(prnt_id)["creation_time"] > block_creation_time
-        ]:
-            self.create_block_lock.release()
-
+        if len(block_parents) == 0 and not self._genesis:
             error_message = (
-                "walytis_beta.Blockchain.create_block: Parent block's creation"
-                " time is greater than this block's creation time "
-                f"{block_creation_time}. This is a bug because it should have "
-                "been checked before."
+                "walytis_beta.Blockchain.create_block: "
+                "Empty list of current endblocks!"
             )
             logger.error(error_message)
             raise NotSupposedToHappenError(error_message)
+        # if parents is only one block, add genesis block
+        elif len(block_parents) == 1:
+            block_parents.append(short_from_long_id(self.get_genesis_block()))
+
+        # sort parent blocks
+        block_parents.sort()
+
+        # # ensure that all parent blocks have older timestamps than this block
+        # if [
+        #     prnt_id
+        #     for prnt_id in block_parents
+        #     if decode_short_id(prnt_id)["creation_time"] > block_creation_time
+        # ]:
+        #     self.create_block_lock.release()
+        #
+        #     error_message = (
+        #         "walytis_beta.Blockchain.create_block: Parent block's creation"
+        #         " time is greater than this block's creation time "
+        #         f"{block_creation_time}. This is a bug because it should have "
+        #         "been checked before."
+        #     )
+        #     logger.error(error_message)
+        #     raise NotSupposedToHappenError(error_message)
 
         block_creator_id = self.ipfs_peer_id.encode("utf-8")
         block_topics = topics
@@ -662,17 +670,17 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             if len(parents) == 0:
                 logger.info(f"{self.name}:  Genesis block!")
 
-            # Check block's timestamp is in the past
-            if creation_time > datetime.now(timezone.utc):
-                logger.warning(
-                    (
-                        "Received a block with a timestamp in the future: "
-                        f"{creation_time}. This is most likely due to "
-                        "badly synchronised node clocks, but could also be "
-                        "due to an ill-informed forgery attempt."
-                    )
-                )
-                return None
+            # # Check block's timestamp is in the past
+            # if creation_time > datetime.now(timezone.utc):
+            #     logger.warning(
+            #         (
+            #             "Received a block with a timestamp in the future: "
+            #             f"{creation_time}. This is most likely due to "
+            #             "badly synchronised node clocks, but could also be "
+            #             "due to an ill-informed forgery attempt."
+            #         )
+            #     )
+            #     return None
 
         # creating a new block object from the decoded block data
         block = Block.from_metadata(
@@ -834,7 +842,6 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         Returns:
             list: long IDs of blocks
         """
-        from .block_ancestry import remove_ancestors
 
         long_ids = remove_ancestors(self, blocks)
         if short_ids:
