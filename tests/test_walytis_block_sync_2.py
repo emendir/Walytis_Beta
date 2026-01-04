@@ -51,7 +51,7 @@ def test_preparations() -> None:
     if DELETE_ALL_BRENTHY_DOCKERS:
         delete_containers(
             image="local/brenthy_testing",
-            container_name_substr="brenthy_tests_",
+            container_name_substr=DOCKER_CONTAINER_NAME,
         )
 
     if REBUILD_DOCKER:

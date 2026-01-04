@@ -41,6 +41,7 @@ DELETE_ALL_BRENTHY_DOCKERS = True
 if True:
     # import run
     import run
+
     run.TRY_INSTALL = False
     import walytis_beta_api
 
@@ -54,15 +55,15 @@ if True:
 # @pytest.fixture(scope="module", autouse=True)
 # def setup_and_teardown() -> None:
 #     """Wrap around tests, running preparations and cleaning up afterwards.
-# 
+#
 #     A module-level fixture that runs once for all tests in this file.
 #     """
 #     # Setup: code here runs before tests that uses this fixture
 #     print(f"\nRunning tests for {__name__}\n")
 #     prepare()
-# 
+#
 #     yield  # This separates setup from teardown
-# 
+#
 #     # Teardown: code here runs after the tests
 #     print(f"\nFinished tests for {__name__}\n")
 #     cleanup()
@@ -71,8 +72,10 @@ if True:
 def test_preparations() -> None:
     """Get everything needed to run the tests ready."""
     if DELETE_ALL_BRENTHY_DOCKERS:
-        delete_containers(image="local/brenthy_testing",
-                          container_name_substr="brenthy_tests_")
+        delete_containers(
+            image="local/brenthy_testing",
+            container_name_substr=DOCKER_CONTAINER_NAME,
+        )
 
     if REBUILD_DOCKER:
         build_docker_image(verbose=False)
@@ -83,11 +86,13 @@ def test_preparations() -> None:
         shutil.rmtree(false_id_path)
 
     shared_data.brenthy_dockers = []
-    shared_data.brenthy_dockers.append(BrenthyDocker(
-        image="local/brenthy_testing",
-        container_name=DOCKER_CONTAINER_NAME,
-        auto_run=False
-    ))
+    shared_data.brenthy_dockers.append(
+        BrenthyDocker(
+            image="local/brenthy_testing",
+            container_name=DOCKER_CONTAINER_NAME,
+            auto_run=False,
+        )
+    )
     testing_utils.run_walytis()
 
     if "TestingWalytis" in walytis_beta_api.list_blockchain_names():
@@ -135,30 +140,32 @@ def test_joining() -> None:
     if not shared_data.invitation:
         pytest.skip("Invitation is blank")
 
-    join_python_code = (
-        f"""
+    join_python_code = f"""
 import walytis_beta_api
 try:
     walytis_beta_api.join_blockchain('{shared_data.invitation}')
 except Exception as e:
     print(e)
 """
-    )
-    test_python_code = ";".join([
-        "import walytis_beta_api",
-        f"print('{shared_data.blockchain.blockchain_id}' in "
-        "walytis_beta_api.list_blockchain_ids())"
-    ]
+    test_python_code = ";".join(
+        [
+            "import walytis_beta_api",
+            f"print('{shared_data.blockchain.blockchain_id}' in "
+            "walytis_beta_api.list_blockchain_ids())",
+        ]
     )
 
     result = "-"
     for i in range(NUMBER_OF_JOIN_ATTEMPTS):
         result = shared_data.brenthy_dockers[0].run_python_code(
-            join_python_code, print_output=True)
+            join_python_code, print_output=True
+        )
         print(result)
-        lines = shared_data.brenthy_dockers[0].run_python_code(
-            test_python_code, print_output=False
-        ).split("\n")
+        lines = (
+            shared_data.brenthy_dockers[0]
+            .run_python_code(test_python_code, print_output=False)
+            .split("\n")
+        )
         if lines:
             result = lines[-1].strip("\n")
             if result == "True":
@@ -174,9 +181,7 @@ def test_join_id_check() -> None:
     try:
         walytis_beta_api.join_blockchain_from_zip(
             "FALSE_BLOCKCHAIN_ID",
-            os.path.join(
-                BRENTHY_DIR, "InstallScripts", "BrenthyUpdates.zip"
-            ),
+            os.path.join(BRENTHY_DIR, "InstallScripts", "BrenthyUpdates.zip"),
         )
     except walytis_beta_api.JoinFailureError:
         exception = True
