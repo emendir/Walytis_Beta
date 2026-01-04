@@ -42,7 +42,6 @@ _preparing for release_
 - [ ] website
 - [x] publish Beta release
 - [ ] set up github discussions
-- [ ] put docs on wiki?
 
 # Phase V 2024-2025
 
@@ -60,4 +59,3 @@ _preparing for release_
 - [ ] security features:
   - [ ] monitoring to detect fraudulent behaviour
   - [ ] DDOS-protection
-- [ ] videos docs
