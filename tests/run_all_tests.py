@@ -31,3 +31,7 @@ run_tests()
 set_env_var("WALYTIS_TEST_MODE", "EMBEDDED")
 print("Running tests with Walytis Embedded...")
 run_tests()
+
+os.system(
+    "docker ps - -filter 'reference=brenthy_testing' - aq | docker rm - f"
+)
