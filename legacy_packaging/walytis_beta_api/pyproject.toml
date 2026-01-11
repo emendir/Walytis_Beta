@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 name = "walytis_beta_api"
 authors = [{ name = "Emendir" }]
 description = "A library for interacting with Walytis, a flexible, lightweight, nonlinear database-blockchain. Built to be built upon."
-readme = {file = "ReadMe.md", content-type = "text/markdown"}
+readme = {file = "README.md", content-type = "text/markdown"}
 dynamic = ["dependencies", "version"]
 requires-python = ">=3.11"
 
