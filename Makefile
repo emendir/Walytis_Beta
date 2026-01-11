@@ -51,7 +51,7 @@ coverage: ## Run tests with coverage report
 .PHONY: build clean clean-preview install
 
 build: clean deps ## Build distribution package
-	$(PYTHON) -m build
+	$(PYTHON) publish.py
 
 clean: ## Remove items from CLEANUP section in .gitignore
 	@tmpfile=$$(mktemp); \
