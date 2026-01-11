@@ -91,7 +91,7 @@ dist: build ## List built distributions
 	ls -lh $(DIST_DIR)
 
 publish: build ## Upload package to PyPI (requires twine)
-	;
+	echo "Published via `make build`"
 
 # ----------------------------
 # Help
