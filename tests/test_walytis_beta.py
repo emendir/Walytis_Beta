@@ -16,10 +16,12 @@ run the following commands to stop and remove the unterminated container:
 """
 
 # This import allows us to run this script with either pytest or python
+import _auto_run_with_pytest  # noqa
+from emtest import get_pytest_report_dirs
+from testing_utils import get_logs_and_delete_dockers, DOCKER_LOG_FILES
 import os
 import shutil
 
-import _auto_run_with_pytest  # noqa
 import pytest
 import testing_utils
 import walytis_beta_embedded
@@ -29,7 +31,7 @@ from testing_utils import get_rebuild_docker, shared_data
 from walytis_beta_tools._experimental.ipfs_interface import ipfs
 
 NUMBER_OF_JOIN_ATTEMPTS = 10
-DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
+DOCKER_CONTAINER_NAME = "test_walytis"
 REBUILD_DOCKER = True  # overriden by environment variable
 REBUILD_DOCKER = get_rebuild_docker(REBUILD_DOCKER)  # override if EnvVar set
 # enable/disable breakpoints when checking intermediate test results
@@ -98,14 +100,6 @@ def test_preparations() -> None:
     if "TestingWalytis" in walytis_beta_api.list_blockchain_names():
         walytis_beta_api.delete_blockchain("TestingWalytis")
     print("Finished preparations...")
-
-
-def cleanup(request: pytest.FixtureRequest | None = None) -> None:
-    """Clean up after running tests with PyTest."""
-    shared_data.brenthy_dockers[0].stop()
-    # _testing_utils.terminate()
-
-    testing_utils.stop_walytis()
 
 
 def test_find_peer() -> None:
@@ -200,4 +194,15 @@ def test_threads_cleanup() -> None:
     shared_data.blockchain.terminate()
     testing_utils.stop_walytis()
     assert await_thread_cleanup(timeout=5)
-    cleanup()
+
+
+def test_cleanup(request: pytest.FixtureRequest) -> None:
+    """Ensure all resources used by tests are cleaned up."""
+    # get logs from, then delete containers
+    get_logs_and_delete_dockers(
+        shared_data.brenthy_dockers,
+        DOCKER_LOG_FILES,
+        get_pytest_report_dirs(request.config),
+    )
+
+    testing_utils.stop_walytis()

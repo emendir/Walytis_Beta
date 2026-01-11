@@ -1,2 +1,5 @@
 pytest
+pytest-timeout
+pytest-html
+pytest-json
 emtest

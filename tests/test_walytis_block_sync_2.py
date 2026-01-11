@@ -1,4 +1,6 @@
 import _auto_run_with_pytest  # noqa
+from emtest import get_pytest_report_dirs
+from testing_utils import get_logs_and_delete_dockers, DOCKER_LOG_FILES
 from walytis_beta_tools.exceptions import NoSuchBlockchainError
 import json
 import os
@@ -202,12 +204,16 @@ def test_threads_cleanup() -> None:
             pass
     stop_walytis()
     assert await_thread_cleanup(), "Threads clean up"
-    cleanup()
 
 
-def cleanup() -> None:
+def test_cleanup(request: pytest.FixtureRequest) -> None:
     """Ensure all resources used by tests are cleaned up."""
-    if shared_data.brenthy_docker_1:
-        shared_data.brenthy_docker_1.delete()
-    if shared_data.brenthy_docker_2:
-        shared_data.brenthy_docker_2.delete()
+    # get logs from, then delete containers
+    get_logs_and_delete_dockers(
+        [
+            shared_data.brenthy_docker_1,
+            shared_data.brenthy_docker_2,
+        ],
+        DOCKER_LOG_FILES,
+        get_pytest_report_dirs(request.config),
+    )

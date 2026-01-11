@@ -1,12 +1,15 @@
-from emtest import polite_wait
+import _auto_run_with_pytest  # noqa
+from testing_utils import get_logs_and_delete_dockers, DOCKER_LOG_FILES
+from emtest import get_pytest_report_dirs
+from testing_utils import get_logs_and_delete_dockers, DOCKER_LOG_FILES
+from emtest import polite_wait, get_pytest_report_dirs
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import json
 from brenthy_tools_beta.utils import time_to_string, string_to_time
+from testing_utils import get_logs_and_delete_dockers
 
 if True:
-    import _auto_run_with_pytest  # noqa
-
     from conftest import get_rebuild_docker
 
     from emtest import await_thread_cleanup
@@ -334,11 +337,15 @@ def docker_check_blocks(
             )
 
 
-def cleanup() -> None:
+def test_cleanup(request: pytest.FixtureRequest) -> None:
     """Ensure all resources used by tests are cleaned up."""
-    if shared_data.brenthy_docker_1:
-        shared_data.brenthy_docker_1.delete()
-    if shared_data.brenthy_docker_2:
-        shared_data.brenthy_docker_2.delete()
-    if shared_data.brenthy_docker_3:
-        shared_data.brenthy_docker_3.delete()
+    # get logs from, then delete containers
+    get_logs_and_delete_dockers(
+        [
+            shared_data.brenthy_docker_1,
+            shared_data.brenthy_docker_2,
+            shared_data.brenthy_docker_3,
+        ],
+        DOCKER_LOG_FILES,
+        get_pytest_report_dirs(request.config),
+    )

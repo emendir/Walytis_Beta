@@ -1,3 +1,8 @@
+from threading import Thread
+import docker
+import os
+from brenthy_docker import BrenthyDocker
+from brenthy_docker.utils import get_logs_and_delete_dockers  # noqa
 from brenthy_tools_beta import brenthy_api
 import time
 from dataclasses import dataclass
@@ -10,6 +15,10 @@ from walytis_beta_tools._experimental.config import (
 )
 from emtest import are_we_in_docker
 
+DOCKER_LOG_FILES = [
+    "/opt/Brenthy/Brenthy.log",
+    "/opt/Brenthy/Walytis_Beta.log",
+]
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
 REBUILD_DOCKER = False

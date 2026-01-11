@@ -1,5 +1,6 @@
 """Run all tests in all variations."""
 
+from datetime import datetime
 import os
 import sys
 
@@ -10,10 +11,20 @@ WORKDIR = os.path.dirname(__file__)
 pytest_args = sys.argv[1:]
 
 
+TEST_FUNC_TIMEOUT_SEC = 300
+
+
 def run_tests() -> None:
     """Run each test file with pytest."""
     pytest_args = sys.argv[1:]
-    os.system(f"{sys.executable} -m pytest {WORKDIR} {' '.join(pytest_args)}")
+    timestamp = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
+    os.system(
+        f"{sys.executable} -m pytest {WORKDIR} "
+        f"--html=report-{timestamp}/report.html "
+        f"--json=report-{timestamp}/report.json "
+        f"--timeout={TEST_FUNC_TIMEOUT_SEC} "
+        f"{' '.join(pytest_args)}"
+    )
 
 
 if True:

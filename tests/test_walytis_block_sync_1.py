@@ -16,6 +16,8 @@ run the following commands to stop and remove the unterminated container:
 """
 
 import _auto_run_with_pytest  # noqa
+from emtest import get_pytest_report_dirs
+from testing_utils import get_logs_and_delete_dockers, DOCKER_LOG_FILES
 import testing_utils
 from emtest import await_thread_cleanup
 from emtest import polite_wait
@@ -259,13 +261,17 @@ def test_threads_cleanup() -> None:
             pass
     stop_walytis()
     assert await_thread_cleanup(), "Threads clean up"
-    cleanup()
 
 
-def cleanup() -> None:
+def test_cleanup(request: pytest.FixtureRequest) -> None:
     """Ensure all resources used by tests are cleaned up."""
+    # get logs from, then delete containers
+    get_logs_and_delete_dockers(
+        shared_data.brenthy_dockers,
+        DOCKER_LOG_FILES,
+        get_pytest_report_dirs(request.config),
+    )
     blockchain = shared_data.blockchain
-    brenthy_dockers = shared_data.brenthy_dockers
     log.debug("test: deleting blockhain")
     if blockchain:
         blockchain.terminate()
@@ -273,15 +279,3 @@ def cleanup() -> None:
             walytis_beta_api.delete_blockchain(blockchain.blockchain_id)
         except NoSuchBlockchainError:
             pass
-    # Terminate Docker containers and our test brenthy instance in parallel
-    termination_threads = []
-    # start terminating docker containers
-    for docker in brenthy_dockers:
-        termination_threads.append(
-            Thread(target=BrenthyDocker.stop, args=(docker,))
-        )
-        termination_threads[-1].start()
-    # terminate our own brenthy instance
-    # wair till all docker containers are terminated
-    for thread in termination_threads:
-        thread.join()
