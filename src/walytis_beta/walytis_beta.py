@@ -206,7 +206,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             backup_path = self.appdata_dir + "_BACKUP"
             logger.error(
                 "This shouldn't happen but it has: Appdata path "
-                f"already exists for blockchain {self.name}. "
+                f"already exists for blockchain {self.name[:10]}. "
                 f"Moving it to {backup_path}."
             )
             if os.path.exists(backup_path):
@@ -262,7 +262,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         elif self.blockchain_id not in topics:
             topics.append(self.blockchain_id)
 
-        logger.info(f"{self.name}:  Creating block for {topics}...")
+        logger.info(f"{self.name[:10]}:  Creating block for {topics}...")
 
         self.create_block_lock.acquire()
         block_blockchain_version = WALYTIS_BETA_CORE_VERSION
@@ -351,9 +351,9 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                     "new timestamp"
                 )
 
-        logger.info(f"{self.name}:  Finished building block.")
+        logger.info(f"{self.name[:10]}:  Finished building block.")
         if self._genesis:
-            # logger.info(f"{self.name}:  Genesis block!")
+            # logger.info(f"{self.name[:10]}:  Genesis block!")
             # manually cache block because BlockRecords isn't initialised
             self.cache_block(block.long_id)
         else:
@@ -366,7 +366,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                     self.current_endblocks + [block.short_id]
                 )
         logger.info(
-            f"{self.name}:  Finished adding new block to the blockchain."
+            f"{self.name[:10]}:  Finished adding new block to the blockchain."
         )
 
         # DEBUG
@@ -374,49 +374,49 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
         if block.ipfs_cid != long_id["ipfs_cid"]:
             logger.warning(
-                f"{self.name}:  MISMATCH ipfs_cid "
+                f"{self.name[:10]}:  MISMATCH ipfs_cid "
                 + str(block.ipfs_cid)
                 + " != "
                 + str(long_id["ipfs_cid"])
             )
         if block.creator_id != long_id["creator_id"]:
             logger.warning(
-                f"{self.name}:  MISMATCH creator_id "
+                f"{self.name[:10]}:  MISMATCH creator_id "
                 + str(block.creator_id)
                 + " != "
                 + str(long_id["creator_id"])
             )
         if block.creation_time != long_id["creation_time"]:
             logger.warning(
-                f"{self.name}:  MISMATCH creation_time "
+                f"{self.name[:10]}:  MISMATCH creation_time "
                 + str(block.creation_time)
                 + " != "
                 + str(long_id["creation_time"])
             )
         if block.topics != long_id["topics"]:
             logger.warning(
-                f"{self.name}:  MISMATCH topics "
+                f"{self.name[:10]}:  MISMATCH topics "
                 + str(block.topics)
                 + " != "
                 + str(long_id["topics"])
             )
         if block._content_length != long_id["content_length"]:
             logger.warning(
-                f"{self.name}:  MISMATCH content_length "
+                f"{self.name[:10]}:  MISMATCH content_length "
                 + str(block._content_length)
                 + " != "
                 + str(long_id["content_length"])
             )
         if block._n_parents != long_id["n_parents"]:
             logger.warning(
-                f"{self.name}:  MISMATCH n_parents "
+                f"{self.name[:10]}:  MISMATCH n_parents "
                 + str(block._n_parents)
                 + " != "
                 + str(long_id["n_parents"])
             )
         if block._content_hash_algorithm != long_id["content_hash_algorithm"]:
             logger.warning(
-                f"{self.name}:  MISMATCH content_hash_algorithm "
+                f"{self.name[:10]}:  MISMATCH content_hash_algorithm "
                 + str(block._content_hash_algorithm)
                 + " != "
                 + str(long_id["content_hash_algorithm"])
@@ -424,14 +424,14 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
         if block._content_hash != long_id["content_hash"]:
             logger.warning(
-                f"{self.name}:  MISMATCH hash "
+                f"{self.name[:10]}:  MISMATCH hash "
                 + str(block._content_hash)
                 + " != "
                 + str(long_id["content_hash"])
             )
         if block._parents_hash != long_id["parents_hash"]:
             logger.warning(
-                f"{self.name}:  MISMATCH hash "
+                f"{self.name[:10]}:  MISMATCH hash "
                 + str(block._parents_hash)
                 + " != "
                 + str(long_id["parents_hash"])
@@ -440,7 +440,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             len(block.parents) > 0 and len(long_id["parents"]) > 0
         ):
             logger.warning(
-                f"{self.name}:  MISMATCH parents"
+                f"{self.name[:10]}:  MISMATCH parents"
                 + str(block.parents)
                 + " != "
                 + str(long_id[5])
@@ -465,7 +465,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         """Eventhandler for when a notification of a new block is received."""
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
-        logger.info(f"{self.name}:  Received new block.")
+        logger.info(f"{self.name[:10]}:  Received new block, processing...")
         self.download_and_process_block(short_id)
 
     def download_and_process_block(
@@ -483,36 +483,43 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         try:
             ipfs_cid = decode_short_id(short_id)["ipfs_cid"]
             # get block datafile from IPFS
+            logger.debug(
+                f"{self.name[:10]}: Downloading blockfile... {ipfs_cid}"
+            )
+
             block_data = ipfs.files.read(ipfs_cid)
+            logger.debug(f"{self.name[:10]}: Downloaded blockfile.")
         except Exception as error:
             logger.error(error)
 
             logger.error(
-                f"{self.name}: Received data but failed to "
-                + f"find block.\n{self.name}\nBlock ID: \n{short_id}"
+                f"{self.name[:10]}: Received data but failed to "
+                + f"find block.\n{self.name[:10]}\nBlock ID: \n{short_id}"
             )
             return None
         block = None
         try:
+            logger.debug("{self.name[:10]}: Reading block...")
             block = self.read_block(block_data, ipfs_cid, live=live)
         except Exception as error:  # if file data seems corrupt
             logger.error(error)
-            logger.important(
-                f"{self.name}:  Failed to build block. Removing block-file "
+            logger.info(
+                f"{self.name[:10]}: "
+                "Failed to build block. Removing block-file "
                 "from IPFS storage"
             )
             # remove block-file from IPFS storage
             ipfs.files.remove(ipfs_cid)
         if not block:
-            logger.important(f"{self.name}:  Failed to load and add block.")
+            logger.info(f"{self.name[:10]}:  Failed to load and add block.")
 
             return None
-        logger.info(f"{self.name}:  Block was processed.")
+        logger.info(f"{self.name[:10]}:  Block was processed: {block.topics}")
         while short_id[-1] == 0:
             short_id = short_id[:-1]
         if bytearray(block.short_id) != bytearray(short_id):  # suspicious
             message = (
-                f"{self.name}: The decoded block's ID is not the "
+                f"{self.name[:10]}: The decoded block's ID is not the "
                 + "same as the one we are looking for.\n"
             )
             message += f"Looking for: {bytearray(short_id)}\n"
@@ -526,7 +533,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
         self.on_block_confirmed(block)
 
-        logger.info(f"{self.name}:  Finished processing new block.")
+        logger.info(f"{self.name[:10]}:  Finished processing new block.")
         return block
 
     def on_block_confirmed(self, block: Block):
@@ -540,7 +547,8 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                     )
 
             logger.info(
-                f"{self.name}:  sending received block to " + "applications..."
+                f"{self.name[:10]}:  sending received block to "
+                + "applications..."
             )
 
             if not self._genesis:
@@ -575,17 +583,17 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
         if [b for b in self.unconfirmed_blocks if b.ipfs_cid == ipfs_cid]:
             logger.debug(
-                f"{self.name}:  read_block: this block is already in our "
+                f"{self.name[:10]}:  read_block: this block is already in our "
                 "unconfirmed_blocks list "
             )
             return None
         # if self.is_block_cid_known(ipfs_cid):
         #     logger.debug(
-        #         f"{self.name}:  read_block: we already know this block."
+        #         f"{self.name[:10]}:  read_block: we already know this block."
         #     )
         #     return self.load_block_from_cid(ipfs_cid)
         logger.info(
-            f"{self.name}:  read_block: Decoding block "
+            f"{self.name[:10]}:  read_block: Decoding block "
             f"{'(live)' if live else '(not live)'}"
         )
 
@@ -615,14 +623,14 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             bytearray([0, 0, 0, 0])
         )
         metadata = blockfile_header[0].split(bytearray([0, 0]))
-        # logger.important(data)
-        # logger.important(blockfile_header)
-        # logger.important(metadata)
+        # logger.info(data)
+        # logger.info(blockfile_header)
+        # logger.info(metadata)
         if len(blockfile_header) > 1:
             parents = blockfile_header[1].split(bytearray([0, 0, 0]))
         else:
             parents = []
-            # logger.important("Genesis block")
+            # logger.info("Genesis block")
         # content sits between metadata and block_hash
         content = data[content_separator + 5 :]
 
@@ -646,12 +654,14 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         # of a running blockchain:
         if live:
             # Check block's parents
-            # logger.info(f"{self.name}:  read_block: Checking parents...")
+            # logger.info(f"{self.name[:10]}:  read_block: Checking parents...")
             result = self.check_blocks_parents(parents)
-            logger.info(f"{self.name}:  read_block: Checked parents: {result}")
+            logger.info(
+                f"{self.name[:10]}:  read_block: Checked parents: {result}"
+            )
             if result == "invalid":
                 logger.warning(
-                    f"{self.name}: blockchain_manager.Readblock: "
+                    f"{self.name[:10]}: blockchain_manager.Readblock: "
                     "self.check_blocks_parents returned 'invalid'.  "
                     f"Topics: {topics}"
                 )
@@ -668,7 +678,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
                 )
                 return None
             if len(parents) == 0:
-                logger.info(f"{self.name}:  Genesis block!")
+                logger.info(f"{self.name[:10]}:  Genesis block!")
 
             # # Check block's timestamp is in the past
             # if creation_time > datetime.now(timezone.utc):
@@ -705,7 +715,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         # making sure the block's block_hash is correct
         if not block.check_integrity():
             logger.warning(
-                f"{self.name}:  The received block is not valid!Removing "
+                f"{self.name[:10]}:  The received block is not valid!Removing "
                 "block-file from IPFS storage"
             )
             # remove block-file from IPFS storage
@@ -713,7 +723,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             return None
 
         if self:
-            logger.info(f"{self.name}:  Block from {topics} decoded.")
+            logger.info(f"{self.name[:10]}:  Block from {topics} decoded.")
 
         if not live:
             return block
@@ -728,11 +738,12 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             ]:
                 self.unconfirmed_blocks.append(block)
             self.blocks_to_confirm_lock.release()
-            logger.important(
-                f"{self.name}:  Block's parents not all confirmed, added to "
+            logger.info(
+                f"{self.name[:10]}: "
+                "Block's parents not all confirmed, added to "
                 f"blocks_to_confirm."
             )
-            # logger.important((
+            # logger.info((
             #     f"Unconfirmed blocks: {len(self.unconfirmed_blocks)}\n\n"+
             #     "\n\n".join([
             #         f"{block.long_id}"
@@ -742,7 +753,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
             # ))
             return None
         else:  # parents_confirmed == True
-            logger.info(f"{self.name}:  All in order with the new block.")
+            logger.info(f"{self.name[:10]}:  All in order with the new block.")
             self.blocks_to_confirm_lock.acquire()
             _update_btf = block.short_id in self.blocks_to_find
             if _update_btf:
@@ -785,7 +796,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         # Ensure there aren't duplicates in parents:
         if not are_elements_unique(parents):
             logger.warning(
-                f"{self.name}:  Block has repeated parents. "
+                f"{self.name[:10]}:  Block has repeated parents. "
                 "Block not accepted."
             )
             return "invalid"
@@ -823,7 +834,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         if len(parents) != len(self.remove_ancestors(parents)):
             logger.warning(
                 (
-                    f"{self.name}:  Some of the block's parents are "
+                    f"{self.name[:10]}:  Some of the block's parents are "
                     "ancestors of each other."
                 )
             )
@@ -871,9 +882,9 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         if num_confirmed > 0:
             self.check_on_unconfirmed_blocks()
         # logger.info(
-        #     f"{self.name} Unconfirmed Blocks: {len(self.unconfirmed_blocks)}"
+        #     f"{self.name[:10]} Unconfirmed Blocks: {len(self.unconfirmed_blocks)}"
         # )
-        # logger.info(f"{self.name} Blocks to Find: {len(self.blocks_to_find)}")
+        # logger.info(f"{self.name[:10]} Blocks to Find: {len(self.blocks_to_find)}")
 
     def look_for_blocks_to_find(self) -> None:
         """Try to get blocks we have heard about but don't have."""
@@ -961,7 +972,8 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
         logger.info(
-            f"{self.name}:  on_join_request_received: received join Request"
+            f"{self.name[:10]}: "
+            "on_join_request_received: received join Request"
         )
         self.peer_monitor.register_contact_event(peer_id)
         try:
@@ -1009,7 +1021,8 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
 
             else:
                 logger.info(
-                    f"{self.name}:  on_join_request_received: Couldn't find "
+                    f"{self.name[:10]}: "
+                    "on_join_request_received: Couldn't find "
                     f"Invitation {invitation}"
                 )
                 conv.say("Don't recognise Invitation.".encode())
@@ -1031,7 +1044,7 @@ class Blockchain(BlockchainAppdata, BlockRecords, Networking):
         self._terminate = True
         self.terminate_networking()
         self.conv_lis.terminate()
-        logger.info(f"{self.name}: Shut down.")
+        logger.info(f"{self.name[:10]}: Shut down.")
 
     def check_alive(self) -> None:
         """Raise an exception if this blockchain is not running."""
@@ -1340,7 +1353,7 @@ def delete_blockchain(blockchain_id: str) -> bool:
     ]
     if blockchain_search:
         blockchain: Blockchain = blockchain_search[0]
-        logger.important(f"deleting blockchain {blockchain.name}...")
+        logger.info(f"deleting blockchain {blockchain.name}...")
         if blockchain in blockchains:
             blockchains.remove(blockchain)
         else:
@@ -1360,7 +1373,7 @@ def delete_blockchain(blockchain_id: str) -> bool:
                 f"doesn't exist {blockchain.appdata_dir}"
             )
         blockchain.index_lock.release()
-        logger.important(f"deleted blockchain {blockchain.name}")
+        logger.info(f"deleted blockchain {blockchain.name}")
         logger.info(
             "Walytis_Beta:remaining blockchains: "
             f"{[blockchain.name for blockchain in blockchains]}"
@@ -1398,7 +1411,7 @@ def run_blockchains() -> None:
         logger.error(error_message)
         raise Exception(error_message)
     blockchain_ids = []
-    logger.important(
+    logger.info(
         "Loading blockchains from "
         f"{os.path.abspath(get_walytis_appdata_dir())}"
     )
@@ -1411,21 +1424,19 @@ def run_blockchains() -> None:
             if not require_blockchain_paths.issubset(
                 set(os.listdir(blockchain_data_dir))
             ):
-                logger.important(f"Skipping directory {blockchain_data_dir}")
+                logger.info(f"Skipping directory {blockchain_data_dir}")
                 continue
             blockchain_ids.append(blockchain_id)
         else:  # delete uncleanedup file
             os.remove(blockchain_data_dir)
 
-    logger.important("Running blockchains:")
+    logger.info("Running blockchains:")
     for blockchain_id in blockchain_ids:
         if get_blockchain(blockchain_id):
-            logger.important(
-                f"run_blockchains: already loaded: {blockchain_id}"
-            )
+            logger.info(f"run_blockchains: already loaded: {blockchain_id}")
             continue
         blockchain = Blockchain(id=blockchain_id, name="")
-        logger.important(f" - {blockchain.name}")
+        logger.info(f" - {blockchain.name}")
         blockchains.append(blockchain)
 
 

@@ -2,4 +2,4 @@ pytest
 pytest-timeout
 pytest-html
 pytest-json
-emtest>=0.0.8
+emtest>=0.1.0

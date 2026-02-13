@@ -164,31 +164,31 @@ class Blockchain(GenericBlockchain):
             error = TypeError(
                 "The blockchain_id parameter must be of type string."
             )
-            logger.error(f"WAPI: {function_name()}: {str(error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(error)}")
             raise error
         if appdata_dir and app_name:
             error = ValueError(
                 "Don't pass both app_name and appdata_dir. "
                 "You can pass one of them or none."
             )
-            logger.error(f"WAPI: {function_name()}: {str(error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(error)}")
             raise error
 
         if not isinstance(app_name, str):
             error = TypeError("The app_name parameter must be of type string.")
-            logger.error(f"WAPI: {function_name()}: {str(error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(error)}")
             raise error
         if not isinstance(appdata_dir, str):
             error = TypeError(
                 "The appdata_dir parameter must be of type string."
             )
-            logger.error(f"WAPI: {function_name()}: {str(error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(error)}")
             raise error
         if appdata_dir and not os.path.isdir(appdata_dir):
             _error = FileNotFoundError(
                 "The appdata_dir parameter must be an exising directory."
             )
-            logger.error(f"WAPI: {function_name()}: {str(_error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(_error)}")
             raise _error
 
         self._blocklist_lock = Lock()
@@ -252,7 +252,7 @@ class Blockchain(GenericBlockchain):
         try:
             block = create_block(self.blockchain_id, content, topics=topics)
         except BlockCreationError as error:
-            logger.error(f"WAPI: {function_name()}: {str(error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(error)}")
             self._blocklist_lock.release()
             raise error
 
@@ -340,7 +340,7 @@ class Blockchain(GenericBlockchain):
                 "This block isn't recorded (by brenthy_api.Blockchain) as being "
                 "part of this blockchain."
             )
-            logger.error(f"WAPI: {function_name()}: {str(error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(error)}")
             raise error
 
     def create_invitation(
@@ -445,6 +445,9 @@ class Blockchain(GenericBlockchain):
                 if self.update_blockids_before_handling:
                     self._update_blocks_list(block, already_locked=True)
 
+                logger.info(
+                    f"{self.name[:10]}: Received new block: {block.topics}"
+                )
                 # call user's block_received_handler
                 # only if the block isn't a genesis block
                 if block.topics == ["genesis"]:
@@ -456,13 +459,15 @@ class Blockchain(GenericBlockchain):
                         Thread(
                             target=self._run_block_received_handler,
                             args=(block,),
-                            name=f"WAPI-{self.name}-block_received_handler",
+                            name=f"{self.name}-block_received_handler",
                         ).start()
                 if not self.update_blockids_before_handling:
                     self._update_blocks_list(block, already_locked=True)
 
             except Exception as e:
-                logger.error(f"WAPI: Blockchain._on_new_block_received: {e}")
+                logger.error(
+                    f"{self.name[:10]}: Blockchain._on_new_block_received: {e}"
+                )
         if not already_locked_block_received:
             self._block_received_handler_lock.release()
 
@@ -522,7 +527,7 @@ class Blockchain(GenericBlockchain):
                 "Got no latest blocks from blockchain. "
                 "This is probably due to a bug in walytis_api."
             )
-            logger.error(f"WAPI: {function_name()}: {str(error)}")
+            logger.error(f"{self.name[:10]}: {function_name()}: {str(error)}")
             raise error
         count = 0
         for block_id in latest_blocks:

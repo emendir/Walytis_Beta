@@ -796,14 +796,14 @@ class WalytisBetaNetApi(BaseWalytisBetaInterface):
         blockfile_header = data[:content_separator].split(
             bytearray([0, 0, 0, 0]))
         metadata = blockfile_header[0].split(bytearray([0, 0]))
-        # logger.important(data)
-        # logger.important(blockfile_header)
-        # logger.important(metadata)
+        # logger.info(data)
+        # logger.info(blockfile_header)
+        # logger.info(metadata)
         if len(blockfile_header) > 1:
             parents = blockfile_header[1].split(bytearray([0, 0, 0]))
         else:
             parents = []
-            # logger.important("Genesis block")
+            # logger.info("Genesis block")
         # content sits between metadata and block_hash
         content = data[content_separator + 5:]
 

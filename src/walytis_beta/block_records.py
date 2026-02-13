@@ -131,7 +131,8 @@ class BlockRecords(ABC):
                         + bytearray([0, 0, 0, 0, 0, 0])
                     )
                 logger.info(
-                    f"{self.name}:  Block is new. Added block to ID Records."
+                    f"{self.name[:10]}: "
+                    "Block is new. Added block to ID Records."
                 )
                 if self.number_of_known_ids is not None:
                     self.number_of_known_ids += 1
@@ -207,7 +208,8 @@ class BlockRecords(ABC):
             entry_list = []
         else:
             logger.error(
-                f"{self.name}: error: index_file_reader was called with an "
+                f"{self.name[:10]}: "
+                "error: index_file_reader was called with an "
                 "invalid task: " + task
             )
             return None
@@ -230,7 +232,8 @@ class BlockRecords(ABC):
             ) -> int | bytearray | list[bytes] | None:
                 if not success:
                     logger.error(
-                        f"{self.name}: BlockRecords: error reading an index file."
+                        f"{self.name[:10]}: "
+                        "BlockRecords: error reading an index file."
                     )
                     return None
 
@@ -242,7 +245,8 @@ class BlockRecords(ABC):
                 elif list_ids:
                     return entry_list
                 logger.error(
-                    f"{self.name}: BlockRecords: Bug in index_file_reader(), this "
+                    f"{self.name[:10]}: "
+                    "BlockRecords: Bug in index_file_reader(), this "
                     "line isn't to be reached."
                 )
                 return None
@@ -277,7 +281,8 @@ class BlockRecords(ABC):
                     # making sure the end code is in place
                     if file_reader.read(6) != bytearray([0, 0, 0, 0, 0, 0]):
                         logger.error(
-                            f"{self.name}: error in the Block ID records in index file"
+                            f"{self.name[:10]}: "
+                            "error in the Block ID records in index file"
                             f" {file}. Block ID entry was not followed by the entry "
                             "separator bytearray([0,0,0,0,0,0])."
                         )
@@ -411,7 +416,7 @@ class BlockRecords(ABC):
         result: list[bytearray] = self.index_file_reader("list_ids", filename)
         if result is None:
             logger.warning(
-                f"{self.name}:  BlockRecords.list_ids: index_file_reader "
+                f"{self.name[:10]}:  BlockRecords.list_ids: index_file_reader "
                 "returned None"
             )
             return []
@@ -433,7 +438,7 @@ class BlockRecords(ABC):
                 break
         if right_file is None:
             message = (
-                f"{self.name} Block Records: Asked for block that is "
+                f"{self.name[:10]} Block Records: Asked for block that is "
                 "older than our records: "
             )
             message += str(block_time)
@@ -490,7 +495,9 @@ class BlockRecords(ABC):
         """
         self.check_alive()  # ensure this Blockchain object isn't shutting down
 
-        logger.info(f"{self.name}:  Loading the record of known blocks...")
+        logger.info(
+            f"{self.name[:10]}:  Loading the record of known blocks..."
+        )
         # loading a list of all index files for the ID records
         if not os.path.exists(self.index_dir):
             os.mkdir(self.index_dir)
@@ -640,7 +647,7 @@ class BlockRecords(ABC):
                         logger.error(
                             f"ensure_ipfs_pinned: published "
                             f"block's cid is not the same as its file name "
-                            f"{self.name} {block_cid}"
+                            f"{self.name[:10]} {block_cid}"
                         )
                     else:
                         ipfs.files.pin(block_cid)

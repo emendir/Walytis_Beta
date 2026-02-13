@@ -89,7 +89,7 @@ class Networking(ABC):
         self.pubsub_listener = ipfs.pubsub.subscribe(
             self.blockchain_id, self.pubsub_message_handler
         )
-        logger.info(f"Created PubSub listener for {self.name}")
+        logger.info(f"Created PubSub listener for {self.name[:10]}")
 
     def pubsub_message_handler(self, pubsub_packet: dict) -> None:
         """Handle a pubsub message on the channel for new blocks comms."""
@@ -111,16 +111,19 @@ class Networking(ABC):
         if not sender_id == self.ipfs_peer_id:
             self.peer_monitor.register_contact_event(sender_id)
         if message == "New block!":
-            # logger.info(f"PubSub: Received data for new block on {self.name}.")
             self.lastcoms_time = datetime.now(timezone.utc)
             self.update_shared_leaf_blocks([data["block_id"]])
             block_id = string_to_bytes(data["block_id"])
+            logger.info(
+                f"{self.name[:10]}: PubSub: Received data for new block :"
+                f"{decode_short_id(block_id)['topics']}"
+            )
             if not block_id:
                 raise Exception("Pubsub Message Handler: Empty block ID")
             self.new_block_published(block_id)
 
         elif message == "Leaf blocks:":
-            # logger.info(f"PubSub: Received leaf blocks broadcast on {self.name}.")
+            # logger.info(f"PubSub: Received leaf blocks broadcast on {self.name[:10]}.")
             self.lastcoms_time = datetime.now(timezone.utc)
             # leaf_blocks = [
             #     string_to_bytes(block_id) for block_id in data["leaf_blocks"]
@@ -326,4 +329,4 @@ class Networking(ABC):
         """Shut down communications, cleaning up resources."""
         self.pubsub_listener.terminate(True)
         self.peer_monitor.terminate(True)
-        logger.info(f"{self.name}: Shut down networking.")
+        logger.info(f"{self.name[:10]}: Shut down networking.")

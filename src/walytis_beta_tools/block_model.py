@@ -497,7 +497,7 @@ def decode_short_id(short_id: bytearray) -> dict:
     while short_id[-1] == 0:
         short_id = short_id[:-1]
     metadata = short_id.split(bytearray([0, 0]))
-    # logger.important(str(metadata))
+    # logger.info(str(metadata))
     topics = [
         element.decode("utf-8")
         for element in metadata[4].split(bytearray([0]))
