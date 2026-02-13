@@ -157,7 +157,7 @@ class Blockchain(GenericBlockchain):
         self.blockchain_id = get_blockchain_id(blockchain_id)
         self.name = get_blockchain_name(self.blockchain_id)
         self.app_name = app_name
-        self._block_received_handler = block_received_handler
+        self.block_received_handler = block_received_handler
         self._block_received_handler_lock = Lock()
 
         if not isinstance(blockchain_id, str):
@@ -450,9 +450,7 @@ class Blockchain(GenericBlockchain):
                 )
                 # call user's block_received_handler
                 # only if the block isn't a genesis block
-                if block.topics == ["genesis"]:
-                    logger.info("WAPI: Received Genesis Block!")
-                elif self.block_received_handler:  # it's a normal block
+                if block.topics != ["genesis"] and self.block_received_handler:
                     if self.sequential_block_handling:
                         self._run_block_received_handler(block)
                     else:
