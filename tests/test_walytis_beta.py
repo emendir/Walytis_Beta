@@ -206,3 +206,6 @@ def test_cleanup(request: pytest.FixtureRequest) -> None:
     )
 
     testing_utils.stop_walytis()
+    from testing_utils import cleanup_ipfs
+
+    cleanup_ipfs()

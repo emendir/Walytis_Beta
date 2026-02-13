@@ -279,3 +279,6 @@ def test_cleanup(request: pytest.FixtureRequest) -> None:
             walytis_beta_api.delete_blockchain(blockchain.blockchain_id)
         except NoSuchBlockchainError:
             pass
+    from testing_utils import cleanup_ipfs
+
+    cleanup_ipfs()

@@ -217,3 +217,6 @@ def test_cleanup(request: pytest.FixtureRequest) -> None:
         DOCKER_LOG_FILES,
         get_pytest_report_dirs(request.config),
     )
+    from testing_utils import cleanup_ipfs
+
+    cleanup_ipfs()

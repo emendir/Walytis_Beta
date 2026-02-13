@@ -1,3 +1,5 @@
+from ipfs_node import IpfsNode
+from ipfs_remote import IpfsRemote
 from threading import Thread
 import docker
 import os
@@ -9,6 +11,7 @@ from dataclasses import dataclass
 from conftest import get_rebuild_docker  # noqa
 
 import pytest
+from walytis_beta_tools._experimental.ipfs_interface import ipfs
 from walytis_beta_tools._experimental.config import (
     WalytisTestModes,
     get_walytis_test_mode,
@@ -223,3 +226,12 @@ def test_list_blockchain_names() -> None:
         == [name for id, name in walytis_beta_api.list_blockchains()]
     )
     assert all_in_order, "walytis_beta_api.list_blockchain_names"
+
+
+def cleanup_ipfs() -> None:
+    """Cleanup IPFS resources after running a test script."""
+    if isinstance(ipfs, IpfsNode):
+        ipfs.terminate()
+    else:
+        # remove connections to old docker containers
+        ipfs.peers.disconnect(ipfs.peers.list_peers())
