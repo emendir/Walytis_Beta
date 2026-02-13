@@ -13,7 +13,10 @@ from brenthy_tools_beta.utils import (
     string_to_time,
 )
 from brenthy_tools_beta.version_utils import decode_version, encode_version
-from brenthy_tools_beta.utils import make_file_readable, make_directory_readable
+from brenthy_tools_beta.utils import (
+    make_file_readable,
+    make_directory_readable,
+)
 
 from . import walytis_beta
 from walytis_beta_tools.block_model import short_from_long_id
@@ -97,14 +100,14 @@ def create_block(payload: bytearray) -> bytes:
             return json.dumps(
                 {"success": False, "error": NO_SUCH_BLOCKCHAIN_MESSAGE}
             ).encode()
-        payload = payload[payload.index(bytearray([0])) + 1:]
+        payload = payload[payload.index(bytearray([0])) + 1 :]
         n_topics_bytes = payload[: payload.index(bytearray([0]))]
         # decode the array of bytes that encode the number of topic IDs
         # included in this block
         n_topics = from_b255_no_0s(n_topics_bytes)
         # remove the topic number and the follwing 0 from the start of payload.
         # + 1 to remove the 0 separator as well
-        payload = payload[len(n_topics_bytes) + 1:]
+        payload = payload[len(n_topics_bytes) + 1 :]
 
         topics = []
 
@@ -113,7 +116,7 @@ def create_block(payload: bytearray) -> bytes:
             topic = payload[: payload.index(bytearray([0, 0, 0]))]
             # removing the collected topic part, including the following 0,
             # from payload
-            payload = payload[payload.index(bytearray([0, 0, 0])) + 3:]
+            payload = payload[payload.index(bytearray([0, 0, 0])) + 3 :]
 
             # adding the topic to the correct topic block list
             # adding this topic to this blocks list of topics
@@ -177,7 +180,7 @@ def is_block_known(payload: bytearray) -> bytes:
             return json.dumps(
                 {"success": False, "error": NO_SUCH_BLOCKCHAIN_MESSAGE}
             ).encode()
-        short_id = payload[payload.index(bytearray([0])) + 1:]
+        short_id = payload[payload.index(bytearray([0])) + 1 :]
         result = blockchain.is_block_known(short_id)
         return json.dumps(
             {
@@ -424,7 +427,6 @@ def get_walytis_beta_version() -> bytes:
     ).encode()
 
 
-
 def request_router(request: bytearray) -> bytes:
     """
     This function processes all requests incoming from the apps,
@@ -432,7 +434,7 @@ def request_router(request: bytearray) -> bytes:
     """
     try:
         function = request[: request.index(bytearray([0]))].decode()
-        payload = request[request.index(bytearray([0])) + 1:]
+        payload = request[request.index(bytearray([0])) + 1 :]
         if function == "list_blockchains":
             return list_blockchains()
         elif function == "create_block":
@@ -487,7 +489,7 @@ def api_request_handler(request: bytearray) -> bytearray:
     walytis_beta_api_version = decode_version(
         request[: request.index(bytearray([0]))]
     )
-    payload = request[request.index(bytearray([0])) + 1:]
+    payload = request[request.index(bytearray([0])) + 1 :]
     reply = request_router(payload)
     return (
         encode_version(WALYTIS_BETA_API_PROTOCOL_VERSION)
