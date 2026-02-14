@@ -40,6 +40,14 @@ def pytest_configure(config):
         terminal.write_line(f"Python {sys.version.split(' ')[0]}")
 
 
+def pytest_sessionfinish(
+    session: pytest.Session,
+    exitstatus: pytest.ExitCode,
+) -> None:
+    """Clean up after pytest has finished."""
+    os._exit(int(exitstatus))  # force close terminating dangling threads
+
+
 def get_rebuild_docker(default: bool):
     return env_vars.bool("TESTS_REBUILD_DOCKER", default=default)
 
