@@ -1,3 +1,4 @@
+from datetime import datetime
 from ipfs_node import IpfsNode
 from ipfs_remote import IpfsRemote
 from threading import Thread
@@ -18,9 +19,25 @@ from walytis_beta_tools._experimental.config import (
 )
 from emtest import are_we_in_docker
 
+from walytis_identities.log import LOG_TIMESTAMP_FORMAT
+
+from emtest.log_utils import collect_logs
+
 DOCKER_LOG_FILES = [
     "/opt/Brenthy/Brenthy.log",
     "/opt/Brenthy/Walytis_Beta.log",
+]
+
+HOST_LOG_FILES = [
+    "/opt/Brenthy/Brenthy.log",
+    "/opt/Brenthy/Brenthy_Walytis.log",
+    "/opt/log/Walytis_Beta/Walytis_Beta.log",
+    "/opt/log/WalytisIdentities/WalytisIdentities.log",
+    "/opt/log/WalytisOffchain/WalytisOffchain.log",
+    "/opt/log/WalytisMutability/WalytisMutability.log",
+    "/opt/log/IPFS_TK/IPFS_TK.log",
+    "/opt/log/WalId_Tests/WalIdTests.log",
+    "/opt/log/IpfsPeersLogger/ipfs_peers_logger.log",
 ]
 NUMBER_OF_JOIN_ATTEMPTS = 10
 DOCKER_CONTAINER_NAME = "brenthy_tests_walytis"
@@ -235,3 +252,33 @@ def cleanup_ipfs() -> None:
     else:
         # remove connections to old docker containers
         ipfs.peers.disconnect(ipfs.peers.list_peers())
+
+
+def collect_all_test_logs(
+    test_name: str,
+    docker_containers: list[BrenthyDocker],
+    pytest_data: pytest.Config,
+    test_start_time: datetime,
+):
+    """Gather logs from host and docker containers.
+
+    WARNING: deletes the given docker containers.
+    Copies logs to all report directories registered in pytest.
+    """
+    report_dirs = [
+        os.path.join(d, test_name) for d in get_pytest_report_dirs(pytest_data)
+    ]
+    # get logs from, then delete containers
+    get_logs_and_delete_dockers(
+        docker_containers,
+        DOCKER_LOG_FILES,
+        report_dirs,
+    )
+    collect_logs(
+        HOST_LOG_FILES,
+        report_dirs,
+        test_start_time,
+        LOG_TIMESTAMP_FORMAT,
+        " ",
+        "host-",
+    )
