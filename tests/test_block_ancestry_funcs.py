@@ -5,6 +5,8 @@ Don't run pytest yet, compatibility with it hasn't been fully tested.
 Simply execute this script instead.
 """
 
+from testing_utils import cleanup_ipfs, collect_all_test_logs
+from testing_utils import collect_all_test_logs
 import os
 import sys
 from datetime import timezone
@@ -48,7 +50,6 @@ class BlockchainModel:
             parents=[short_from_long_id(parent) for parent in parents],
             n_parents=len(parents),
             blockchain_version=WALYTIS_BETA_CORE_VERSION,
-
             ipfs_cid="FALSE_BLOCK",
             content_hash_algorithm="",
             content_hash=bytearray(),
@@ -135,6 +136,16 @@ def test_remove_ancestors() -> None:
     assert result == expected_result, "remove_ancestors"
 
 
-def test_threads_cleanup() -> None:
-    """Test that no threads are left running."""
+def test_cleanup(
+    test_module_name: str,
+    test_module_start_time: datetime,
+    test_report_dirs: list[str],
+) -> None:
+    """Ensure all resources and threads used by tests are cleaned up."""
+    collect_all_test_logs(
+        test_module_name,
+        [],
+        test_report_dirs,
+        test_module_start_time,
+    )
     assert await_thread_cleanup(), "Threads clean up"

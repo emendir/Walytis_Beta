@@ -17,7 +17,7 @@ from walytis_beta_tools._experimental.config import (
     WalytisTestModes,
     get_walytis_test_mode,
 )
-from emtest import are_we_in_docker
+from emtest import are_we_in_docker, get_pytest_report_dirs
 
 from walytis_identities.log import LOG_TIMESTAMP_FORMAT
 
@@ -32,11 +32,7 @@ HOST_LOG_FILES = [
     "/opt/Brenthy/Brenthy.log",
     "/opt/Brenthy/Brenthy_Walytis.log",
     "/opt/log/Walytis_Beta/Walytis_Beta.log",
-    "/opt/log/WalytisIdentities/WalytisIdentities.log",
-    "/opt/log/WalytisOffchain/WalytisOffchain.log",
-    "/opt/log/WalytisMutability/WalytisMutability.log",
     "/opt/log/IPFS_TK/IPFS_TK.log",
-    "/opt/log/WalId_Tests/WalIdTests.log",
     "/opt/log/IpfsPeersLogger/ipfs_peers_logger.log",
 ]
 NUMBER_OF_JOIN_ATTEMPTS = 10
@@ -255,19 +251,20 @@ def cleanup_ipfs() -> None:
 
 
 def collect_all_test_logs(
-    test_name: str,
+    test_module_name: str,
     docker_containers: list[BrenthyDocker],
-    pytest_data: pytest.Config,
+    test_report_dirs: list[str],
     test_start_time: datetime,
-):
+) -> None:
     """Gather logs from host and docker containers.
 
     WARNING: deletes the given docker containers.
     Copies logs to all report directories registered in pytest.
     """
-    report_dirs = [
-        os.path.join(d, test_name) for d in get_pytest_report_dirs(pytest_data)
-    ]
+    # report_dirs = [os.path.join(d, test_module_name) for d in test_report_dirs]
+    report_dirs = test_report_dirs
+    print("REPORTS")
+    print(report_dirs)
     # get logs from, then delete containers
     get_logs_and_delete_dockers(
         docker_containers,

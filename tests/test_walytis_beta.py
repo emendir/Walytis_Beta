@@ -16,6 +16,8 @@ run the following commands to stop and remove the unterminated container:
 """
 
 # This import allows us to run this script with either pytest or python
+from testing_utils import cleanup_ipfs, collect_all_test_logs
+from datetime import datetime
 import _auto_run_with_pytest  # noqa
 from emtest import get_pytest_report_dirs
 from testing_utils import get_logs_and_delete_dockers, DOCKER_LOG_FILES
@@ -190,22 +192,23 @@ def test_delete_blockchain() -> None:
 
 def test_threads_cleanup() -> None:
     """Test that no threads are left running."""
-    shared_data.brenthy_dockers[0].stop()
+
+
+def test_cleanup(
+    test_module_name: str,
+    test_module_start_time: datetime,
+    test_report_dirs: list[str],
+) -> None:
+    """Ensure all resources and threads used by tests are cleaned up."""
+    testing_utils.stop_walytis()
+
     shared_data.blockchain.terminate()
     testing_utils.stop_walytis()
-    assert await_thread_cleanup(timeout=5)
-
-
-def test_cleanup(request: pytest.FixtureRequest) -> None:
-    """Ensure all resources used by tests are cleaned up."""
-    # get logs from, then delete containers
-    get_logs_and_delete_dockers(
-        shared_data.brenthy_dockers,
-        DOCKER_LOG_FILES,
-        get_pytest_report_dirs(request.config),
-    )
-
-    testing_utils.stop_walytis()
-    from testing_utils import cleanup_ipfs
-
     cleanup_ipfs()
+    collect_all_test_logs(
+        test_module_name,
+        shared_data.brenthy_dockers,
+        test_report_dirs,
+        test_module_start_time,
+    )
+    assert await_thread_cleanup(timeout=5)

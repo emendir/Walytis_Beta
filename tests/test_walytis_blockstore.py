@@ -1,6 +1,8 @@
 """Test that Walytis' local block store works."""
 
 # This import allows us to run this script with either pytest or python
+from datetime import datetime
+from testing_utils import cleanup_ipfs, collect_all_test_logs, stop_walytis
 from tqdm import tqdm
 import os
 import shutil
@@ -66,13 +68,6 @@ def test_preparations() -> None:
     print("Finished preparations...")
 
 
-def cleanup(request: pytest.FixtureRequest | None = None) -> None:
-    """Clean up after running tests with PyTest."""
-    # _testing_utils.terminate()
-
-    testing_utils.stop_walytis()
-
-
 def test_create_blockchain() -> None:
     """Test that we can create a Walytis blockchain."""
     testing_utils.shared_data.blockchain = walytis_beta_api.Blockchain.create(
@@ -120,9 +115,19 @@ def test_delete_blockchain() -> None:
     testing_utils.test_delete_blockchain()
 
 
-def test_threads_cleanup() -> None:
-    """Test that no threads are left running."""
+def test_cleanup(
+    test_module_name: str,
+    test_module_start_time: datetime,
+    test_report_dirs: list[str],
+) -> None:
+    """Ensure all resources and threads used by tests are cleaned up."""
     shared_data.blockchain.terminate()
-    testing_utils.stop_walytis()
+    stop_walytis()
+    cleanup_ipfs()
+    collect_all_test_logs(
+        test_module_name,
+        [],
+        test_report_dirs,
+        test_module_start_time,
+    )
     assert await_thread_cleanup(timeout=5)
-    cleanup()

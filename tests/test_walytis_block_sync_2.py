@@ -1,3 +1,5 @@
+from datetime import datetime
+from testing_utils import cleanup_ipfs, collect_all_test_logs, stop_walytis
 import _auto_run_with_pytest  # noqa
 from emtest import get_pytest_report_dirs
 from testing_utils import get_logs_and_delete_dockers, DOCKER_LOG_FILES
@@ -206,17 +208,19 @@ def test_threads_cleanup() -> None:
     assert await_thread_cleanup(), "Threads clean up"
 
 
-def test_cleanup(request: pytest.FixtureRequest) -> None:
-    """Ensure all resources used by tests are cleaned up."""
-    # get logs from, then delete containers
-    get_logs_and_delete_dockers(
-        [
-            shared_data.brenthy_docker_1,
-            shared_data.brenthy_docker_2,
-        ],
-        DOCKER_LOG_FILES,
-        get_pytest_report_dirs(request.config),
-    )
-    from testing_utils import cleanup_ipfs
-
+def test_cleanup(
+    test_module_name: str,
+    test_module_start_time: datetime,
+    test_report_dirs: list[str],
+) -> None:
+    """Ensure all resources and threads used by tests are cleaned up."""
+    shared_data.blockchain.terminate()
+    stop_walytis()
     cleanup_ipfs()
+    collect_all_test_logs(
+        test_module_name,
+        [shared_data.brenthy_docker_1, shared_data.brenthy_docker_2],
+        test_report_dirs,
+        test_module_start_time,
+    )
+    assert await_thread_cleanup(timeout=5)
