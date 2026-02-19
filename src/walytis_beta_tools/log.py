@@ -33,30 +33,11 @@ formatter = MillisecondFormatter(
 )
 # Console handler (INFO+)
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.WARNING)
+console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(formatter)
-
-WALYTIS_BETA_TOOLS_LOG_NAME = os.environ.get(
-    "WALYTIS_BETA_TOOLS_LOG_NAME", "Walytis_Beta"
-)
-
-LOG_PATH = os.path.join(
-    get_app_log_dir(WALYTIS_BETA_TOOLS_LOG_NAME, "Waly"),
-    f"{WALYTIS_BETA_TOOLS_LOG_NAME}.log",
-)
-print(f"Walytis_Beta: Logging to {LOG_PATH}")
-# File handler (DEBUG+ with rotation)
-file_handler = RotatingFileHandler(
-    LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=5
-)
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
 
 
 logger = logging.getLogger("Walytis")
-logger.setLevel(logging.DEBUG)
-
-
 logger_networking = logging.getLogger("Networking")
 logger_api = logging.getLogger("API")
 logger_block_creation = logging.getLogger("BlockCreation")
@@ -95,21 +76,33 @@ logger_ancestry.addHandler(console_handler)
 logger_appdata.addHandler(console_handler)
 logger_join.addHandler(console_handler)
 
-logger.addHandler(file_handler)
-logger_networking.addHandler(file_handler)
-logger_api.addHandler(file_handler)
-logger_block_creation.addHandler(file_handler)
-logger_block_processing.addHandler(file_handler)
-logger_block_records.addHandler(file_handler)
-logger_blockchain_model.addHandler(file_handler)
-logger_block_model.addHandler(file_handler)
-logger_generics.addHandler(file_handler)
-logger_ancestry.addHandler(file_handler)
-logger_appdata.addHandler(file_handler)
-logger_join.addHandler(file_handler)
 
+file_handler = None
+WALYTIS_BETA_TOOLS_LOG_NAME = os.environ.get(
+    "WALYTIS_BETA_TOOLS_LOG_NAME", "Walytis_Beta"
+)
+LOG_DIR = get_app_log_dir(WALYTIS_BETA_TOOLS_LOG_NAME, "Waly")
+if LOG_DIR is None:
+    logger.info("Logging to files is disabled.")
+else:
+    LOG_PATH = os.path.join(LOG_DIR, f"{WALYTIS_BETA_TOOLS_LOG_NAME}.log")
+    logger.info(f"Logging to {os.path.abspath(LOG_PATH)}")
 
-# logger.setLevel(logging.DEBUG)
-# logger_block_records.setLevel(logging.DEBUG)
-# logger_networking.setLevel(logging.DEBUG)
-# console_handler.setLevel(logging.DEBUG)
+    file_handler = RotatingFileHandler(
+        LOG_PATH, maxBytes=5 * 1024 * 1024, backupCount=5
+    )
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(file_handler)
+    logger_networking.addHandler(file_handler)
+    logger_api.addHandler(file_handler)
+    logger_block_creation.addHandler(file_handler)
+    logger_block_processing.addHandler(file_handler)
+    logger_block_records.addHandler(file_handler)
+    logger_blockchain_model.addHandler(file_handler)
+    logger_block_model.addHandler(file_handler)
+    logger_generics.addHandler(file_handler)
+    logger_ancestry.addHandler(file_handler)
+    logger_appdata.addHandler(file_handler)
+    logger_join.addHandler(file_handler)

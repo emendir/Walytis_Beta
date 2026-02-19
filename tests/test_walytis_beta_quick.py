@@ -15,10 +15,11 @@ run the following commands to stop and remove the unterminated container:
     docker rm $(docker ps -aqf "name=^brenthy_test$")
 """
 
+import _auto_run_with_pytest  # noqa
+
 # This import allows us to run this script with either pytest or python
 from datetime import datetime
 from testing_utils import cleanup_ipfs, collect_all_test_logs, stop_walytis
-import _auto_run_with_pytest  # noqa
 import walytis_beta_embedded
 import pytest
 import shutil

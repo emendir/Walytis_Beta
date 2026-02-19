@@ -24,6 +24,7 @@
 - [ ] finish implementation of walytis_beta_embedded (missing functions such as read_block)
 - [ ] move value checking and blockchain existence checking logic from walytis_beta_embedded_api & walytis_beta_brethy_api to walytis_beta_generic_interface
 - [ ] fix environment variables for Walytis & IPFS-Toolkit and make a stable feature
+
 ### Tests
 
 - [ ] test all security functionality

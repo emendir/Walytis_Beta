@@ -1,1 +1,1 @@
-walytis_beta==2.4.36
+walytis_beta==2.4.38

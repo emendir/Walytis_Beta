@@ -19,7 +19,7 @@ from walytis_beta_tools._experimental.config import (
 )
 from emtest import are_we_in_docker, get_pytest_report_dirs
 
-from walytis_identities.log import LOG_TIMESTAMP_FORMAT
+from walytis_beta_tools.log import LOG_TIMESTAMP_FORMAT
 
 from emtest.log_utils import collect_logs
 

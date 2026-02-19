@@ -3,6 +3,7 @@
 Runs automatically when pytest runs a test before loading the test module.
 """
 
+from emtest.log_utils import get_app_log_dir
 from datetime import datetime
 import logging
 from testing_paths import (
@@ -18,6 +19,7 @@ from emtest import (
     add_path_to_python,
     are_we_in_docker,
     env_vars,
+    set_env_var,
     get_pytest_report_dirs,
     configure_pytest_reporter,
 )
@@ -32,7 +34,10 @@ PRINT_ERRORS = (
 
 os.chdir(WORKDIR)
 
-logger_tests = logging.getLogger("Tests-WalId")
+# add source code paths to python's search paths
+add_path_to_python(SRC_DIR)
+
+logger_tests = logging.getLogger("Tests-Walytis")
 logger_tests.setLevel(logging.DEBUG)
 logger_pytest = logging.getLogger("Pytest")
 logger_pytest.setLevel(logging.DEBUG)
@@ -86,10 +91,61 @@ def get_rebuild_docker(default: bool):
     return env_vars.bool("TESTS_REBUILD_DOCKER", default=default)
 
 
-if env_vars.bool("CONFTEST_LOAD_WALYTIS", default=True):
-    print("Loading Walytis...")
-    from testing_imports import load_walytis
+if True:  # IMPORT ORDER MATTERS, stop linters from reordering
+    set_env_var("WALY_LOG_DIR", "/opt/log", override=False)
 
-    load_walytis()
-else:
-    print("NOT loading Walytis")
+    if env_vars.bool("CONFTEST_LOAD_WALYTIS", default=True):
+        print("Loading Walytis...")
+        from testing_imports import load_walytis
+
+        load_walytis()
+    else:
+        print("NOT loading Walytis")
+
+    from walytis_beta_tools.log import (
+        file_handler,
+        console_handler,
+        formatter,
+    )
+
+    if file_handler:
+        file_handler.setLevel(logging.DEBUG)
+
+    plain_console_handler = logging.StreamHandler()
+    plain_console_handler.setLevel(logging.DEBUG)
+
+    LOG_DIR = get_app_log_dir("Walytis_Beta_Tests", "Waly")
+    if LOG_DIR:
+        file_handler_tests = logging.handlers.RotatingFileHandler(
+            os.path.join(LOG_DIR, "Tests-Walytis.log"),
+            maxBytes=4 * 1024 * 1024,
+            backupCount=4,
+        )
+
+        file_handler_tests.setLevel(logging.DEBUG)
+        file_handler_tests.setFormatter(formatter)
+
+        logger_tests.addHandler(file_handler_tests)
+        logger_pytest.addHandler(file_handler_tests)
+    console_handler.setLevel(logging.DEBUG)
+    logger_tests.addHandler(plain_console_handler)
+    logger_pytest.addHandler(plain_console_handler)
+
+    # add logging for IPFS-Toolkit
+    from ipfs_tk_transmission.log import logger_transm, logger_conv
+
+    LOG_DIR = get_app_log_dir("IPFS_TK", "Waly")
+    if LOG_DIR:
+        file_handler_ipfs = logging.handlers.RotatingFileHandler(
+            os.path.join(LOG_DIR, "IPFS_TK.log"),
+            maxBytes=5 * 1024 * 1024,
+            backupCount=5,
+        )
+        file_handler_ipfs.setLevel(logging.DEBUG)
+        file_handler_ipfs.setFormatter(formatter)
+
+        logger_transm.addHandler(file_handler_ipfs)
+        logger_conv.addHandler(file_handler_ipfs)
+
+    logger_conv.setLevel(logging.DEBUG)
+    logger_transm.setLevel(logging.DEBUG)
