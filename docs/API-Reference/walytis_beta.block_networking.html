@@ -253,21 +253,9 @@
 <p>The networking functionality is defined in this child class,
 its parent block_model.Block contains the more fundamental functionality.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.Block.announce_block">
-<span class="sig-name descname"><span class="pre">announce_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#Block.announce_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.Block.announce_block" title="Link to this definition">¶</a></dt>
-<dd><p>Publish a PubSub message about the new block.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="walytis_beta.block_networking.Block.publish_and_generate_id">
 <span class="sig-name descname"><span class="pre">publish_and_generate_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockchain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_pubsub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#Block.publish_and_generate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.Block.publish_and_generate_id" title="Link to this definition">¶</a></dt>
 <dd><p>Publish this block, generating its long ID.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="walytis_beta.block_networking.Block.publish_file_data">
-<span class="sig-name descname"><span class="pre">publish_file_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/walytis_beta/block_networking.html#Block.publish_file_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#walytis_beta.block_networking.Block.publish_file_data" title="Link to this definition">¶</a></dt>
-<dd><p>Put this block’s block file on IPFS.</p>
 </dd></dl>
 
 </dd></dl>
@@ -325,9 +313,7 @@ its parent block_model.Block contains the more fundamental functionality.</p>
             <ul>
 <li><a class="reference internal" href="#">walytis_beta.block_networking module</a><ul>
 <li><a class="reference internal" href="#walytis_beta.block_networking.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><ul>
-<li><a class="reference internal" href="#walytis_beta.block_networking.Block.announce_block"><code class="docutils literal notranslate"><span class="pre">Block.announce_block()</span></code></a></li>
 <li><a class="reference internal" href="#walytis_beta.block_networking.Block.publish_and_generate_id"><code class="docutils literal notranslate"><span class="pre">Block.publish_and_generate_id()</span></code></a></li>
-<li><a class="reference internal" href="#walytis_beta.block_networking.Block.publish_file_data"><code class="docutils literal notranslate"><span class="pre">Block.publish_file_data()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#walytis_beta.block_networking.IpfsCidExistsError"><code class="docutils literal notranslate"><span class="pre">IpfsCidExistsError</span></code></a><ul>

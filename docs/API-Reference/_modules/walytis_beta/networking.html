@@ -246,7 +246,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">randint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span><span class="p">,</span> <span class="n">Thread</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ipfs_tk_peer_monitor</span><span class="w"> </span><span class="kn">import</span> <span class="n">PeerMonitor</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockchainTerminatedError</span>
@@ -270,6 +270,8 @@
 
 <span class="c1"># at what intervall should we check the number of pubsub-connected peers</span>
 <span class="n">PUBSUB_PEERS_CHECK_INTERVALL_S</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">IPFS_PIN_CACHE_AGE_SEC</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">IPFS_PIN_RENEWAL_PERIOD_SEC</span> <span class="o">=</span> <span class="n">IPFS_PIN_CACHE_AGE_SEC</span> <span class="o">-</span> <span class="mi">150</span>
 
 
 <div class="viewcode-block" id="Networking">
@@ -310,6 +312,18 @@
             <span class="n">seconds</span><span class="o">=</span><span class="n">PUBSUB_PEERS_CHECK_INTERVALL_S</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ipfs_peer_id</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">peer_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pin_checker_thr</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">renew_ipfs_pin_cache</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Walytis-Pin-Checker&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pin_checker_thr</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Networking.renew_ipfs_pin_cache">
+<a class="viewcode-back" href="../../walytis_beta.networking.html#walytis_beta.networking.Networking.renew_ipfs_pin_cache">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">renew_ipfs_pin_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terminate</span><span class="p">:</span>
+            <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">list_pins</span><span class="p">(</span><span class="n">cids_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wait_seconds</span><span class="p">(</span><span class="n">IPFS_PIN_RENEWAL_PERIOD_SEC</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="Networking.listen_for_blocks">
 <a class="viewcode-back" href="../../walytis_beta.networking.html#walytis_beta.networking.Networking.listen_for_blocks">[docs]</a>
@@ -320,7 +334,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pubsub_listener</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">blockchain_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pubsub_message_handler</span>
         <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created PubSub listener for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created PubSub listener for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Networking.pubsub_message_handler">
@@ -345,13 +359,19 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sender_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ipfs_peer_id</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">peer_monitor</span><span class="o">.</span><span class="n">register_contact_event</span><span class="p">(</span><span class="n">sender_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;New block!&quot;</span><span class="p">:</span>
-            <span class="c1"># logger.info(f&quot;PubSub: Received data for new block on {self.name}.&quot;)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lastcoms_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_shared_leaf_blocks</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;block_id&quot;</span><span class="p">]])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">new_block_published</span><span class="p">(</span><span class="n">string_to_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;block_id&quot;</span><span class="p">]))</span>
+            <span class="n">block_id</span> <span class="o">=</span> <span class="n">string_to_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;block_id&quot;</span><span class="p">])</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: PubSub: Received data for new block :&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">decode_short_id</span><span class="p">(</span><span class="n">block_id</span><span class="p">)[</span><span class="s1">&#39;topics&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">block_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pubsub Message Handler: Empty block ID&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_block_published</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;Leaf blocks:&quot;</span><span class="p">:</span>
-            <span class="c1"># logger.info(f&quot;PubSub: Received leaf blocks broadcast on {self.name}.&quot;)</span>
+            <span class="c1"># logger.info(f&quot;PubSub: Received leaf blocks broadcast on {self.name[:10]}.&quot;)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lastcoms_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
             <span class="c1"># leaf_blocks = [</span>
             <span class="c1">#     string_to_bytes(block_id) for block_id in data[&quot;leaf_blocks&quot;]</span>
@@ -508,12 +528,12 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            bool: whether or not this blockchain is still running</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_alive</span><span class="p">()</span>  <span class="c1"># ensure this Blockchain object isn&#39;t shutting down</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terminate</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terminate</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
@@ -546,7 +566,7 @@
         <span class="c1"># get peer IDs and date of last contact of peers from whome we have</span>
         <span class="c1"># received messages from recently who are currently online</span>
         <span class="n">contacted_peers</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">peer</span><span class="o">.</span><span class="n">peer_id</span><span class="p">(),</span> <span class="n">peer</span><span class="o">.</span><span class="n">last_seen</span><span class="p">())</span>
+            <span class="p">(</span><span class="n">peer</span><span class="o">.</span><span class="n">peer_id</span><span class="p">(),</span> <span class="n">peer</span><span class="o">.</span><span class="n">last_seen</span><span class="p">()</span> <span class="ow">or</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">peer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">peer_monitor</span><span class="o">.</span><span class="n">peers</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">peer</span><span class="o">.</span><span class="n">peer_id</span><span class="p">()</span> <span class="ow">in</span> <span class="n">pubsub_peers</span>
         <span class="p">]</span>
@@ -593,7 +613,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Shut down communications, cleaning up resources.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pubsub_listener</span><span class="o">.</span><span class="n">terminate</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">peer_monitor</span><span class="o">.</span><span class="n">terminate</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: Shut down networking.&quot;</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: Shut down networking.&quot;</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

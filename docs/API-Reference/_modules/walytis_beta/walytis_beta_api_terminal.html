@@ -251,7 +251,10 @@
     <span class="n">string_to_time</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brenthy_tools_beta.version_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">decode_version</span><span class="p">,</span> <span class="n">encode_version</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">brenthy_tools_beta.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_file_readable</span><span class="p">,</span> <span class="n">make_directory_readable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">brenthy_tools_beta.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">make_file_readable</span><span class="p">,</span>
+    <span class="n">make_directory_readable</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">walytis_beta</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">walytis_beta_tools.block_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">short_from_long_id</span>
@@ -346,14 +349,14 @@
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
                 <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">NO_SUCH_BLOCKCHAIN_MESSAGE</span><span class="p">}</span>
             <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
         <span class="n">n_topics_bytes</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[:</span> <span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))]</span>
         <span class="c1"># decode the array of bytes that encode the number of topic IDs</span>
         <span class="c1"># included in this block</span>
         <span class="n">n_topics</span> <span class="o">=</span> <span class="n">from_b255_no_0s</span><span class="p">(</span><span class="n">n_topics_bytes</span><span class="p">)</span>
         <span class="c1"># remove the topic number and the follwing 0 from the start of payload.</span>
         <span class="c1"># + 1 to remove the 0 separator as well</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">n_topics_bytes</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">n_topics_bytes</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
 
         <span class="n">topics</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -362,7 +365,7 @@
             <span class="n">topic</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[:</span> <span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))]</span>
             <span class="c1"># removing the collected topic part, including the following 0,</span>
             <span class="c1"># from payload</span>
-            <span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">3</span><span class="p">:]</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">3</span> <span class="p">:]</span>
 
             <span class="c1"># adding the topic to the correct topic block list</span>
             <span class="c1"># adding this topic to this blocks list of topics</span>
@@ -432,7 +435,7 @@
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
                 <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">NO_SUCH_BLOCKCHAIN_MESSAGE</span><span class="p">}</span>
             <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-        <span class="n">short_id</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="n">short_id</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="n">payload</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">blockchain</span><span class="o">.</span><span class="n">is_block_known</span><span class="p">(</span><span class="n">short_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
             <span class="p">{</span>
@@ -707,7 +710,6 @@
 
 
 
-
 <div class="viewcode-block" id="request_router">
 <a class="viewcode-back" href="../../walytis_beta.walytis_beta_api_terminal.html#walytis_beta.walytis_beta_api_terminal.request_router">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">request_router</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="nb">bytearray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
@@ -717,7 +719,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">function</span> <span class="o">=</span> <span class="n">request</span><span class="p">[:</span> <span class="n">request</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
         <span class="k">if</span> <span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;list_blockchains&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">list_blockchains</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;create_block&quot;</span><span class="p">:</span>
@@ -775,7 +777,7 @@
     <span class="n">walytis_beta_api_version</span> <span class="o">=</span> <span class="n">decode_version</span><span class="p">(</span>
         <span class="n">request</span><span class="p">[:</span> <span class="n">request</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))]</span>
     <span class="p">)</span>
-    <span class="n">payload</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="n">request_router</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">encode_version</span><span class="p">(</span><span class="n">WALYTIS_BETA_API_PROTOCOL_VERSION</span><span class="p">)</span>

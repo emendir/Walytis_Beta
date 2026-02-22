@@ -244,6 +244,7 @@
     <span class="n">create_temp_dir</span><span class="p">,</span>
     <span class="n">get_walytis_appdata_dir</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.block_ancestry</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove_ancestors</span><span class="p">,</span> <span class="n">remove_future_blocks</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.networking</span><span class="w"> </span><span class="kn">import</span> <span class="n">Networking</span><span class="p">,</span> <span class="n">ipfs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockchainNotInitialised</span><span class="p">,</span> <span class="n">BlockchainTerminatedError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.block_records</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockRecords</span>
@@ -259,7 +260,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">randint</span><span class="p">,</span> <span class="n">seed</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span><span class="p">,</span> <span class="n">Thread</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">sleep</span>
@@ -316,7 +317,6 @@
 
     <span class="n">blocks_finder_thread_cycle_duration_s</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">create_block_lock</span><span class="p">:</span> <span class="n">Lock</span>
-    <span class="n">genesis</span><span class="p">:</span> <span class="nb">bool</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load an existing blockchain, or creat a new one.</span>
@@ -405,7 +405,7 @@
         <span class="n">seed</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">microsecond</span><span class="p">)</span>
         <span class="n">genesis_blocks</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating genesis blocks...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Generating genesis blocks...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">number_of_known_ids</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_GENESIS_BLOCKS</span><span class="p">):</span>
             <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_block</span><span class="p">(</span>
@@ -416,7 +416,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_genesis_block_id</span> <span class="o">=</span> <span class="n">genesis_blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">long_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__born</span><span class="p">(</span><span class="n">genesis_blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_genesis_block_id</span> <span class="o">=</span> <span class="n">genesis_blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">long_id</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Storing genesis blocks...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Storing genesis blocks...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_endblocks</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">genesis_blocks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">download_and_process_block</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">short_id</span><span class="p">)</span>
@@ -427,7 +427,7 @@
 
         <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">genesis_blocks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">publish_new_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finished processing Genesis blocks!&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Finished processing Genesis blocks!&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">listen_for_blocks</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__born</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genesis_block</span><span class="p">:</span> <span class="n">Block</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -446,7 +446,7 @@
             <span class="n">backup_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">appdata_dir</span> <span class="o">+</span> <span class="s2">&quot;_BACKUP&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;This shouldn&#39;t happen but it has: Appdata path &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;already exists for blockchain </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;already exists for blockchain </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Moving it to </span><span class="si">{</span><span class="n">backup_path</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">backup_path</span><span class="p">):</span>
@@ -460,7 +460,12 @@
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">appdata_dir</span><span class="p">)</span>
         <span class="n">BlockchainAppdata</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">BlockRecords</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_block_records</span><span class="p">(</span><span class="n">genesis_block</span><span class="o">.</span><span class="n">creation_time</span><span class="p">)</span>
+        <span class="c1"># -1 second for backwards-compatibility with older versions</span>
+        <span class="c1"># where BlockRecords only looks for blocks within index files</span>
+        <span class="c1"># dated earlier than their creation time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_block_records</span><span class="p">(</span>
+            <span class="n">genesis_block</span><span class="o">.</span><span class="n">creation_time</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">Networking</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Blockchain.create_block">
@@ -499,7 +504,7 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">blockchain_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">topics</span><span class="p">:</span>
             <span class="n">topics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blockchain_id</span><span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Creating block for </span><span class="si">{</span><span class="n">topics</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Creating block for </span><span class="si">{</span><span class="n">topics</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">create_block_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
         <span class="n">block_blockchain_version</span> <span class="o">=</span> <span class="n">WALYTIS_BETA_CORE_VERSION</span>
@@ -509,30 +514,38 @@
         <span class="n">block_parents</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Adding parent blocks</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">endblocks_lock</span><span class="p">:</span>
-            <span class="n">block_parents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_endblocks</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">current_endblocks</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># clear current_endblocks</span>
+            <span class="n">block_parents</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_endblocks</span><span class="p">]</span>  <span class="c1"># copy list</span>
 
-        <span class="c1"># if parents is only one block, add genesis block</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">block_parents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">short_from_long_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_genesis_block</span><span class="p">()))</span>
-        <span class="c1"># sort parent blocks</span>
-        <span class="n">block_parents</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-        <span class="c1"># ensure that all parent blocks have older timestamps than this block</span>
-        <span class="k">if</span> <span class="p">[</span>
-            <span class="n">prnt_id</span>
-            <span class="k">for</span> <span class="n">prnt_id</span> <span class="ow">in</span> <span class="n">block_parents</span>
-            <span class="k">if</span> <span class="n">decode_short_id</span><span class="p">(</span><span class="n">prnt_id</span><span class="p">)[</span><span class="s2">&quot;creation_time&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">block_creation_time</span>
-        <span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">create_block_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_genesis</span><span class="p">:</span>
             <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;walytis_beta.Blockchain.create_block: Parent block&#39;s creation&quot;</span>
-                <span class="s2">&quot; time is greater than this block&#39;s creation time &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">block_creation_time</span><span class="si">}</span><span class="s2">. This is a bug because it should have &quot;</span>
-                <span class="s2">&quot;been checked before.&quot;</span>
+                <span class="s2">&quot;walytis_beta.Blockchain.create_block: &quot;</span>
+                <span class="s2">&quot;Empty list of current endblocks!&quot;</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">NotSupposedToHappenError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+        <span class="c1"># if parents is only one block, add genesis block</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">block_parents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">short_from_long_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_genesis_block</span><span class="p">()))</span>
+
+        <span class="c1"># sort parent blocks</span>
+        <span class="n">block_parents</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="c1"># # ensure that all parent blocks have older timestamps than this block</span>
+        <span class="c1"># if [</span>
+        <span class="c1">#     prnt_id</span>
+        <span class="c1">#     for prnt_id in block_parents</span>
+        <span class="c1">#     if decode_short_id(prnt_id)[&quot;creation_time&quot;] &gt; block_creation_time</span>
+        <span class="c1"># ]:</span>
+        <span class="c1">#     self.create_block_lock.release()</span>
+        <span class="c1">#</span>
+        <span class="c1">#     error_message = (</span>
+        <span class="c1">#         &quot;walytis_beta.Blockchain.create_block: Parent block&#39;s creation&quot;</span>
+        <span class="c1">#         &quot; time is greater than this block&#39;s creation time &quot;</span>
+        <span class="c1">#         f&quot;{block_creation_time}. This is a bug because it should have &quot;</span>
+        <span class="c1">#         &quot;been checked before.&quot;</span>
+        <span class="c1">#     )</span>
+        <span class="c1">#     logger.error(error_message)</span>
+        <span class="c1">#     raise NotSupposedToHappenError(error_message)</span>
 
         <span class="n">block_creator_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ipfs_peer_id</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="n">block_topics</span> <span class="o">=</span> <span class="n">topics</span>
@@ -580,23 +593,22 @@
                     <span class="s2">&quot;new timestamp&quot;</span>
                 <span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Finished building block.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Finished building block.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_genesis</span><span class="p">:</span>
-            <span class="c1"># logger.info(f&quot;{self.name}:  Genesis block!&quot;)</span>
+            <span class="c1"># logger.info(f&quot;{self.name[:10]}:  Genesis block!&quot;)</span>
             <span class="c1"># manually cache block because BlockRecords isn&#39;t initialised</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache_block</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">long_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_new_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">endblocks_lock</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">short_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_endblocks</span><span class="p">:</span>
                 <span class="c1"># add block to current_endblocks, remove ancestors</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_endblocks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_ancestors</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">current_endblocks</span> <span class="o">+</span> <span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">short_id</span><span class="p">]</span>
                 <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Finished adding new block to the blockchain.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Finished adding new block to the blockchain.&quot;</span>
         <span class="p">)</span>
 
         <span class="c1"># DEBUG</span>
@@ -604,49 +616,49 @@
 
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">ipfs_cid</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;ipfs_cid&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH ipfs_cid &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH ipfs_cid &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">ipfs_cid</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;ipfs_cid&quot;</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">creator_id</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;creator_id&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH creator_id &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH creator_id &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">creator_id</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;creator_id&quot;</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">creation_time</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;creation_time&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH creation_time &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH creation_time &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">creation_time</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;creation_time&quot;</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">topics</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;topics&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH topics &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH topics &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">topics</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;topics&quot;</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">_content_length</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;content_length&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH content_length &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH content_length &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_content_length</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;content_length&quot;</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">_n_parents</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;n_parents&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH n_parents &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH n_parents &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_n_parents</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;n_parents&quot;</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">_content_hash_algorithm</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;content_hash_algorithm&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH content_hash_algorithm &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH content_hash_algorithm &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_content_hash_algorithm</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;content_hash_algorithm&quot;</span><span class="p">])</span>
@@ -654,14 +666,14 @@
 
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">_content_hash</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;content_hash&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH hash &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH hash &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_content_hash</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;content_hash&quot;</span><span class="p">])</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">_parents_hash</span> <span class="o">!=</span> <span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;parents_hash&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH hash &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH hash &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">_parents_hash</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;parents_hash&quot;</span><span class="p">])</span>
@@ -670,7 +682,7 @@
             <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="s2">&quot;parents&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  MISMATCH parents&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  MISMATCH parents&quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span>
                 <span class="o">+</span> <span class="s2">&quot; != &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">long_id</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
@@ -701,7 +713,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Eventhandler for when a notification of a new block is received.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_alive</span><span class="p">()</span>  <span class="c1"># ensure this Blockchain object isn&#39;t shutting down</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Received new block.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Received new block, processing...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">download_and_process_block</span><span class="p">(</span><span class="n">short_id</span><span class="p">)</span></div>
 
 
@@ -722,36 +734,43 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ipfs_cid</span> <span class="o">=</span> <span class="n">decode_short_id</span><span class="p">(</span><span class="n">short_id</span><span class="p">)[</span><span class="s2">&quot;ipfs_cid&quot;</span><span class="p">]</span>
             <span class="c1"># get block datafile from IPFS</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: Downloading blockfile... </span><span class="si">{</span><span class="n">ipfs_cid</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
             <span class="n">block_data</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">ipfs_cid</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: Downloaded blockfile.&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: Received data but failed to &quot;</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;find block.</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">Block ID: </span><span class="se">\n</span><span class="si">{</span><span class="n">short_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: Received data but failed to &quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;find block.</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">Block ID: </span><span class="se">\n</span><span class="si">{</span><span class="n">short_id</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">block</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{self.name[:10]}</span><span class="s2">: Reading block...&quot;</span><span class="p">)</span>
             <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_block</span><span class="p">(</span><span class="n">block_data</span><span class="p">,</span> <span class="n">ipfs_cid</span><span class="p">,</span> <span class="n">live</span><span class="o">=</span><span class="n">live</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>  <span class="c1"># if file data seems corrupt</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Failed to build block. Removing block-file &quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="s2">&quot;Failed to build block. Removing block-file &quot;</span>
                 <span class="s2">&quot;from IPFS storage&quot;</span>
             <span class="p">)</span>
             <span class="c1"># remove block-file from IPFS storage</span>
             <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ipfs_cid</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">block</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Failed to load and add block.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Failed to load and add block.&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Block was processed.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Block was processed: </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="n">topics</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="n">short_id</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">short_id</span> <span class="o">=</span> <span class="n">short_id</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">short_id</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">short_id</span><span class="p">):</span>  <span class="c1"># suspicious</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: The decoded block&#39;s ID is not the &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: The decoded block&#39;s ID is not the &quot;</span>
                 <span class="o">+</span> <span class="s2">&quot;same as the one we are looking for.</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Looking for: </span><span class="si">{</span><span class="nb">bytearray</span><span class="p">(</span><span class="n">short_id</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -765,7 +784,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">on_block_confirmed</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Finished processing new block.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Finished processing new block.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">block</span></div>
 
 
@@ -782,7 +801,8 @@
                     <span class="p">)</span>
 
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  sending received block to &quot;</span> <span class="o">+</span> <span class="s2">&quot;applications...&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  sending received block to &quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;applications...&quot;</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_genesis</span><span class="p">:</span>
@@ -820,17 +840,17 @@
 
         <span class="k">if</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_blocks</span> <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">ipfs_cid</span> <span class="o">==</span> <span class="n">ipfs_cid</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  read_block: this block is already in our &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  read_block: this block is already in our &quot;</span>
                 <span class="s2">&quot;unconfirmed_blocks list &quot;</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="c1"># if self.is_block_cid_known(ipfs_cid):</span>
         <span class="c1">#     logger.debug(</span>
-        <span class="c1">#         f&quot;{self.name}:  read_block: we already know this block.&quot;</span>
+        <span class="c1">#         f&quot;{self.name[:10]}:  read_block: we already know this block.&quot;</span>
         <span class="c1">#     )</span>
         <span class="c1">#     return self.load_block_from_cid(ipfs_cid)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  read_block: Decoding block &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  read_block: Decoding block &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;(live)&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">live</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;(not live)&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
@@ -860,14 +880,14 @@
             <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
         <span class="p">)</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="n">blockfile_header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
-        <span class="c1"># logger.important(data)</span>
-        <span class="c1"># logger.important(blockfile_header)</span>
-        <span class="c1"># logger.important(metadata)</span>
+        <span class="c1"># logger.info(data)</span>
+        <span class="c1"># logger.info(blockfile_header)</span>
+        <span class="c1"># logger.info(metadata)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">blockfile_header</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">parents</span> <span class="o">=</span> <span class="n">blockfile_header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">parents</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="c1"># logger.important(&quot;Genesis block&quot;)</span>
+            <span class="c1"># logger.info(&quot;Genesis block&quot;)</span>
         <span class="c1"># content sits between metadata and block_hash</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">content_separator</span> <span class="o">+</span> <span class="mi">5</span> <span class="p">:]</span>
 
@@ -891,12 +911,14 @@
         <span class="c1"># of a running blockchain:</span>
         <span class="k">if</span> <span class="n">live</span><span class="p">:</span>
             <span class="c1"># Check block&#39;s parents</span>
-            <span class="c1"># logger.info(f&quot;{self.name}:  read_block: Checking parents...&quot;)</span>
+            <span class="c1"># logger.info(f&quot;{self.name[:10]}:  read_block: Checking parents...&quot;)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_blocks_parents</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  read_block: Checked parents: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  read_block: Checked parents: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;invalid&quot;</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: blockchain_manager.Readblock: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: blockchain_manager.Readblock: &quot;</span>
                     <span class="s2">&quot;self.check_blocks_parents returned &#39;invalid&#39;.  &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;Topics: </span><span class="si">{</span><span class="n">topics</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
@@ -913,19 +935,19 @@
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Genesis block!&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Genesis block!&quot;</span><span class="p">)</span>
 
-            <span class="c1"># Check block&#39;s timestamp is in the past</span>
-            <span class="k">if</span> <span class="n">creation_time</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="p">(</span>
-                        <span class="s2">&quot;Received a block with a timestamp in the future: &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">creation_time</span><span class="si">}</span><span class="s2">. This is most likely due to &quot;</span>
-                        <span class="s2">&quot;badly synchronised node clocks, but could also be &quot;</span>
-                        <span class="s2">&quot;due to an ill-informed forgery attempt.&quot;</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
-                <span class="k">return</span> <span class="kc">None</span>
+            <span class="c1"># # Check block&#39;s timestamp is in the past</span>
+            <span class="c1"># if creation_time &gt; datetime.now(timezone.utc):</span>
+            <span class="c1">#     logger.warning(</span>
+            <span class="c1">#         (</span>
+            <span class="c1">#             &quot;Received a block with a timestamp in the future: &quot;</span>
+            <span class="c1">#             f&quot;{creation_time}. This is most likely due to &quot;</span>
+            <span class="c1">#             &quot;badly synchronised node clocks, but could also be &quot;</span>
+            <span class="c1">#             &quot;due to an ill-informed forgery attempt.&quot;</span>
+            <span class="c1">#         )</span>
+            <span class="c1">#     )</span>
+            <span class="c1">#     return None</span>
 
         <span class="c1"># creating a new block object from the decoded block data</span>
         <span class="n">block</span> <span class="o">=</span> <span class="n">Block</span><span class="o">.</span><span class="n">from_metadata</span><span class="p">(</span>
@@ -950,7 +972,7 @@
         <span class="c1"># making sure the block&#39;s block_hash is correct</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">block</span><span class="o">.</span><span class="n">check_integrity</span><span class="p">():</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  The received block is not valid!Removing &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  The received block is not valid!Removing &quot;</span>
                 <span class="s2">&quot;block-file from IPFS storage&quot;</span>
             <span class="p">)</span>
             <span class="c1"># remove block-file from IPFS storage</span>
@@ -958,7 +980,7 @@
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Block from </span><span class="si">{</span><span class="n">topics</span><span class="si">}</span><span class="s2"> decoded.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Block from </span><span class="si">{</span><span class="n">topics</span><span class="si">}</span><span class="s2"> decoded.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">live</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">block</span>
@@ -973,11 +995,12 @@
             <span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">unconfirmed_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">blocks_to_confirm_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Block&#39;s parents not all confirmed, added to &quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="s2">&quot;Block&#39;s parents not all confirmed, added to &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;blocks_to_confirm.&quot;</span>
             <span class="p">)</span>
-            <span class="c1"># logger.important((</span>
+            <span class="c1"># logger.info((</span>
             <span class="c1">#     f&quot;Unconfirmed blocks: {len(self.unconfirmed_blocks)}\n\n&quot;+</span>
             <span class="c1">#     &quot;\n\n&quot;.join([</span>
             <span class="c1">#         f&quot;{block.long_id}&quot;</span>
@@ -987,7 +1010,7 @@
             <span class="c1"># ))</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># parents_confirmed == True</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  All in order with the new block.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  All in order with the new block.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">blocks_to_confirm_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
             <span class="n">_update_btf</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">short_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks_to_find</span>
             <span class="k">if</span> <span class="n">_update_btf</span><span class="p">:</span>
@@ -1033,7 +1056,7 @@
         <span class="c1"># Ensure there aren&#39;t duplicates in parents:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">are_elements_unique</span><span class="p">(</span><span class="n">parents</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Block has repeated parents. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Block has repeated parents. &quot;</span>
                 <span class="s2">&quot;Block not accepted.&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;invalid&quot;</span>
@@ -1071,7 +1094,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_ancestors</span><span class="p">(</span><span class="n">parents</span><span class="p">)):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Some of the block&#39;s parents are &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Some of the block&#39;s parents are &quot;</span>
                     <span class="s2">&quot;ancestors of each other.&quot;</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -1093,7 +1116,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            list: long IDs of blocks</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.block_ancestry</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove_ancestors</span>
 
         <span class="n">long_ids</span> <span class="o">=</span> <span class="n">remove_ancestors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocks</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">short_ids</span><span class="p">:</span>
@@ -1127,9 +1149,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">check_on_unconfirmed_blocks</span><span class="p">()</span></div>
 
         <span class="c1"># logger.info(</span>
-        <span class="c1">#     f&quot;{self.name} Unconfirmed Blocks: {len(self.unconfirmed_blocks)}&quot;</span>
+        <span class="c1">#     f&quot;{self.name[:10]} Unconfirmed Blocks: {len(self.unconfirmed_blocks)}&quot;</span>
         <span class="c1"># )</span>
-        <span class="c1"># logger.info(f&quot;{self.name} Blocks to Find: {len(self.blocks_to_find)}&quot;)</span>
+        <span class="c1"># logger.info(f&quot;{self.name[:10]} Blocks to Find: {len(self.blocks_to_find)}&quot;)</span>
 
 <div class="viewcode-block" id="Blockchain.look_for_blocks_to_find">
 <a class="viewcode-back" href="../../walytis_beta.walytis_beta.html#walytis_beta.walytis_beta.Blockchain.look_for_blocks_to_find">[docs]</a>
@@ -1150,7 +1172,7 @@
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_terminate</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">look_for_blocks_to_find</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_on_unconfirmed_blocks</span><span class="p">()</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blocks_finder_thread_cycle_duration_s</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wait_seconds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blocks_finder_thread_cycle_duration_s</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Blockchain.create_invitation">
@@ -1234,7 +1256,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">check_alive</span><span class="p">()</span>  <span class="c1"># ensure this Blockchain object isn&#39;t shutting down</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  on_join_request_received: received join Request&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+            <span class="s2">&quot;on_join_request_received: received join Request&quot;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">peer_monitor</span><span class="o">.</span><span class="n">register_contact_event</span><span class="p">(</span><span class="n">peer_id</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1282,7 +1305,8 @@
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  on_join_request_received: Couldn&#39;t find &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                    <span class="s2">&quot;on_join_request_received: Couldn&#39;t find &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;Invitation </span><span class="si">{</span><span class="n">invitation</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="n">conv</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;Don&#39;t recognise Invitation.&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
@@ -1307,7 +1331,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_terminate</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminate_networking</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conv_lis</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: Shut down.&quot;</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: Shut down.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Blockchain.check_alive">
@@ -1608,6 +1632,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Blockchain: the newly created Blockchain object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating blockchain: </span><span class="si">{</span><span class="n">blockchain_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">blockchain_name</span>
         <span class="ow">and</span> <span class="p">[</span><span class="n">bc</span> <span class="k">for</span> <span class="n">bc</span> <span class="ow">in</span> <span class="n">blockchains</span> <span class="k">if</span> <span class="n">bc</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">blockchain_name</span><span class="p">]</span>
@@ -1643,7 +1668,7 @@
     <span class="p">]</span>
     <span class="k">if</span> <span class="n">blockchain_search</span><span class="p">:</span>
         <span class="n">blockchain</span><span class="p">:</span> <span class="n">Blockchain</span> <span class="o">=</span> <span class="n">blockchain_search</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deleting blockchain </span><span class="si">{</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deleting blockchain </span><span class="si">{</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">blockchain</span> <span class="ow">in</span> <span class="n">blockchains</span><span class="p">:</span>
             <span class="n">blockchains</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">blockchain</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1663,7 +1688,7 @@
                 <span class="sa">f</span><span class="s2">&quot;doesn&#39;t exist </span><span class="si">{</span><span class="n">blockchain</span><span class="o">.</span><span class="n">appdata_dir</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">blockchain</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deleted blockchain </span><span class="si">{</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;deleted blockchain </span><span class="si">{</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Walytis_Beta:remaining blockchains: &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="p">[</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">blockchain</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">blockchains</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1710,7 +1735,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
     <span class="n">blockchain_ids</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="s2">&quot;Loading blockchains from &quot;</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">get_walytis_appdata_dir</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
@@ -1723,21 +1748,19 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">require_blockchain_paths</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
                 <span class="nb">set</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">blockchain_data_dir</span><span class="p">))</span>
             <span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping directory </span><span class="si">{</span><span class="n">blockchain_data_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping directory </span><span class="si">{</span><span class="n">blockchain_data_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="n">blockchain_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># delete uncleanedup file</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">blockchain_data_dir</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span><span class="s2">&quot;Running blockchains:&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Running blockchains:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">blockchain_id</span> <span class="ow">in</span> <span class="n">blockchain_ids</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">get_blockchain</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;run_blockchains: already loaded: </span><span class="si">{</span><span class="n">blockchain_id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;run_blockchains: already loaded: </span><span class="si">{</span><span class="n">blockchain_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">continue</span>
         <span class="n">blockchain</span> <span class="o">=</span> <span class="n">Blockchain</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">blockchain_id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">important</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">blockchains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">blockchain</span><span class="p">)</span></div>
 
 

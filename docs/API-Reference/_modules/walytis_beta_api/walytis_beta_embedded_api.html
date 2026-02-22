@@ -291,8 +291,6 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">_DirectBlocksListener</span><span class="p">(</span><span class="n">BaseBlocksListener</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Listen for a blockchain&#39;s new block events.&quot;&quot;&quot;</span>
 
-    <span class="n">event_listener</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -321,11 +319,11 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_waly_event_received</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">topics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">Thread</span><span class="p">(</span>
-            <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_event_received</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">topics</span><span class="p">),</span>
-            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;_DirectBlocksListener.eventhandler-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">blockchain_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_event_received</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">topics</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;_DirectBlocksListener.eventhandler-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">blockchain_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-        <span class="c1"># self._on_event_received(data,set(topics))</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">blockchain_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blockchain_id</span>
@@ -339,14 +337,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eventhandler</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">:</span> <span class="nb">bytearray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">WalytisBetaDirectInterface</span><span class="o">.</span><span class="n">get_block</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blockchain_id</span><span class="p">,</span> <span class="n">block_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">WalytisBetaDirectInterface</span><span class="o">.</span><span class="n">get_block</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">blockchain_id</span><span class="p">,</span> <span class="n">block_id</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean up all resources used by this object.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
 
-<span class="n">TBlocksListener</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;TBlocksListener&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">BaseBlocksListener</span><span class="p">)</span>
+<span class="n">TBlocksListener</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TBlocksListener&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">BaseBlocksListener</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface">
@@ -354,15 +354,17 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">WalytisBetaDirectInterface</span><span class="p">(</span><span class="n">BaseWalytisBetaInterface</span><span class="p">):</span>
 <div class="viewcode-block" id="WalytisBetaDirectInterface.BlocksListener">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.BlocksListener">[docs]</a>
-    <span class="o">@</span> <span class="n">classproperty</span>
+    <span class="nd">@classproperty</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">BlocksListener</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">DirectBlocksListener</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">_DirectBlocksListener</span></div>
 
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.list_blockchains">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.list_blockchains">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">list_blockchains</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">names_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">list_blockchains</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">names_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the IDs names of all the blockchains we have.</span>
 
 <span class="sd">        Args:</span>
@@ -378,7 +380,6 @@
             <span class="k">return</span> <span class="p">[</span>
                 <span class="p">(</span><span class="n">blockchain</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">blockchain</span><span class="o">.</span><span class="n">blockchain_id</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">blockchain</span> <span class="ow">in</span> <span class="n">walytis_beta</span><span class="o">.</span><span class="n">blockchains</span>
-
             <span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span>
@@ -391,7 +392,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.create_blockchain">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.create_blockchain">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_blockchain</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create and run a new blockchain.</span>
 
@@ -414,8 +415,10 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.join_blockchain">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.join_blockchain">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">join_blockchain</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">invitation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blockchain_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">join_blockchain</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">invitation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blockchain_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Join a blockchain using an invitation generated by a blockchain node.</span>
 
 <span class="sd">        Args:</span>
@@ -448,7 +451,8 @@
             <span class="k">raise</span> <span class="n">error</span>
         <span class="k">if</span> <span class="n">blockchain_name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">blockchains</span><span class="p">]:</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">BlockchainAlreadyExistsError</span><span class="p">(</span>
-                <span class="n">blockchain_name</span><span class="o">=</span><span class="n">blockchain_name</span><span class="p">)</span>
+                <span class="n">blockchain_name</span><span class="o">=</span><span class="n">blockchain_name</span>
+            <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WAPI: </span><span class="si">{</span><span class="n">function_name</span><span class="p">()</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">error</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WAPI: </span><span class="si">{</span><span class="n">function_name</span><span class="p">()</span><span class="si">}</span><span class="s2">: Making request...&quot;</span><span class="p">)</span>
@@ -462,10 +466,13 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.join_blockchain_from_cid">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.join_blockchain_from_cid">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">join_blockchain_from_cid</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
-                                 <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blockchain_data_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blockchain_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-                                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">join_blockchain_from_cid</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">blockchain_data_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">blockchain_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Join an existing live blockchain, given the IPFS CID of its appdata.</span>
 
 <span class="sd">        Args:</span>
@@ -487,7 +494,8 @@
             <span class="k">raise</span> <span class="n">error</span>
         <span class="k">if</span> <span class="n">blockchain_name</span> <span class="ow">in</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">blockchains</span><span class="p">]:</span>
             <span class="n">error</span> <span class="o">=</span> <span class="n">BlockchainAlreadyExistsError</span><span class="p">(</span>
-                <span class="n">blockchain_name</span><span class="o">=</span><span class="n">blockchain_name</span><span class="p">)</span>
+                <span class="n">blockchain_name</span><span class="o">=</span><span class="n">blockchain_name</span>
+            <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WAPI: </span><span class="si">{</span><span class="n">function_name</span><span class="p">()</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">error</span>
         <span class="n">blockchain</span> <span class="o">=</span> <span class="n">walytis_beta</span><span class="o">.</span><span class="n">join_blockchain_from_cid</span><span class="p">(</span>
@@ -500,7 +508,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.delete_blockchain">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.delete_blockchain">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_blockchain</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete the blockchain with the given id or name.</span>
 
@@ -513,12 +521,13 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.create_block">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.create_block">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_block</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
-                     <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                     <span class="n">content</span><span class="p">:</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">,</span>
-                     <span class="n">topics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-                     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_block</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">content</span><span class="p">:</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">,</span>
+        <span class="n">topics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a block with the given content on the specified blockchain.</span>
 
 <span class="sd">        Args:</span>
@@ -530,7 +539,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytearray</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">))):</span>
             <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Block content must be of type bytes or bytearray.&quot;</span><span class="p">)</span>
+                <span class="s2">&quot;Block content must be of type bytes or bytearray.&quot;</span>
+            <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WAPI: </span><span class="si">{</span><span class="n">function_name</span><span class="p">()</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">error</span>
         <span class="n">blockchain</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_blockchain</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">)</span>
@@ -544,7 +554,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_block">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_block">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_block</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">block_id</span><span class="p">:</span> <span class="nb">bytearray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a block from the specified blokchain given its block ID.</span>
 
@@ -592,7 +602,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.is_block_known">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.is_block_known">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_block_known</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">block_id</span><span class="p">:</span> <span class="nb">bytearray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether or not the specified blockchain has the given block.</span>
 
@@ -609,14 +619,15 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_latest_blocks">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_latest_blocks">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_latest_blocks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
-                          <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                          <span class="n">amount</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                          <span class="n">since_date</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                          <span class="n">topics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                          <span class="n">long_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># defaults to False for backwards-compatibility</span>
-                          <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">]:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_latest_blocks</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">amount</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">since_date</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">topics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">long_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># defaults to False for backwards-compatibility</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the latest few blocks on the blockchain.</span>
 
 <span class="sd">        The amount of which is determined by the paramters.</span>
@@ -645,14 +656,12 @@
         <span class="k">if</span> <span class="n">long_ids</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">block_ids</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span>
-                <span class="n">short_from_long_id</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">block_id</span> <span class="ow">in</span> <span class="n">block_ids</span>
-            <span class="p">]</span></div>
+            <span class="k">return</span> <span class="p">[</span><span class="n">short_from_long_id</span><span class="p">(</span><span class="n">block_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">block_id</span> <span class="ow">in</span> <span class="n">block_ids</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_blockchain_data">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_blockchain_data">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_blockchain_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a zip file of all this blockchain&#39;s data, returning its path.</span>
 
@@ -670,7 +679,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_peers">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_peers">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_peers</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of IPFS IDs of the given blockchain&#39;s currently online nodes.</span>
 
@@ -686,10 +695,10 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.create_invitation">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.create_invitation">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_invitation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
-                          <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">one_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">shared</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-                          <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_invitation</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">one_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">shared</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a code which other nodes can use to join this blockchain.</span>
 
 <span class="sd">        Args:</span>
@@ -704,14 +713,12 @@
 <span class="sd">                    this blockchain</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">blockchain</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_blockchain</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">blockchain</span><span class="o">.</span><span class="n">create_invitation</span><span class="p">(</span>
-            <span class="n">one_time</span><span class="o">=</span><span class="n">one_time</span><span class="p">,</span> <span class="n">shared</span><span class="o">=</span><span class="n">shared</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">blockchain</span><span class="o">.</span><span class="n">create_invitation</span><span class="p">(</span><span class="n">one_time</span><span class="o">=</span><span class="n">one_time</span><span class="p">,</span> <span class="n">shared</span><span class="o">=</span><span class="n">shared</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_invitations">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_invitations">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_invitations</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the specified blockchain&#39;s active invitations.</span>
 
@@ -727,7 +734,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.delete_invitation">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.delete_invitation">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_invitation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">invitation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete an invitation from the specified blockchain.</span>
 
@@ -742,8 +749,10 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_walytis_beta_version">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_walytis_beta_version">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_walytis_beta_version</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_walytis_beta_version</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the software version of the locally running Walytis node.</span>
 
 <span class="sd">        Returns:</span>
@@ -754,8 +763,10 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_walytis_beta_api_version">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_walytis_beta_api_version">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_walytis_beta_api_version</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_walytis_beta_api_version</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the software version of the this walytis_beta_api library.</span>
 
 <span class="sd">        Returns:</span>
@@ -764,7 +775,7 @@
         <span class="k">return</span> <span class="n">WALYTIS_BETA_API_VERSION</span></div>
 
 
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_blockchain</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">walytis_beta</span><span class="o">.</span><span class="n">Blockchain</span><span class="p">:</span>
         <span class="n">blockchain_id</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_blockchain_id</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">)</span>
         <span class="n">blockchain</span> <span class="o">=</span> <span class="n">walytis_beta</span><span class="o">.</span><span class="n">get_blockchain</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">)</span>
@@ -774,7 +785,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.get_and_read_block">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.get_and_read_block">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_and_read_block</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">short_id</span><span class="p">:</span> <span class="nb">bytearray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a block&#39;s ID, download and verify it.</span>
 
@@ -791,7 +802,7 @@
 
 <div class="viewcode-block" id="WalytisBetaDirectInterface.read_block">
 <a class="viewcode-back" href="../../walytis_beta_api.walytis_beta_embedded_api.html#walytis_beta_api.walytis_beta_embedded_api.WalytisBetaDirectInterface.read_block">[docs]</a>
-    <span class="o">@</span> <span class="nb">classmethod</span>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_block</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">block_data</span><span class="p">:</span> <span class="nb">bytearray</span><span class="p">,</span> <span class="n">ipfs_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a block-file, generating a block object if it&#39;s valid.</span>
 

@@ -248,8 +248,8 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.networking</span><span class="w"> </span><span class="kn">import</span> <span class="n">ipfs</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.networking</span><span class="w"> </span><span class="kn">import</span> <span class="n">ipfs</span><span class="p">,</span> <span class="n">IPFS_PIN_CACHE_AGE_SEC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
 
 <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
     <span class="c1"># pylint: disable=import-error</span>
@@ -288,12 +288,12 @@
 <span class="sd">    This class is inherited by the Blockchain class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span><span class="p">:</span><span class="nb">str</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 
     <span class="c1"># defined in walytis_beta_appdata</span>
-    <span class="n">received_blocks_dir</span> <span class="p">:</span><span class="nb">str</span>
-    <span class="n">known_blocks_index_dir</span><span class="p">:</span><span class="nb">str</span>
-    <span class="n">block_record_initialised</span><span class="p">:</span><span class="n">Event</span> 
+    <span class="n">received_blocks_dir</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">known_blocks_index_dir</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">block_record_initialised</span><span class="p">:</span> <span class="n">Event</span>
     <span class="n">max_num_blocks_per_file</span> <span class="o">=</span> <span class="mi">1000</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -308,7 +308,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">number_of_known_ids</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># how many blocks are recorded in the current index file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_file_length</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_files</span><span class="o">=</span><span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_files</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_genesis_block_id</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -321,17 +321,20 @@
 
 <div class="viewcode-block" id="BlockRecords.load_block_records">
 <a class="viewcode-back" href="../../walytis_beta.block_records.html#walytis_beta.block_records.BlockRecords.load_block_records">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">load_block_records</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_block_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensure_ipfs_pinned</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading block records...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_block_records_index</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ensure_ipfs_pinned</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ensure_ipfs_pinned</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ensure_ipfs_pinned</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">block_record_initialised</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="BlockRecords.create_block_records">
 <a class="viewcode-back" href="../../walytis_beta.block_records.html#walytis_beta.block_records.BlockRecords.create_block_records">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_block_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">birth_time</span><span class="p">:</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_block_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">birth_time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create_new_index_file</span><span class="p">(</span><span class="n">birth_time</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_block_records</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_block_records</span><span class="p">(</span><span class="n">ensure_ipfs_pinned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BlockRecords.check_new_block">
@@ -356,7 +359,7 @@
         <span class="k">while</span> <span class="n">long_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">long_id</span> <span class="o">=</span> <span class="n">long_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">while</span> <span class="n">long_id</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">long_id</span> <span class="o">=</span> <span class="n">long_id</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">long_id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">long_id</span> <span class="o">=</span> <span class="n">long_id</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">long_id</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># if the block is already in the records</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_block_known</span><span class="p">(</span><span class="n">long_id</span><span class="p">):</span>
@@ -365,24 +368,27 @@
             <span class="c1"># result[2] is the name of the index file in which the ID should be</span>
             <span class="c1"># recorded</span>
             <span class="n">right_index_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">which_file</span><span class="p">(</span><span class="n">short_from_long_id</span><span class="p">(</span><span class="n">long_id</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">right_index_file</span><span class="p">),</span> <span class="s2">&quot;ab&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="n">to_b255_no_0s</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">long_id</span><span class="p">))</span>
-                <span class="o">+</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
-                <span class="o">+</span> <span class="n">long_id</span>
-                <span class="o">+</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-            <span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Block is new. Added block to ID Records.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_known_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">number_of_known_ids</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">right_index_file</span><span class="p">),</span> <span class="s2">&quot;ab&quot;</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="n">to_b255_no_0s</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">long_id</span><span class="p">))</span>
+                        <span class="o">+</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="o">+</span> <span class="n">long_id</span>
+                        <span class="o">+</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+                    <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                    <span class="s2">&quot;Block is new. Added block to ID Records.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_known_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">number_of_known_ids</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">current_file_length</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_file_length</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num_blocks_per_file</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">create_new_index_file</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_file_length</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_file_length</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_num_blocks_per_file</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">create_new_index_file</span><span class="p">()</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cache_block</span><span class="p">(</span><span class="n">long_id</span><span class="p">)</span>
 
             <span class="c1"># it is important to save the block datafile only after saving its</span>
@@ -453,103 +459,103 @@
             <span class="n">entry_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: error: index_file_reader was called with an &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="s2">&quot;error: index_file_reader was called with an &quot;</span>
                 <span class="s2">&quot;invalid task: &quot;</span> <span class="o">+</span> <span class="n">task</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;BlockRecords </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">: Index file doesn&#39;t exist: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_stack</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">ID_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># counter for counting the number of IDs in the file</span>
-        <span class="c1"># gets called when end of file is reached or error is found in file</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">Finished</span><span class="p">(</span><span class="n">success</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">file_reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">)):</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: BlockRecords: error reading an index file.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;BlockRecords </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">: Index file doesn&#39;t exist: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_stack</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
-            <span class="k">if</span> <span class="n">find_id</span><span class="p">:</span>
-                <span class="c1"># The end of the file was reached without finding the ID.</span>
-                <span class="k">return</span> <span class="kc">None</span>
-            <span class="k">elif</span> <span class="n">count_ids</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">ID_count</span>
-            <span class="k">elif</span> <span class="n">list_ids</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">entry_list</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: BlockRecords: Bug in index_file_reader(), this &quot;</span>
-                <span class="s2">&quot;line isn&#39;t to be reached.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">ID_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># counter for counting the number of IDs in the file</span>
+            <span class="c1"># gets called when end of file is reached or error is found in file</span>
 
-        <span class="c1"># checking  if the ID is recorded in the file</span>
-        <span class="n">file_reader</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
-        <span class="c1"># Loop reading one ID after the other:</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="c1"># Reading the length of the next ID</span>
-            <span class="n">next_id_length_255</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">([])</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">Finished</span><span class="p">(</span>
+                <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                        <span class="s2">&quot;BlockRecords: error reading an index file.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">None</span>
 
-            <span class="c1"># going through one byte of the block_id length number after the</span>
-            <span class="c1"># other until we reach 0, the code for the end of the block_id</span>
-            <span class="c1"># length number</span>
-            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">byte</span> <span class="o">=</span> <span class="n">file_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                <span class="c1"># if we&#39;ve finished reading the ID length code, break the loop</span>
-                <span class="k">if</span> <span class="n">byte</span> <span class="o">==</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]):</span>
-                    <span class="k">break</span>
-                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">byte</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if we&#39;ve reached the end of the file</span>
-                    <span class="k">return</span> <span class="n">Finished</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>  <span class="c1"># we&#39;re still reading the block_id length number</span>
-                    <span class="n">next_id_length_255</span> <span class="o">=</span> <span class="n">next_id_length_255</span> <span class="o">+</span> <span class="n">byte</span>
-            <span class="c1"># decoding the bytearray representation of the length</span>
-            <span class="n">next_id_length</span> <span class="o">=</span> <span class="n">from_b255_no_0s</span><span class="p">(</span><span class="n">next_id_length_255</span><span class="p">)</span>
-
-            <span class="c1"># reading the next ID</span>
-            <span class="n">index_entry</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">file_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">next_id_length</span><span class="p">))</span>
-
-            <span class="c1"># making sure the end code is in place</span>
-            <span class="k">if</span> <span class="n">file_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">find_id</span><span class="p">:</span>
+                    <span class="c1"># The end of the file was reached without finding the ID.</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">elif</span> <span class="n">count_ids</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">ID_count</span>
+                <span class="k">elif</span> <span class="n">list_ids</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">entry_list</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: error in the Block ID records in index file&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">. Block ID entry was not followed by the entry &quot;</span>
-                    <span class="s2">&quot;separator bytearray([0,0,0,0,0,0]).&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                    <span class="s2">&quot;BlockRecords: Bug in index_file_reader(), this &quot;</span>
+                    <span class="s2">&quot;line isn&#39;t to be reached.&quot;</span>
                 <span class="p">)</span>
-                <span class="n">file_reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="c1"># ID_count (we don&#39;t know how many IDs were stored in the file)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-
                 <span class="k">return</span> <span class="kc">None</span>
-            <span class="c1"># finished reading index entry</span>
 
-            <span class="k">if</span> <span class="n">find_id</span><span class="p">:</span>
-                <span class="c1"># comparison compatible with short id and long id</span>
-                <span class="c1"># if it&#39;s the block we&#39;re looking for</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">index_entry</span> <span class="o">==</span> <span class="n">block_id</span>
-                    <span class="ow">or</span> <span class="n">short_from_long_id</span><span class="p">(</span><span class="n">index_entry</span><span class="p">)</span> <span class="o">==</span> <span class="n">block_id</span>
-                <span class="p">):</span>
-                    <span class="n">file_reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                    <span class="c1"># True: that the block was found</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-                    <span class="k">return</span> <span class="n">index_entry</span>
-            <span class="k">elif</span> <span class="n">list_ids</span><span class="p">:</span>
-                <span class="n">entry_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index_entry</span><span class="p">)</span>
-            <span class="c1"># incrementing the counter that keeps track of how many IDs have</span>
-            <span class="c1"># been processed so far</span>
-            <span class="n">ID_count</span> <span class="o">=</span> <span class="n">ID_count</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">index_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span></div>
+            <span class="c1"># checking  if the ID is recorded in the file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_reader</span><span class="p">:</span>
+                <span class="c1"># Loop reading one ID after the other:</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="c1"># Reading the length of the next ID</span>
+                    <span class="n">next_id_length_255</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">([])</span>
+
+                    <span class="c1"># going through one byte of the block_id length number after the</span>
+                    <span class="c1"># other until we reach 0, the code for the end of the block_id</span>
+                    <span class="c1"># length number</span>
+                    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="n">byte</span> <span class="o">=</span> <span class="n">file_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="c1"># if we&#39;ve finished reading the ID length code, break the loop</span>
+                        <span class="k">if</span> <span class="n">byte</span> <span class="o">==</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">]):</span>
+                            <span class="k">break</span>
+                        <span class="k">elif</span> <span class="p">(</span>
+                            <span class="nb">len</span><span class="p">(</span><span class="n">byte</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+                        <span class="p">):</span>  <span class="c1"># if we&#39;ve reached the end of the file</span>
+                            <span class="k">return</span> <span class="n">Finished</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>  <span class="c1"># we&#39;re still reading the block_id length number</span>
+                            <span class="n">next_id_length_255</span> <span class="o">=</span> <span class="n">next_id_length_255</span> <span class="o">+</span> <span class="n">byte</span>
+                    <span class="c1"># decoding the bytearray representation of the length</span>
+                    <span class="n">next_id_length</span> <span class="o">=</span> <span class="n">from_b255_no_0s</span><span class="p">(</span><span class="n">next_id_length_255</span><span class="p">)</span>
+
+                    <span class="c1"># reading the next ID</span>
+                    <span class="n">index_entry</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">file_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">next_id_length</span><span class="p">))</span>
+
+                    <span class="c1"># making sure the end code is in place</span>
+                    <span class="k">if</span> <span class="n">file_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
+                            <span class="s2">&quot;error in the Block ID records in index file&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">. Block ID entry was not followed by the entry &quot;</span>
+                            <span class="s2">&quot;separator bytearray([0,0,0,0,0,0]).&quot;</span>
+                        <span class="p">)</span>
+                        <span class="c1"># ID_count (we don&#39;t know how many IDs were stored in the file)</span>
+
+                        <span class="k">return</span> <span class="kc">None</span>
+                    <span class="c1"># finished reading index entry</span>
+
+                    <span class="k">if</span> <span class="n">find_id</span><span class="p">:</span>
+                        <span class="c1"># comparison compatible with short id and long id</span>
+                        <span class="c1"># if it&#39;s the block we&#39;re looking for</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="n">index_entry</span> <span class="o">==</span> <span class="n">block_id</span>
+                            <span class="ow">or</span> <span class="n">short_from_long_id</span><span class="p">(</span><span class="n">index_entry</span><span class="p">)</span> <span class="o">==</span> <span class="n">block_id</span>
+                        <span class="p">):</span>
+                            <span class="c1"># True: that the block was found</span>
+                            <span class="k">return</span> <span class="n">index_entry</span>
+                    <span class="k">elif</span> <span class="n">list_ids</span><span class="p">:</span>
+                        <span class="n">entry_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index_entry</span><span class="p">)</span>
+                    <span class="c1"># incrementing the counter that keeps track of how many IDs have</span>
+                    <span class="c1"># been processed so far</span>
+                    <span class="n">ID_count</span> <span class="o">=</span> <span class="n">ID_count</span> <span class="o">+</span> <span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="BlockRecords.is_block_known">
@@ -682,7 +688,7 @@
         <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_file_reader</span><span class="p">(</span><span class="s2">&quot;list_ids&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  BlockRecords.list_ids: index_file_reader &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  BlockRecords.list_ids: index_file_reader &quot;</span>
                 <span class="s2">&quot;returned None&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="p">[]</span>
@@ -707,11 +713,14 @@
                 <span class="k">break</span>
         <span class="k">if</span> <span class="n">right_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> Block Records: Asked for block that is &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2"> Block Records: Asked for block that is &quot;</span>
                 <span class="s2">&quot;older than our records: &quot;</span>
             <span class="p">)</span>
-            <span class="n">message</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">block_time</span><span class="p">)</span> 
+            <span class="n">message</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">block_time</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">right_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_new_index_file</span><span class="p">(</span>
+                <span class="n">block_time</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">right_file</span></div>
 
 
@@ -741,9 +750,10 @@
         <span class="n">ipfs_cid</span> <span class="o">=</span> <span class="n">decode_short_id</span><span class="p">(</span><span class="n">short_id</span><span class="p">)[</span><span class="s2">&quot;ipfs_cid&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_block_datafile_path_from_cid</span><span class="p">(</span><span class="n">ipfs_cid</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="BlockRecords.get_block_datafile_path_from_cid">
 <a class="viewcode-back" href="../../walytis_beta.block_records.html#walytis_beta.block_records.BlockRecords.get_block_datafile_path_from_cid">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_block_datafile_path_from_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ipfs_cid</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_block_datafile_path_from_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ipfs_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the filepath of a block&#39;s block-file.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">received_blocks_dir</span><span class="p">,</span> <span class="n">ipfs_cid</span><span class="p">[:</span><span class="mi">4</span><span class="p">],</span> <span class="n">ipfs_cid</span><span class="p">)</span></div>
 
@@ -759,6 +769,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">block_record_initialised</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
         <span class="n">ipfs_cid</span> <span class="o">=</span> <span class="n">decode_short_id</span><span class="p">(</span><span class="n">short_id</span><span class="p">)[</span><span class="s2">&quot;ipfs_cid&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_block_from_cid</span><span class="p">(</span><span class="n">ipfs_cid</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="BlockRecords.load_block_from_cid">
 <a class="viewcode-back" href="../../walytis_beta.block_records.html#walytis_beta.block_records.BlockRecords.load_block_from_cid">[docs]</a>
@@ -777,7 +788,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_alive</span><span class="p">()</span>  <span class="c1"># ensure this Blockchain object isn&#39;t shutting down</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:  Loading the record of known blocks...&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">:  Loading the record of known blocks...&quot;</span>
+        <span class="p">)</span>
         <span class="c1"># loading a list of all index files for the ID records</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">)</span>
@@ -785,7 +798,9 @@
         <span class="n">index_files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="c1"># if there are no index files at all, create one</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Blockchain appdata block records has no index files.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Blockchain appdata block records has no index files.&quot;</span>
+            <span class="p">)</span>
         <span class="c1"># going through all the IDs in the file</span>
         <span class="n">ID_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_ids</span><span class="p">(</span><span class="n">index_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_file_length</span> <span class="o">=</span> <span class="n">ID_count</span>
@@ -798,7 +813,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">index_files_times</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">file</span><span class="p">,</span> <span class="n">string_to_time</span><span class="p">(</span><span class="n">file</span><span class="p">)))</span></div>
 
 
-
 <div class="viewcode-block" id="BlockRecords.create_new_index_file">
 <a class="viewcode-back" href="../../walytis_beta.block_records.html#walytis_beta.block_records.BlockRecords.create_new_index_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_new_index_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filetime</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -807,10 +821,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">check_alive</span><span class="p">()</span>  <span class="c1"># ensure this Blockchain object isn&#39;t shutting down</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filetime</span><span class="p">:</span>
-            <span class="n">filetime</span>  <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+            <span class="n">filetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">time_to_string</span><span class="p">(</span><span class="n">filetime</span><span class="p">)</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_</span><span class="p">:</span>
+            <span class="k">pass</span>
         <span class="c1"># registering new index file in our list of index files and their</span>
         <span class="c1"># creation times</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index_files_times</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">filetime</span><span class="p">))</span>
@@ -918,7 +932,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure all block&#39;s data-files are pinned on our IPFS node.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_alive</span><span class="p">()</span>  <span class="c1"># ensure this Blockchain object isn&#39;t shutting down</span>
 
-        <span class="n">ipfs_pins</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">list_pins</span><span class="p">(</span><span class="n">cids_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_age_s</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+        <span class="n">ipfs_pins</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">list_pins</span><span class="p">(</span>
+            <span class="n">cids_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_age_s</span><span class="o">=</span><span class="n">IPFS_PIN_CACHE_AGE_SEC</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">subfolder</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">received_blocks_dir</span><span class="p">):</span>
             <span class="n">subfolder_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">received_blocks_dir</span><span class="p">,</span> <span class="n">subfolder</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subfolder_dir</span><span class="p">):</span>
@@ -936,7 +952,7 @@
                         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;ensure_ipfs_pinned: published &quot;</span>
                             <span class="sa">f</span><span class="s2">&quot;block&#39;s cid is not the same as its file name &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">block_cid</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">block_cid</span><span class="si">}</span><span class="s2">&quot;</span>
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">pin</span><span class="p">(</span><span class="n">block_cid</span><span class="p">)</span></div>

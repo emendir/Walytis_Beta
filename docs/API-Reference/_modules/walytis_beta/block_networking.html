@@ -244,7 +244,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">walytis_beta_tools.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger_networking</span>  <span class="k">as</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">walytis_beta_tools.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger_networking</span> <span class="k">as</span> <span class="n">logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">brenthy_tools_beta.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># pylint: disable=unused-import</span>
     <span class="n">bytes_to_string</span><span class="p">,</span>
 <span class="p">)</span>
@@ -252,6 +253,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">walytis_beta_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">block_model</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.networking</span><span class="w"> </span><span class="kn">import</span> <span class="n">ipfs</span>
+
 <span class="n">PREFERRED_HASH_ALGORITHM</span> <span class="o">=</span> <span class="s2">&quot;sha512&quot;</span>
 
 
@@ -271,52 +273,56 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Publish this block, generating its long ID.&quot;&quot;&quot;</span>
         <span class="c1"># make sure all the necessary components of the short_id have been set</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">creator_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content_hash</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ipfs_cid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">publish_file_data</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generate_id</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_pubsub</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">announce_block</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">creator_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_content_hash</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span>
 
-
-<div class="viewcode-block" id="Block.publish_file_data">
-<a class="viewcode-back" href="../../walytis_beta.block_networking.html#walytis_beta.block_networking.Block.publish_file_data">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">publish_file_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Put this block&#39;s block file on IPFS.&quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Publishing file...&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="n">error_message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;Block.publish_file_data: file_data is empty&quot;</span>
-            <span class="p">)</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Block.publish_file_data: file_data is empty&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">tempf</span><span class="p">:</span>
-            <span class="n">tempf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_data</span><span class="p">)</span>
-            <span class="n">tempf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">cid</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">predict_cid</span><span class="p">(</span><span class="n">tempf</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">list_pins</span><span class="p">(</span><span class="n">cache_age_s</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;Block.publish_file_data: &quot;</span>
-                    <span class="s2">&quot;IPFS content with this CID already exists!&quot;</span>
-                <span class="p">)</span>
-                <span class="k">raise</span> <span class="n">IpfsCidExistsError</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Publishing file...&quot;</span><span class="p">)</span>
+        <span class="n">tempf</span> <span class="o">=</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">tempf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_data</span><span class="p">)</span>
+        <span class="n">tempf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">cid</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">predict_cid</span><span class="p">(</span><span class="n">tempf</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">list_pins</span><span class="p">(</span><span class="n">cache_age_s</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Block.publish_file_data: &quot;</span>
+                <span class="s2">&quot;IPFS content with this CID already exists!&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">IpfsCidExistsError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ipfs_cid</span> <span class="o">=</span> <span class="n">cid</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Block: generating ID...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_id</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_publish</span><span class="p">(</span><span class="n">short_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Publishing...&quot;</span><span class="p">)</span>
             <span class="n">cid</span> <span class="o">=</span> <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">tempf</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tempf</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pinning...&quot;</span><span class="p">)</span>
             <span class="n">ipfs</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">pin</span><span class="p">(</span><span class="n">cid</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">cid</span></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_pubsub</span><span class="p">:</span>
+                <span class="c1"># Publish a PubSub message about the new block.</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Block: announcing on pubsub&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">short_id</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Announce block on PubSub: empty block ID&quot;</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;New block!&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;block_id&quot;</span><span class="p">:</span> <span class="n">bytes_to_string</span><span class="p">(</span><span class="n">short_id</span><span class="p">),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
 
+                <span class="n">ipfs</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Published!&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Block.announce_block">
-<a class="viewcode-back" href="../../walytis_beta.block_networking.html#walytis_beta.block_networking.Block.announce_block">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">announce_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blockchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Publish a PubSub message about the new block.&quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;New block!&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;block_id&quot;</span><span class="p">:</span> <span class="n">bytes_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_id</span><span class="p">),</span>
-            <span class="p">}</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-
-        <span class="n">ipfs</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">blockchain_id</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+        <span class="n">Thread</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">_publish</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">short_id</span><span class="p">,),</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Block-Publisher-Temp&quot;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 </div>
 
 
